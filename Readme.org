@@ -91,7 +91,8 @@ This guide is designed to provide a foundation for understanding Emacs and its u
 6. Clone the repository:
    #+begin_src sh
 
-   git clone https://github.com/Cletip/.emacs.d.git
+   git clone https://github.com/Cletip/projetZZ2.git .emacs.d
+
 
    #+end_src
    
@@ -107,6 +108,19 @@ This method ensures that you have the latest version of the Emacs configuration 
 - The first time you start Emacs, it may take some time to load as it configures itself based on the `.emacs.d` setup.
 - Explore the default interface or follow additional setup instructions specific to the configuration you chose.
 
+* Update
 
+1. Open your command line interface:
+   Windows: Open Command Prompt or PowerShell.
+   macOS/Linux: Open Terminal.
+2. Navigate to your .emacs.d directory in your home directory: All OS:
+    #+begin_src sh
+   cd ~/.emacs.d
+     #+end_src
 
-** Update emacs
+3. Pull the latest changes from the repository. This command fetches the updated data from the remote repository (e.g., GitHub) and then merges it into your local repository: All OS:
+   #+begin_src sh
+     git pull
+   #+end_src
+
+4. Restart Emacs to apply the updates.
