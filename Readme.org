@@ -79,9 +79,7 @@ This guide is designed to provide a foundation for understanding Emacs and its u
    
    This command creates a new `.emacs.d` directory with the contents of the repository.
 
-7. Once the cloning is complete, you can start Emacs, and it should load the new configuration from the cloned `.emacs.d` directory.
-
-This method ensures that you have the latest version of the Emacs configuration from the `Cletip/.emacs.d` repository, set up and ready to use on your machine. Be sure to replace the repository URL with the actual URL if `Cletip/.emacs.d` is just a placeholder for the real repository.
+7. Once the cloning is complete, you can start Emacs.
 
 ** Launch Emacs
 

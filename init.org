@@ -1,0 +1,322 @@
+#+title: Tutorial and Configuration file
+
+[[id:044b5f4a-dc6f-467c-b151-85a36f1b88bb][Go directly to the tutorial]]
+
+* Introduction
+
+* How this file works
+:PROPERTIES:
+:ID:       c4f1d90a-3afd-4884-af24-8134fb163535
+:END:
+
+This file is provided with the git repository: any updates (see the readme for update instructions) will reset this file as intended. Therefore, modifying it is pointless. However, to customize it, see [[id:c9bd19aa-b1c5-4d96-b4d9-1fb09aaedae8][How to modify the configuration]].
+
+** Basic Code Block
+
+This is a basic example of a code block in Org mode. Code blocks are enclosed in "#+begin_src" and "#+end_src" tags. The language of the code block (e.g., emacs-lisp) is specified right after "#+begin_src".
+
+#+begin_src emacs-lisp
+  ;; Simple function definition in Emacs Lisp
+    (message "Hello, world!")
+#+end_src
+
+This block does not interact with any external files or parts of the document. It's simply an isolated snippet of code that you can run within Org mode. Do C-c C-c when you are in this block !
+
+Bonus for programmer : this can work with any type of language (":results output" will print the result of the console, and not the return value)
+
+#+begin_src python :results output
+
+print("Hello word")
+
+#+end_src
+
+** Tangling Code Block
+
+The following code block has a ":tangle yes" directive. This tells Org mode to include this code in a source file when the document is tangled. Tangling is the process of extracting code blocks into a standalone script or source file, which can be executed outside of Emacs.
+
+#+begin_src emacs-lisp :tangle yes
+  ;; the code in this code block and ALL code block with ":tangle yes" will be exported
+#+end_src
+
+By tangling, you can maintain your source code within an Org document but still produce executable scripts, making your documentation and code management more integrated and fluid (like this config file).
+
+** Noweb Reference Definition Block
+
+This block defines a ":noweb-ref" called "test". The ":noweb-ref" is a marker that allows this block of code to be referenced by name in other parts of the document.
+
+#+begin_src emacs-lisp :noweb-ref test
+  ;; Code that can be reused in other blocks
+  (defun repeat-message (message)
+    (dotimes (i 3)
+      (message message)))
+#+end_src
+
+You can think of ":noweb-ref" as creating a reusable code snippet that can be inserted into other code blocks using the "noweb" syntax.
+
+** Using Noweb to Insert Code
+
+The ":noweb yes" directive allows the inclusion of code from a ":noweb-ref block". This means that the "<<test>>" here is replaced by the content of the "test" block defined earlier.
+Don't forget the ":tangle yes" if you want to export the code too (not the case here) !
+
+#+begin_src emacs-lisp :noweb yes
+    ;; Here we insert all the ":noweb-ref test" block
+    <<test>>
+
+    ;; Additional code can be added here too
+    (repeat-message "Hello again!")
+#+end_src
+
+This feature is powerful for literate programming because it lets you define code in chunks that can be explained in context and reused throughout the document.
+
+** Summary
+
+Remember, any change to a block with ":tangle" or ":noweb-ref" has broader implications for your document's behavior and the output files. It's essential to manage these carefully, especially in a collaborative environment where the document might be sourced from a version-controlled repository.
+
+* Features and Tutorial !
+:PROPERTIES:
+:ID:       044b5f4a-dc6f-467c-b151-85a36f1b88bb
+:END:
+
+** Beginning
+
+This loads the initial configuration (which you do not need to understand).
+
+#+begin_src emacs-lisp :noweb yes :tangle yes
+
+  <<init-configuration>>
+
+#+end_src
+
+If you want to understand, then you should read [[id:c4f1d90a-3afd-4884-af24-8134fb163535][how this file works]], but nothing is mandatory.
+
+** Do some command !
+
+*** Understanding Commands
+
+In Emacs, everything is a "command." A command is a piece of code that allows you to interact with Emacs and perform various actions. These actions can range from simple tasks like moving the cursor or inserting text to complex operations like searching and replacing text, running programs, or interacting with external services.
+
+*** Accessing Commands
+
+There are four main ways to access commands in Emacs:
+
+1. *Using the Provided Menu*: I've implemented a [[id:581343cc-d38c-4d31-ba23-d74311ba7f3c][menu]] for you with the main useful commands. You can access this menu to quickly find and execute commands without remembering their keybindings.
+
+2. *Using the Menu at the Top*: Emacs has a menu bar at the top of the window, similar to other graphical applications. You can use this menu bar to find and execute commands by navigating through the menus and submenus.
+
+3. *Using "M-x" (Meta + x)*: Pressing "M-x" (where Meta is usually the Alt key) opens the "M-x" prompt. Here, you can type the name of the command you want to execute and press Enter to run it. This method is particularly useful when you know the name of the command but not its keybinding.
+
+4. *Using Keyboard Shortcuts*: Emacs is known for its extensive use of keyboard shortcuts, also known as keybindings. You can execute commands by pressing the appropriate key sequence, often consisting of a combination of modifier keys (such as Ctrl or Meta) and regular keys.
+
+** Menu
+:PROPERTIES:
+:ID:       581343cc-d38c-4d31-ba23-d74311ba7f3c
+:END:
+
+This menu is very effective, and you might be use this one very often.
+
+#+begin_src emacs-lisp :tangle yes
+
+    (pretty-hydra-define my-hydra
+      (:title "My Hydra" :color amaranth :quit-key "q")
+      ("PKM"
+       (("b" org-roam-node-find "Switch to another node")
+	("i" org-roam-node-insert "Insert a node")
+	("s" save-buffer "save"))
+       "Window"
+       (("n" next-window "next window")
+	("p" previous-window "prev window")
+	("d" delete-other-windows "Delete other window")
+	)))
+
+#+end_src
+
+Then, we have to bind the key to be accessible :
+
+#+begin_src emacs-lisp :tangle yes
+
+  ;; (global-set-key (kbd "C-c h") 'my-hydra/body)
+  (global-set-key (kbd "<escape>") 'my-hydra/body)
+  ;; (global-set-key (kbd "<f11>") 'my-hydra/body)
+
+#+end_src
+
+Chose or change what do you prefer in the 
+
+** Navigate in note
+
+You are in org-mode. To navigate :
+
+** Create things in note
+
+** Setting up nodes
+
+Notes that are interconnecting.
+
+** Creation and searching
+
+Just do 
+
+** Explanation of different note-taking methods possible (and comparison with the book 
+
+** stem) like Zettelkasten, PARA, etc.
+
+** Setting up org roam
+
+** Setting up org-roam ui
+
+** Setting up tasks
+
+** Setting up the calendar
+
+** Setting up automatic calendar export
+
+** Setting up captures
+
+** Setting up exportation
+
+** Setting up practical things (Vertico)
+
+** Setting up org-attach (with proper UUID generation)
+
+** Setting up a dashboard
+
+* How to modify the configuration
+:PROPERTIES:
+:ID:       c9bd19aa-b1c5-4d96-b4d9-1fb09aaedae8
+:END:
+
+[[elisp:(find-file (concat user-emacs-directory "personal.org"))][Go to personal configuration file]]
+
+You don't have the option to create another configuration file, as the base file will always be overwritten. Therefore, I've decided to create a second configuration file where you can simply copy and paste code snippets that suit your needs !
+
+Load the personal configuration file.
+
+#+begin_src emacs-lisp :tangle yes
+
+  (load (concat user-emacs-directory "personal.el"))
+
+#+end_src
+
+* Hidden Practical Things for the User
+
+You can (and should) [[id:044b5f4a-dc6f-467c-b151-85a36f1b88bb][skip]] this part: it is not intended for you.
+
+This section is dedicated to things that you, as the user, are not supposed to understand.
+
+** Startup Page
+
+Here is the code allowing
+
+#+begin_src emacs-lisp :noweb-ref init-configuration
+
+(defun open-my-startup-file ()
+  "Open a specific file and maximize the Emacs window on startup."
+  (find-file (concat user-emacs-directory "init.org"))  ; Change the path to your specific file
+  (delete-other-windows))
+
+;; Add the custom startup function to the Emacs startup hook
+(add-hook 'emacs-startup-hook 'open-my-startup-file)
+
+#+end_src
+
+** Package Manager
+
+#+begin_src emacs-lisp  :noweb-ref init-configuration
+
+;; Install straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+#+end_src
+
+** Use-package
+
+#+begin_src emacs-lisp :noweb-ref init-configuration
+
+  ;; Install use-package
+  (when (version< emacs-version "29")
+    (straight-use-package 'use-package))
+
+
+  ;; Configure use-package to use straight.el by default
+  (use-package straight
+               :custom
+               (straight-use-package-by-default t))
+
+  ;; Disable package.el in favor of straight.el
+  (setq package-enable-at-startup nil)
+
+#+end_src
+
+
+** Human-machine interface
+
+*** Interface for shortcut
+
+#+begin_src emacs-lisp :noweb-ref init-configuration
+
+  (use-package hydra
+    :straight t)
+
+(use-package pretty-hydra
+  :after hydra
+  :straight t)
+
+#+end_src
+
+*** See the next key
+
+#+begin_src emacs-lisp :noweb-ref init-configuration
+
+  (use-package which-key
+	       :straight t
+	       :init
+	       (which-key-mode)
+	       :config
+	       (setq which-key-idle-delay 0.5)  ; Adjust to the desired delay in seconds before which-key pops up
+	       (setq which-key-popup-type 'side-window)  ; Display in side window by default
+	       (setq which-key-side-window-location 'bottom)  ; Display at the bottom of the screen
+	       (setq which-key-side-window-max-width 0.33)  ; Use a third of the screen width for which-key window
+	       (setq which-key-side-window-max-height 0.25)  ; Use a quarter of the screen height for which-key window
+	       (which-key-setup-side-window-bottom)  ; Setup to display at the bottom
+	       )
+
+
+#+end_src
+
+*** Completion Framework
+
+#+begin_src emacs-lisp :noweb-ref init-configuration
+
+  ;; vertical completion
+  (use-package vertico
+	       :init
+	       (vertico-mode 1))
+
+  ;; annotation in the minibuffer
+  (use-package marginalia
+	       :init
+	       (marginalia-mode 1))
+
+  ;; better searching 
+  (use-package consult
+	       :config
+	       ;; Replace bindings with Consult commands
+	       (global-set-key (kbd "C-s") 'consult-line)
+	       (global-set-key (kbd "C-x b") 'consult-buffer)
+	       (global-set-key (kbd "M-y") 'consult-yank-pop)
+	       (global-set-key [remap switch-to-buffer] 'consult-buffer)
+	       (global-set-key [remap switch-to-buffer-other-window] 'consult-buffer-other-window)
+	       (global-set-key [remap switch-to-buffer-other-frame] 'consult-buffer-other-frame))
+
+#+end_src
