@@ -1,0 +1,112 @@
+#+title: EasyEmacsPKM
+
+* Purpose
+
+This guide is designed to provide a foundation for understanding Emacs and its utility through a user-oriented pre-configured setup.
+
+* Installation
+
+** Download and Install Git
+
+**Windows:**
+1. Download the Git installer from the official Git website: [[https://gitforwindows.org/][git download]].
+2. Run the downloaded `.exe` file to start the installer.
+3. Follow the installation prompts. Make sure to choose options that add Git to your PATH, which makes it accessible from the command prompt.
+4. To verify installation, open Command Prompt and type `git --version`. It should return the installed version of Git.
+
+**macOS:**
+1. The easiest way to install Git on macOS is to install the Xcode Command Line Tools. Open a terminal and type:
+   #+begin_src sh
+
+   xcode-select --install
+
+   #+end_src
+2. Click 'Install' when prompted to install the command line developer tools.
+3. After installation, verify Git is installed by typing `git --version` in the terminal.
+
+**Linux:**
+1. Open a terminal.
+2. Update your package list using the package manager, then install Git.
+   - For Debian/Ubuntu:
+     #+begin_src sh
+
+     sudo apt update
+     sudo apt install git
+
+     #+end_src
+     
+   - For Fedora:
+     #+begin_src sh
+
+     
+     sudo dnf install git
+
+     #+end_src
+     
+   - For Arch Linux:
+     #+begin_src sh
+
+     sudo pacman -S git
+
+     #+end_src
+     
+3. Verify the installation by typing `git --version` in the terminal.
+
+** Download and Install Emacs
+
+- Visit the official GNU Emacs website: [https://www.gnu.org/software/emacs/](https://www.gnu.org/software/emacs/)
+- Choose the version suitable for your operating system. It is recommended to download at least version 28 for compatibility with most packages.
+- Follow the installation instructions on the website for your specific OS.
+
+** Set Up the PKM
+
+**Windows, macOS, and Linux:**
+
+1. First, ensure that you have Git installed (as per the instructions above).
+2. Do the same for Emacs (as per the instructions above).
+3. Open your command line interface (Command Prompt for Windows, Terminal for macOS and Linux).
+4. Navigate to your home directory:
+   - **Windows**:
+     #+begin_src sh
+
+
+     cd %USERPROFILE%
+
+     #+end_src
+   - **macOS/Linux**:
+     #+begin_src sh
+
+     cd ~
+
+     #+end_src
+     
+5. If you already have a `.emacs.d` directory and you want to replace it, you should rename or remove the existing directory:
+   - **All OS**:
+     #+begin_src sh
+
+     mv .emacs.d .emacs.d.backup
+
+     #+end_src
+     
+6. Clone the repository:
+   #+begin_src sh
+
+   git clone https://github.com/Cletip/.emacs.d.git
+
+   #+end_src
+   
+   This command creates a new `.emacs.d` directory with the contents of the repository.
+
+7. Once the cloning is complete, you can start Emacs, and it should load the new configuration from the cloned `.emacs.d` directory.
+
+This method ensures that you have the latest version of the Emacs configuration from the `Cletip/.emacs.d` repository, set up and ready to use on your machine. Be sure to replace the repository URL with the actual URL if `Cletip/.emacs.d` is just a placeholder for the real repository.
+
+** Launch Emacs
+
+- Open Emacs by searching for it in your start menu or using a command line interface.
+- The first time you start Emacs, it may take some time to load as it configures itself based on the `.emacs.d` setup.
+- Explore the default interface or follow additional setup instructions specific to the configuration you chose.
+
+
+
+** Update emacs
