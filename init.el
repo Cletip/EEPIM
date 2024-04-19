@@ -49,27 +49,8 @@
 
 (cua-mode 1)
 
-;;to directly delete the buffer if a file (or directory) is deleted
-(defun my--dired-kill-before-delete (file &rest rest)
-  (if-let ((buf (get-file-buffer file)))
-      (kill-buffer buf)
-    (dolist (dired-buf (dired-buffers-for-dir file))
-      (kill-buffer dired-buf))))
-(advice-add 'dired-delete-file :before 'my--dired-kill-before-delete)
-
-
-
-					; automatic refresh of dired when file is modified
-(add-hook 'dired-mode-hook 'auto-revert-mode)
-
-(setq dired-auto-revert-buffer t) ; ; Update dired buffer on revisit
-(setq dired-dwim-target t) ; ; If two dired buffers are open, save in the other on copy attempt
-(setq dired-hide-details-hide-symlink-targets nil) ; ; Do not hide symlink targets
-(setq dired-listing-switches "-alh") ; ; Allow dired to display all folders, in lengty format, with quantities of data in human-readable format
-(setq dired-ls-F-marks-symlinks nil) ; ; Informs dired how 'ls -lF' marks symbolic links, see help page for details
-(setq dired-recursive-copies 'always) ; ; Always recursively copies without prompting
-(setq dired-recursive-deletes 'always) ; asks for more to delete recursively
-(setq dired-dwim-target t) ; qd t-on copies, if another dired is open, copies into it "directly".
+(auto-save-visited-mode 1)
+(setq auto-save-visited-interval 10) ; every X seconds
 
 (use-package smartparens
     :hook (org-mode . smartparens-mode)
@@ -82,8 +63,6 @@
     (sp-local-pair 'org-mode "\/" "\/")
     )
 
-;;retour à la ligne concrètrement
-(auto-fill-mode 1)
 ;; visuellement
 (global-visual-line-mode 1)
 
@@ -115,16 +94,6 @@
 
 (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
 
-(use-package beacon
-    :config
-    (setq beacon-blink-delay 0.0)
-    (setq beacon-blink-duration 0.5)
-    (setq beacon-size 60)
-    ;; (setq beacon-color "#ffa38f")
-    (setq beacon-color "blue")
-    (beacon-mode 1)
-    )
-
 (use-package nyan-mode
     :init (nyan-mode)
     )
@@ -135,44 +104,33 @@
 	     (load-theme 'leuven t)
 	     )
 
-(use-package dimmer
-    :custom
-    (dimmer-fraction 0.3)
-    (dimmer-exclusion-regexp-list
-     '(".*Minibuf.*"
-       ".*which-key.*"
-       ".*LV.*"))
-    :config
-    (dimmer-mode 1)
-    )
-
 (use-package hydra)
 
 (use-package pretty-hydra)
 
 (pretty-hydra-define my-hydra
-		     (:title "Types Command" :color amaranth :quit-key "q")
+		     (:title "Main Commands, leave with q" :color amaranth :quit-key "q")
 		     ("PKM"
-		      (("b" org-roam-node-find "Switch to another node")
-		       ("i" org-roam-node-insert "Insert a node")
-		       ("s" save-buffer "save")
+		      (("f" org-roam-node-find "Find a go to a node")
+		       ("i" org-roam-node-insert "Find and insert a link to a node")
 		       ("a" org-attach "Attach a document to the heading")
 		       )
 		      "Note"
 		      (("h" org-meta-return "Insert new heading or list")
-		       ("p" org-todo "TODO a heading !")
-		       ("p" org-export-dispatch "Export to another format")
-		       ("p" org-store-link "Export to another format")
-		       ("p" org-insert-link "Export to another format")
-
+		       ("t" org-todo "Marka heading as TODO")
+		       ("e" org-export-dispatch "Export to another format")
+		       ("l" org-store-link "Store the link under the cursor")
+		       ("m" org-insert-link "Insert a link")
 		       )
 		      "Window"
-		      (("n" next-window "next window")
-		       ("p" previous-window "prev window")
-		       ("p" winner-undo "back")
-		       ("p" split-window-below "back")
-		       ("p" split-window-right "back")
-		       ("d" delete-other-windows "Delete other window")
+		      (("h" split-window-below "Split your window horizontaly")
+		       ("v" split-window-right "Split your window verticaly")
+		       ("n" next-window "Next window")
+		       ("p" previous-window "Previous window")
+		       ("w" winner-undo "Undo previous configuration of window(s)")
+		       ("x" winner-redo "Redo previous configuration of window(s)")
+		       ("k" delete-other-windows "Keep only the current window")
+		       ("d" delete-window "Delete current window")
 		       )
 		      ))
 
@@ -256,19 +214,20 @@
 
 ;; Make sure org-indent face is available
 (require 'org-indent)
-(set-face-attribute 'org-document-title nil :font "Fira Mono" :weight 'bold :height 1.5)
-(dolist (face '((org-level-1 . 1.3)
-                (org-level-2 . 1.25)
-                (org-level-3 . 1.20)
-                (org-level-4 . 1.15)
-                (org-level-5 . 1.10)
-                (org-level-6 . 1.05)
-                (org-level-7 . 1.0)
-                (org-level-8 . 1.0)))
-  (set-face-attribute (car face) nil :font "Fira Mono" :weight 'medium :height (cdr face)))
+;; (set-face-attribute 'org-document-title nil :font "Fira Mono" :weight 'bold :height 1.5)
+;; (dolist (face '((org-level-1 . 1.3)
+;;                 (org-level-2 . 1.25)
+;;                 (org-level-3 . 1.20)
+;;                 (org-level-4 . 1.15)
+;;                 (org-level-5 . 1.10)
+;;                 (org-level-6 . 1.05)
+;;                 (org-level-7 . 1.0)
+;;                 (org-level-8 . 1.0)))
+;;   (set-face-attribute (car face) nil :font "Fira Mono" :weight 'medium :height (cdr face)))
 
 
-;; Ensure that anything that should be fixed-pitch in Org files appears that way
+;; ;; Ensure that 
+;; anything that should be fixed-pitch in Org files appears that way
 (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
 (set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
 (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
@@ -301,6 +260,20 @@
 (setq org-ellipsis "⬎")
 
 (add-hook 'org-mode-hook 'org-indent-mode)
+
+(setq org-attach-dir (concat user-emacs-directory "PKM/data/org-attach"))
+
+;; each attached document go to the ID of the nodes
+
+;;The first function in this list defines the preferred function which will be used when creating new attachment folders.
+(setq org-attach-id-to-path-function-list
+      '(cp/org-attach-id-uuid-folder-format
+	;; org-attach-id-uuid-folder-format
+	))
+
+(defun cp/org-attach-id-uuid-folder-format (id)
+  "Return the path to attach a file with an id"
+  (format "%s" id))
 
 (use-package org-roam
 	     :init
@@ -354,5 +327,27 @@
    ("C-c n B" . consult-org-roam-backlinks-recursive)
    ("C-c n l" . consult-org-roam-forward-links)
    ("C-c n r" . consult-org-roam-search))
+
+;;to directly delete the buffer if a file (or directory) is deleted
+(defun my--dired-kill-before-delete (file &rest rest)
+  (if-let ((buf (get-file-buffer file)))
+      (kill-buffer buf)
+    (dolist (dired-buf (dired-buffers-for-dir file))
+      (kill-buffer dired-buf))))
+(advice-add 'dired-delete-file :before 'my--dired-kill-before-delete)
+
+
+
+					; automatic refresh of dired when file is modified
+(add-hook 'dired-mode-hook 'auto-revert-mode)
+
+(setq dired-auto-revert-buffer t) ; ; Update dired buffer on revisit
+(setq dired-dwim-target t) ; ; If two dired buffers are open, save in the other on copy attempt
+(setq dired-hide-details-hide-symlink-targets nil) ; ; Do not hide symlink targets
+(setq dired-listing-switches "-alh") ; ; Allow dired to display all folders, in lengty format, with quantities of data in human-readable format
+(setq dired-ls-F-marks-symlinks nil) ; ; Informs dired how 'ls -lF' marks symbolic links, see help page for details
+(setq dired-recursive-copies 'always) ; ; Always recursively copies without prompting
+(setq dired-recursive-deletes 'always) ; asks for more to delete recursively
+(setq dired-dwim-target t) ; qd t-on copies, if another dired is open, copies into it "directly".
 
 (load (concat user-emacs-directory "personal.el"))
