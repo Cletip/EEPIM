@@ -1,13 +1,25 @@
 #+title: EasyEmacsPKM
 
+
+
+todo :
+- mieux expliquer l'installation d'emacs windows (expliquer quel fichier prendre, le .exe)
+- expliquer une PKM ou bien modifier le titre PKM
+- changer userprofile sur autre chose
+- le mettre dans nomutilisteur/appdata/roaming/
+- cd $env:APPDATA
+- C:\Users\Username\AppData\Roaming
+- windows en bas à gauche
+- dire que le chargement dépend de la conextion, et que l'utilsateur doit voir des lignes en bas à gauche changer indiquant qu'emacs télécharge bien des choses
+
 * Purpose
 
-This guide is designed to provide a foundation for understanding Emacs and its utility through a user-oriented pre-configured setup.
+This guide is designed to provide a foundation of a "PKM", that mean "Personal Knowledge Management (system)". A "PKM" , is a set of method used to collect, organize, store, and share information by an individual, enhancing personal effectiveness and facilitating learning. Normally, a "PKM" is a set of tools. Here, the goal of this project/guide is to centralize all of this.
 
-In this guide, we need to install two softwares : 
+In this guide, we need to install two softwares to setup the new PKM :
 
-1. Emacs serves as the central platform for your Personal Knowledge Management (PKM). Its extensive customizability and adaptability make it ideal for tailoring a system that can handle all your information management needs, from note-taking and task management to calendar integration and coding.
-2. Git in this setup is used here to effortlessly update your setup. 
+1. Git in this setup is used here to effortlessly update your setup. 
+2. Emacs serves as the central platform for your Personal Knowledge Management (PKM). Its extensive customizability and adaptability make it ideal for tailoring a system that can handle all your information management needs, from note-taking and task management to calendar integration and coding.
 
 * Installation
 
@@ -26,6 +38,7 @@ In this guide, we need to install two softwares :
    #+end_src
 2. Click 'Install' when prompted to install the command line developer tools.
 3. After installation, verify Git is installed by typing `git --version` in the terminal.
+4. TODO configurer utilisateur et email
 
 *Linux:*
 1. Open a terminal.
@@ -50,7 +63,7 @@ In this guide, we need to install two softwares :
 
 ** Download and Install Emacs
 
-- Visit the official GNU Emacs website: [https://www.gnu.org/software/emacs/](https://www.gnu.org/software/emacs/)
+- Visit the official GNU Emacs website: [[https://www.gnu.org/software/emacs/download.html][download page for emacs]].
 - Choose the version suitable for your operating system. It is recommended to download at least version 28 for compatibility with most packages.
 - Follow the installation instructions on the website for your specific OS.
 
@@ -89,8 +102,8 @@ In this guide, we need to install two softwares :
 ** Launch Emacs
 
 - Open Emacs by searching for it in your start menu or using a command line interface.
-- The first time you start Emacs, it may take some time to load as it configures itself based on the `.emacs.d` setup.
-- Explore the default interface or follow additional setup instructions specific to the configuration you chose.
+- The first time you start Emacs, it may take some time to load as it configures itself.
+- If everything is good,, you are in the tutorial ! Just read and learn how to use it.
 
 * Update
 
