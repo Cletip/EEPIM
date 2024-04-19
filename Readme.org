@@ -4,6 +4,11 @@
 
 This guide is designed to provide a foundation for understanding Emacs and its utility through a user-oriented pre-configured setup.
 
+In this guide, we need to install two softwares : 
+
+1. Emacs serves as the central platform for your Personal Knowledge Management (PKM). Its extensive customizability and adaptability make it ideal for tailoring a system that can handle all your information management needs, from note-taking and task management to calendar integration and coding.
+2. Git in this setup is used here to effortlessly update your setup. 
+
 * Installation
 
 ** Download and Install Git

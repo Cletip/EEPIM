@@ -1,17 +1,19 @@
-#+title: Tutorial and Configuration file
-
-[[id:044b5f4a-dc6f-467c-b151-85a36f1b88bb][Go directly to the tutorial]]
+#+title: Configuration file
 
 * Introduction
 
-* How this file works
+** Oriented User experience
+
+** How this file works
 :PROPERTIES:
 :ID:       c4f1d90a-3afd-4884-af24-8134fb163535
 :END:
 
+You can skip this part if you want.
+
 This file is provided with the git repository: any updates (see the readme for update instructions) will reset this file as intended. Therefore, modifying it is pointless. However, to customize it, see [[id:c9bd19aa-b1c5-4d96-b4d9-1fb09aaedae8][How to modify the configuration]].
 
-** Basic Code Block
+*** Basic Code Block
 
 This is a basic example of a code block in Org mode. Code blocks are enclosed in "#+begin_src" and "#+end_src" tags. The language of the code block (e.g., emacs-lisp) is specified right after "#+begin_src".
 
@@ -30,7 +32,7 @@ print("Hello word")
 
 #+end_src
 
-** Tangling Code Block
+*** Tangling Code Block
 
 The following code block has a ":tangle yes" directive. This tells Org mode to include this code in a source file when the document is tangled. Tangling is the process of extracting code blocks into a standalone script or source file, which can be executed outside of Emacs.
 
@@ -40,7 +42,7 @@ The following code block has a ":tangle yes" directive. This tells Org mode to i
 
 By tangling, you can maintain your source code within an Org document but still produce executable scripts, making your documentation and code management more integrated and fluid (like this config file).
 
-** Noweb Reference Definition Block
+*** Noweb Reference Definition Block
 
 This block defines a ":noweb-ref" called "test". The ":noweb-ref" is a marker that allows this block of code to be referenced by name in other parts of the document.
 
@@ -53,7 +55,7 @@ This block defines a ":noweb-ref" called "test". The ":noweb-ref" is a marker th
 
 You can think of ":noweb-ref" as creating a reusable code snippet that can be inserted into other code blocks using the "noweb" syntax.
 
-** Using Noweb to Insert Code
+*** Using Noweb to Insert Code
 
 The ":noweb yes" directive allows the inclusion of code from a ":noweb-ref block". This means that the "<<test>>" here is replaced by the content of the "test" block defined earlier.
 Don't forget the ":tangle yes" if you want to export the code too (not the case here) !
@@ -68,69 +70,336 @@ Don't forget the ":tangle yes" if you want to export the code too (not the case 
 
 This feature is powerful for literate programming because it lets you define code in chunks that can be explained in context and reused throughout the document.
 
-** Summary
+*** Summary
 
 Remember, any change to a block with ":tangle" or ":noweb-ref" has broader implications for your document's behavior and the output files. It's essential to manage these carefully, especially in a collaborative environment where the document might be sourced from a version-controlled repository.
 
-* Features and Tutorial !
-:PROPERTIES:
-:ID:       044b5f4a-dc6f-467c-b151-85a36f1b88bb
-:END:
+* Configuration of Emacs and his world
 
-** Beginning
+** Basic things essential
 
-This loads the initial configuration (which you do not need to understand).
+*** Startup Page
 
-#+begin_src emacs-lisp :noweb yes :tangle yes
-
-  <<init-configuration>>
-
-#+end_src
-
-If you want to understand, then you should read [[id:c4f1d90a-3afd-4884-af24-8134fb163535][how this file works]], but nothing is mandatory.
-
-** Do some command !
-
-*** Understanding Commands
-
-In Emacs, everything is a "command." A command is a piece of code that allows you to interact with Emacs and perform various actions. These actions can range from simple tasks like moving the cursor or inserting text to complex operations like searching and replacing text, running programs, or interacting with external services.
-
-*** Accessing Commands
-
-There are four main ways to access commands in Emacs:
-
-1. *Using the Provided Menu*: I've implemented a [[id:581343cc-d38c-4d31-ba23-d74311ba7f3c][menu]] for you with the main useful commands. You can access this menu to quickly find and execute commands without remembering their keybindings.
-
-2. *Using the Menu at the Top*: Emacs has a menu bar at the top of the window, similar to other graphical applications. You can use this menu bar to find and execute commands by navigating through the menus and submenus.
-
-3. *Using "M-x" (Meta + x)*: Pressing "M-x" (where Meta is usually the Alt key) opens the "M-x" prompt. Here, you can type the name of the command you want to execute and press Enter to run it. This method is particularly useful when you know the name of the command but not its keybinding.
-
-4. *Using Keyboard Shortcuts*: Emacs is known for its extensive use of keyboard shortcuts, also known as keybindings. You can execute commands by pressing the appropriate key sequence, often consisting of a combination of modifier keys (such as Ctrl or Meta) and regular keys.
-
-** Menu
-:PROPERTIES:
-:ID:       581343cc-d38c-4d31-ba23-d74311ba7f3c
-:END:
-
-This menu is very effective, and you might be use this one very often.
+Here is the code allowing
 
 #+begin_src emacs-lisp :tangle yes
 
-    (pretty-hydra-define my-hydra
-      (:title "My Hydra" :color amaranth :quit-key "q")
-      ("PKM"
-       (("b" org-roam-node-find "Switch to another node")
-	("i" org-roam-node-insert "Insert a node")
-	("s" save-buffer "save"))
-       "Window"
-       (("n" next-window "next window")
-	("p" previous-window "prev window")
-	("d" delete-other-windows "Delete other window")
-	)))
+(defun open-my-startup-file ()
+  "Open a specific file and maximize the Emacs window on startup."
+  (find-file (concat user-emacs-directory "tutorial.org"))  ; Change the path to your specific file
+  (delete-other-windows))
+
+;; Add the custom startup function to the Emacs startup hook
+(add-hook 'emacs-startup-hook 'open-my-startup-file)
 
 #+end_src
 
-Then, we have to bind the key to be accessible :
+*** Package Manager
+
+#+begin_src emacs-lisp :tangle early-init.el
+
+  ;; Disable package.el in favor of straight.el
+  (setq package-enable-at-startup nil)
+
+#+end_src
+
+#+begin_src emacs-lisp  :tangle yes
+
+;; Install straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+#+end_src
+
+*** Use-package
+
+#+begin_src emacs-lisp :tangle yes
+
+  ;; Install use-package
+  (when (version< emacs-version "29")
+    (straight-use-package 'use-package))
+
+  ;; always download package automatically (without :ensure t)
+  (setq use-package-always-ensure t)
+
+  ;; Configure use-package to use straight.el by default
+  (setq straight-use-package-by-default t)
+
+#+end_src
+
+
+*** Encodings
+
+#+begin_src emacs-lisp :tangle yes
+
+;;; Encodings
+;; Contrary to what many Emacs users have in their configs, you don't need more
+;; than this to make UTF-8 the default coding system:
+(set-language-environment "UTF-8")
+;; ...but `set-language-environment' also sets `default-input-method', which is
+;; a step too opinionated.
+(setq default-input-method nil)
+;; ...And the clipboard on Windows could be in a wider encoding (UTF-16), so
+;; leave Emacs to its own devices.
+(when (memq system-type '(cygwin windows-nt ms-dos))
+  (setq selection-coding-system 'utf-8))
+
+#+end_src
+
+*** Replace text when copy and past
+
+*** Normal copy and past shortcut
+
+CUA Mode is a feature in Emacs that configures the keybindings to emulate the Common User Access (CUA) standard used in many other programs, particularly those in the Windows environment. This mode makes cut, copy, paste, and other common operations accessible through the familiar Ctrl-X, Ctrl-C, Ctrl-V, and Ctrl-Z shortcuts.
+
+#+begin_src emacs-lisp :tangle yes 
+
+(cua-mode 1)
+
+#+end_src
+
+
+*** Auto save
+
+#+begin_src emacs-lisp :tangle yes 
+
+  (auto-save-visited-mode 1)
+  (setq auto-save-visited-interval 10) ; every X seconds
+
+
+#+end_src
+
+*** Smart parens
+
+#+begin_src emacs-lisp :tangle yes 
+
+(use-package smartparens
+    :hook (org-mode . smartparens-mode)
+    :config
+    (sp-pair "\«" "\»")  
+    ;; the second argument is the closing delimiter, so you need to skip it with nil
+    (sp-pair "'" nil :actions :rem)  
+    (sp-local-pair 'org-mode "*" "*") ;; adds * as a local pair in org mode
+    (sp-local-pair 'org-mode "=" "=") ;; adds = as a local pair in org mode
+    (sp-local-pair 'org-mode "\/" "\/")
+    )
+
+#+end_src
+
+
+** Text
+
+*** Aesthetics
+
+**** Wraps lines
+
+visual-line-mode is a display mode in Emacs that wraps lines of text at the edge of the window. This mode is particularly useful for reading and editing long paragraphs of text because it allows the lines to break naturally at word boundaries without inserting hard newline characters into the text.
+
+#+begin_src emacs-lisp :tangle yes
+
+  ;; visuellement
+  (global-visual-line-mode 1)
+
+#+end_src
+
+**** Fill mode
+
+(auto-fill-mode 1)
+fill-column
+
+** Aesthetics
+
+*** Mode line
+
+#+begin_src emacs-lisp :tangle yes 
+
+  (use-package doom-modeline
+	       :init
+	       (doom-modeline-mode)
+	       :custom    
+	       (doom-modeline-height 25)
+	       (doom-modeline-bar-width 1)
+	       (doom-modeline-icon t)
+	       (doom-modeline-major-mode-icon t)
+	       (doom-modeline-major-mode-color-icon t)
+	       (doom-modeline-buffer-file-name-style 'truncate-upto-project)
+	       (doom-modeline-buffer-state-icon t)
+	       (doom-modeline-buffer-modification-icon t)
+	       (doom-modeline-minor-modes nil)
+	       (doom-modeline-enable-word-count t)
+	       (doom-modeline-buffer-encoding nil)
+	       (doom-modeline-indent-info nil)
+	       (doom-modeline-checker-simple-format t)
+	       (doom-modeline-vcs-max-length 20)
+	       (doom-modeline-env-version t)
+	       (doom-modeline-irc-stylize 'identity)
+	       (doom-modeline-github-timer nil)
+	       (doom-modeline-gnus-timer nil)
+	       )
+
+#+end_src
+
+*** Icons
+
+#+begin_src emacs-lisp :tangle yes 
+
+  (use-package all-the-icons-dired)
+
+  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+
+#+end_src
+
+*** Scroll bar
+
+:tangle yes 
+#+begin_src emacs-lisp
+
+  (scroll-bar-mode 0)
+
+  (use-package better-scroll-bar
+	       :straight
+	       (:host github :repo "jcs-elpa/better-scroll-bar")
+	       :init
+	       (define-key global-map (kbd "<prior>") #'better-scroll-down)
+	       (define-key global-map (kbd "<next>") #'better-scroll-up)
+
+	       (define-key global-map (kbd "S-<prior>") #'better-scroll-down-other-window)
+	       (define-key global-map (kbd "S-<next>") #'better-scroll-up-other-window)
+	       )
+
+  (use-package auto-scroll-bar
+	       :straight
+	       (:host github :repo "jcs-elpa/auto-scroll-bar")
+	       :init
+	       (auto-scroll-bar-mode 1)
+	       )
+
+#+end_src
+
+*** Cursor
+
+**** View where is the cursor
+
+Not very useful.
+
+#+begin_src emacs-lisp
+
+  (use-package beacon
+      :config
+      (setq beacon-blink-delay 0.0)
+      (setq beacon-blink-duration 0.5)
+      (setq beacon-size 60)
+      ;; (setq beacon-color "#ffa38f")
+      (setq beacon-color "blue")
+      (beacon-mode 1)
+      )
+
+#+end_src
+
+**** Indication in the modeline
+
+#+begin_src emacs-lisp :tangle yes 
+
+  (use-package nyan-mode
+      :init (nyan-mode)
+      )
+
+#+end_src
+
+*** Theme
+
+#+begin_src emacs-lisp :tangle yes 
+
+  (use-package doom-themes
+	       :config
+	       ;; (load-theme 'doom-moonlight t)
+	       (load-theme 'leuven t)
+	       )
+
+#+end_src
+
+*** Buffer
+
+**** Light active buffer
+
+Not very useful.
+
+#+begin_src emacs-lisp
+
+(use-package dimmer
+    :custom
+    (dimmer-fraction 0.3)
+    (dimmer-exclusion-regexp-list
+     '(".*Minibuf.*"
+       ".*which-key.*"
+       ".*LV.*"))
+    :config
+    (dimmer-mode 1)
+    )
+
+#+end_src
+
+** Human-machine interface
+
+*** Interface for shortcut
+
+#+begin_src emacs-lisp :tangle yes
+
+  (use-package hydra)
+
+  (use-package pretty-hydra)
+
+#+end_src
+
+**** Menu
+:PROPERTIES:
+:ID:       4be934ad-9e75-4b45-a0b1-adb6d26a8632
+:END:
+
+#+begin_src emacs-lisp :tangle yes
+
+  (pretty-hydra-define my-hydra
+		       (:title "Main Commands, leave with q" :color amaranth :quit-key "q")
+		       ("PKM"
+			(("f" org-roam-node-find "Find a go to a node")
+			 ("i" org-roam-node-insert "Find and insert a link to a node")
+			 ("a" org-attach "Attach a document to the heading")
+			 )
+			"Note"
+			(("h" org-meta-return "Insert new heading or list")
+			 ("t" org-todo "Marka heading as TODO")
+			 ("e" org-export-dispatch "Export to another format")
+			 ("l" org-store-link "Store the link under the cursor")
+			 ("m" org-insert-link "Insert a link")
+			 )
+			"Window"
+			(("h" split-window-below "Split your window horizontaly")
+			 ("v" split-window-right "Split your window verticaly")
+			 ("n" next-window "Next window")
+			 ("p" previous-window "Previous window")
+			 ("w" winner-undo "Undo previous configuration of window(s)")
+			 ("x" winner-redo "Redo previous configuration of window(s)")
+			 ("k" delete-other-windows "Keep only the current window")
+			 ("d" delete-window "Delete current window")
+			 )
+			))
+
+#+end_src
+
+Binding :
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -140,45 +409,308 @@ Then, we have to bind the key to be accessible :
 
 #+end_src
 
-Chose or change what do you prefer in the 
+*** See the next key
 
-** Navigate in note
+#+begin_src emacs-lisp :tangle yes
 
-You are in org-mode. To navigate :
+  (use-package which-key
+	       :init
+	       (which-key-mode)
+	       :config
+	       (setq which-key-idle-delay 0.5)  ; Adjust to the desired delay in seconds before which-key pops up
+	       (setq which-key-popup-type 'side-window)  ; Display in side window by default
+	       (setq which-key-side-window-location 'bottom)  ; Display at the bottom of the screen
+	       (setq which-key-side-window-max-width 0.33)  ; Use a third of the screen width for which-key window
+	       (setq which-key-side-window-max-height 0.25)  ; Use a quarter of the screen height for which-key window
+	       (which-key-setup-side-window-bottom)  ; Setup to display at the bottom
+	       )
 
-** Create things in note
 
-** Setting up nodes
+#+end_src
 
-Notes that are interconnecting.
+*** Completion Framework
 
-** Creation and searching
+#+begin_src emacs-lisp :tangle yes
 
-Just do 
+  ;; vertical completion
+  (use-package vertico
+	       :init
+	       (vertico-mode 1)
+	       :custom
+	       (vertico-cycle t)
+	       :custom-face
+	       (vertico-current ((t (:background "#3a3f5a"))))
+	       )
 
-** Explanation of different note-taking methods possible (and comparison with the book 
+  ;; annotation in the minibuffer
+  (use-package marginalia
+	       :init
+	       (marginalia-mode 1)
+	       :custom
+	       (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+	       )
 
-** stem) like Zettelkasten, PARA, etc.
+  ;; Use the `orderless' completion style.
+  ;; Use space-separated search terms in any order when completing with Icomplete or the default interface.
+  ;; Example : M-x consult-line, write "use ordeless", and you will find the configuration of the package orderless !
+  (use-package orderless
+	       :init
+	       ;; Enable `partial-completion' for files to allow path expansion.
+	       ;; You may prefer to use `initials' instead of `partial-completion'.
+	       (setq completion-styles '(orderless)
+		     completion-category-defaults nil
+		     completion-category-overrides '((file (styles partial-completion)))))
 
-** Setting up org roam
+  ;; better searching 
+  (use-package consult
+	       :config
+	       ;; Replace bindings with Consult commands
+	       (global-set-key (kbd "C-s") 'consult-line)
+	       (global-set-key (kbd "C-x b") 'consult-buffer)
+	       (global-set-key (kbd "M-y") 'consult-yank-pop)
+	       (global-set-key [remap switch-to-buffer] 'consult-buffer)
+	       (global-set-key [remap switch-to-buffer-other-window] 'consult-buffer-other-window)
+	       (global-set-key [remap switch-to-buffer-other-frame] 'consult-buffer-other-frame))
 
-** Setting up org-roam ui
+#+end_src
 
-** Setting up tasks
 
-** Setting up the calendar
+*** Back to the previous window configuration
 
-** Setting up automatic calendar export
+#+begin_src emacs-lisp :tangle yes 
 
-** Setting up captures
+  (winner-mode 1)
 
-** Setting up exportation
+#+end_src
 
-** Setting up practical things (Vertico)
+** Org and family
 
-** Setting up org-attach (with proper UUID generation)
+*** Org
 
-** Setting up a dashboard
+#+begin_src emacs-lisp :tangle yes
+
+  (use-package org :straight (org :type git :repo "https://code.orgmode.org/bzg/org-mode.git")
+	       :config
+	       (setq org-directory (concat user-emacs-directory "PKM/notes/"))
+	       )
+
+#+end_src
+
+**** Exportation
+
+#+begin_src emacs-lisp :tangle yes 
+
+  (defun my/org-export-output-dir (orig-fun &rest args)
+    "Modification of the export-output directory for Org-mode."
+    (let ((old-default-directory default-directory))
+      ;; Change working directory temporarily to 'export' directory.
+      (setq default-directory (expand-file-name "PKM/data/export/" user-emacs-directory))
+      (apply orig-fun args)
+      ;; Restores original working directory after export.
+      (setq default-directory old-default-directory)))
+
+  ;; Applies directory modification function to all Org export functions.
+  (advice-add 'org-export-to-file :around #'my/org-export-output-dir)
+
+#+end_src
+
+
+**** Aesthetic
+
+***** Global
+
+#+begin_src emacs-lisp :tangle yes 
+
+  ;;Pour obtenir des polices proportionnelles
+  (variable-pitch-mode 1)
+
+  ;; Make sure org-indent face is available
+  (require 'org-indent)
+  (set-face-attribute 'org-document-title nil :font "Fira Mono" :weight 'bold :height 1.5)
+  (dolist (face '((org-level-1 . 1.3)
+                  (org-level-2 . 1.25)
+                  (org-level-3 . 1.20)
+                  (org-level-4 . 1.15)
+                  (org-level-5 . 1.10)
+                  (org-level-6 . 1.05)
+                  (org-level-7 . 1.0)
+                  (org-level-8 . 1.0)))
+    (set-face-attribute (car face) nil :font "Fira Mono" :weight 'medium :height (cdr face)))
+
+
+  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
+  (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+
+  ;;couleur des checkbox
+  (defface org-checkbox-todo-text
+    '((t (:inherit org-todo)))
+    "Face for the text part of an unchecked org-mode checkbox.")
+
+  (font-lock-add-keywords
+   'org-mode
+   `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?: \\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-todo-text prepend))
+   'append)
+
+  (defface org-checkbox-done-text
+    '((t (:inherit org-done)))
+    "Face for the text part of a checked org-mode checkbox.")
+
+  (font-lock-add-keywords
+   'org-mode
+   `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-done-text prepend))
+   'append)
+
+#+end_src
+
+
+***** New symbol end of headings
+
+#+begin_src emacs-lisp :tangle yes 
+
+  (setq org-ellipsis "⬎")
+
+#+end_src
+
+***** Indentation
+
+#+begin_src emacs-lisp :tangle yes 
+
+  (add-hook 'org-mode-hook 'org-indent-mode)
+
+#+end_src
+
+
+**** Attach
+
+#+begin_src emacs-lisp :tangle yes 
+
+  (setq org-attach-dir (concat user-emacs-directory "PKM/data/org-attach"))
+
+  ;; each attached document go to the ID of the nodes
+
+  ;;The first function in this list defines the preferred function which will be used when creating new attachment folders.
+  (setq org-attach-id-to-path-function-list
+	'(cp/org-attach-id-uuid-folder-format
+	  ;; org-attach-id-uuid-folder-format
+	  ))
+
+  (defun cp/org-attach-id-uuid-folder-format (id)
+    "Return the path to attach a file with an id"
+    (format "%s" id))
+
+
+#+end_src
+
+*** Org-roam
+
+#+begin_src emacs-lisp :tangle yes
+
+  (use-package org-roam
+	       :init
+	       (setq org-roam-directory org-directory)
+	       ;;avoid nottif from version 1 to 2
+	       (setq org-roam-v2-ack t)
+	       :custom
+	       (org-roam-completion-everywhere t) ;; to have completion everywhere
+	       ;;set my log capture, not used
+	       (org-roam-dailies-directory "journals/")
+	       ;; what's in the backlinks buffer
+	       (org-roam-mode-sections
+		(list #'org-roam-backlinks-section
+		      #'org-roam-reflinks-section
+		      #'org-roam-unlinked-references-section
+		      ))
+	       :config
+	       (setq org-roam-directory org-directory)
+	       ;; automatic sync with files 
+	       (org-roam-db-autosync-mode +1)
+	       )
+
+#+end_src
+
+
+*** Org-roam-ui
+
+#+begin_src emacs-lisp :tangle yes
+
+(use-package org-roam-ui
+    :after org-roam
+    :straight
+    (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
+    ;; :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start nil)
+    )
+
+#+end_src
+
+*** Org-consult
+
+#+begin_src emacs-lisp :tangle yes
+
+(use-package consult-org-roam
+   :after org-roam
+   :init
+   (require 'consult-org-roam)
+   ;; Activate the minor mode
+   (consult-org-roam-mode 1)
+   :custom
+   ;; Use `ripgrep' for searching with `consult-org-roam-search'
+   (consult-org-roam-grep-func #'consult-ripgrep)
+   ;; Display org-roam buffers right after non-org-roam buffers
+   ;; in consult-buffer (and not down at the bottom)
+   (consult-org-roam-buffer-after-buffers t)
+   :bind
+   ;; Define some convenient keybindings as an addition
+   ("C-c n e" . consult-org-roam-file-find)
+   ("C-c n b" . consult-org-roam-backlinks)
+   ("C-c n B" . consult-org-roam-backlinks-recursive)
+   ("C-c n l" . consult-org-roam-forward-links)
+   ("C-c n r" . consult-org-roam-search))
+
+#+end_src
+
+** Dired
+
+#+begin_src emacs-lisp :tangle yes 
+
+  ;;to directly delete the buffer if a file (or directory) is deleted
+  (defun my--dired-kill-before-delete (file &rest rest)
+    (if-let ((buf (get-file-buffer file)))
+	(kill-buffer buf)
+      (dolist (dired-buf (dired-buffers-for-dir file))
+	(kill-buffer dired-buf))))
+  (advice-add 'dired-delete-file :before 'my--dired-kill-before-delete)
+
+
+
+					  ; automatic refresh of dired when file is modified
+  (add-hook 'dired-mode-hook 'auto-revert-mode)
+
+  (setq dired-auto-revert-buffer t) ; ; Update dired buffer on revisit
+  (setq dired-dwim-target t) ; ; If two dired buffers are open, save in the other on copy attempt
+  (setq dired-hide-details-hide-symlink-targets nil) ; ; Do not hide symlink targets
+  (setq dired-listing-switches "-alh") ; ; Allow dired to display all folders, in lengty format, with quantities of data in human-readable format
+  (setq dired-ls-F-marks-symlinks nil) ; ; Informs dired how 'ls -lF' marks symbolic links, see help page for details
+  (setq dired-recursive-copies 'always) ; ; Always recursively copies without prompting
+  (setq dired-recursive-deletes 'always) ; asks for more to delete recursively
+  (setq dired-dwim-target t) ; qd t-on copies, if another dired is open, copies into it "directly".
+
+#+end_src
+
+
+** Other
 
 * How to modify the configuration
 :PROPERTIES:
@@ -197,126 +729,3 @@ Load the personal configuration file.
 
 #+end_src
 
-* Hidden Practical Things for the User
-
-You can (and should) [[id:044b5f4a-dc6f-467c-b151-85a36f1b88bb][skip]] this part: it is not intended for you.
-
-This section is dedicated to things that you, as the user, are not supposed to understand.
-
-** Startup Page
-
-Here is the code allowing
-
-#+begin_src emacs-lisp :noweb-ref init-configuration
-
-(defun open-my-startup-file ()
-  "Open a specific file and maximize the Emacs window on startup."
-  (find-file (concat user-emacs-directory "init.org"))  ; Change the path to your specific file
-  (delete-other-windows))
-
-;; Add the custom startup function to the Emacs startup hook
-(add-hook 'emacs-startup-hook 'open-my-startup-file)
-
-#+end_src
-
-** Package Manager
-
-#+begin_src emacs-lisp  :noweb-ref init-configuration
-
-;; Install straight.el
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 6))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-#+end_src
-
-** Use-package
-
-#+begin_src emacs-lisp :noweb-ref init-configuration
-
-  ;; Install use-package
-  (when (version< emacs-version "29")
-    (straight-use-package 'use-package))
-
-
-  ;; Configure use-package to use straight.el by default
-  (use-package straight
-               :custom
-               (straight-use-package-by-default t))
-
-  ;; Disable package.el in favor of straight.el
-  (setq package-enable-at-startup nil)
-
-#+end_src
-
-
-** Human-machine interface
-
-*** Interface for shortcut
-
-#+begin_src emacs-lisp :noweb-ref init-configuration
-
-  (use-package hydra
-    :straight t)
-
-(use-package pretty-hydra
-  :after hydra
-  :straight t)
-
-#+end_src
-
-*** See the next key
-
-#+begin_src emacs-lisp :noweb-ref init-configuration
-
-  (use-package which-key
-	       :straight t
-	       :init
-	       (which-key-mode)
-	       :config
-	       (setq which-key-idle-delay 0.5)  ; Adjust to the desired delay in seconds before which-key pops up
-	       (setq which-key-popup-type 'side-window)  ; Display in side window by default
-	       (setq which-key-side-window-location 'bottom)  ; Display at the bottom of the screen
-	       (setq which-key-side-window-max-width 0.33)  ; Use a third of the screen width for which-key window
-	       (setq which-key-side-window-max-height 0.25)  ; Use a quarter of the screen height for which-key window
-	       (which-key-setup-side-window-bottom)  ; Setup to display at the bottom
-	       )
-
-
-#+end_src
-
-*** Completion Framework
-
-#+begin_src emacs-lisp :noweb-ref init-configuration
-
-  ;; vertical completion
-  (use-package vertico
-	       :init
-	       (vertico-mode 1))
-
-  ;; annotation in the minibuffer
-  (use-package marginalia
-	       :init
-	       (marginalia-mode 1))
-
-  ;; better searching 
-  (use-package consult
-	       :config
-	       ;; Replace bindings with Consult commands
-	       (global-set-key (kbd "C-s") 'consult-line)
-	       (global-set-key (kbd "C-x b") 'consult-buffer)
-	       (global-set-key (kbd "M-y") 'consult-yank-pop)
-	       (global-set-key [remap switch-to-buffer] 'consult-buffer)
-	       (global-set-key [remap switch-to-buffer-other-window] 'consult-buffer-other-window)
-	       (global-set-key [remap switch-to-buffer-other-frame] 'consult-buffer-other-frame))
-
-#+end_src
