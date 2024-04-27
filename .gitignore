@@ -1,5 +1,9 @@
-/personnal.org
-/personnal.el
+# don't ignore the tutorial
+!/PKM/tutorial.org
+/PKM/
+
+/personal.org
+/personal.el
 /org-roam.db
 /elpa/
 /straight/

@@ -2,7 +2,7 @@
 
 (defun open-my-startup-file ()
   "Open a specific file and maximize the Emacs window on startup."
-  (find-file (concat user-emacs-directory "tutorial.org"))  ; Change the path to your specific file
+  (find-file (concat user-emacs-directory "PKM/notes/" "tutorial.org"))  ; Change the path to your specific file
   (delete-other-windows))
 
 ;; Add the custom startup function to the Emacs startup hook
@@ -35,6 +35,17 @@
 ;; Configure use-package to use straight.el by default
 (setq straight-use-package-by-default t)
 
+(use-package no-littering
+	     :init
+	     (require 'no-littering)
+	     )
+
+(defgroup eepkm nil
+  "Customization group for EasyEmacsPKM"
+  :group 'main-group  ; Inherits from main-group
+  :prefix "eepkm-"
+  )
+
 ;;; Encodings
 ;; Contrary to what many Emacs users have in their configs, you don't need more
 ;; than this to make UTF-8 the default coding system:
@@ -47,10 +58,13 @@
 (when (memq system-type '(cygwin windows-nt ms-dos))
   (setq selection-coding-system 'utf-8))
 
-(cua-mode 1)
+;; make esc key do cancel. works only in gui emacs
+(define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
+;; the first don't work with all the time
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 
-(auto-save-visited-mode 1)
-(setq auto-save-visited-interval 10) ; every X seconds
+;; visuellement
+(global-visual-line-mode 1)
 
 (use-package smartparens
     :hook (org-mode . smartparens-mode)
@@ -63,8 +77,10 @@
     (sp-local-pair 'org-mode "\/" "\/")
     )
 
-;; visuellement
-(global-visual-line-mode 1)
+(auto-save-visited-mode 1)
+(setq auto-save-visited-interval 10) ; every X seconds
+
+(cua-mode 1)
 
 (use-package doom-modeline
 	     :init
@@ -106,37 +122,132 @@
 
 (use-package hydra)
 
-(use-package pretty-hydra)
+(use-package pretty-hydra
+	     :init
+	     
+	     ;; Customizable key bindings for PKM section
+	     (defcustom eepkm-bindings-find-node-key "f"
+	       "Key for `org-roam-node-find` in the eepkm-bindings PKM section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     (defcustom eepkm-bindings-insert-node-key "i"
+	       "Key for `org-roam-node-insert` in the eepkm-bindings PKM section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     (defcustom eepkm-bindings-attach-key "a"
+	       "Key for `org-attach` in the eepkm-bindings PKM section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     ;; Customizable key bindings for Note section
+	     (defcustom eepkm-bindings-note-new-heading-key "h"
+	       "Key for `org-meta-return` in the eepkm-bindings Note section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     (defcustom eepkm-bindings-note-todo-key "t"
+	       "Key for `org-todo` in the eepkm-bindings Note section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     (defcustom eepkm-bindings-note-export-key "e"
+	       "Key for `org-export-dispatch` in the eepkm-bindings Note section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     (defcustom eepkm-bindings-note-store-link-key "l"
+	       "Key for `org-store-link` in the eepkm-bindings Note section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     (defcustom eepkm-bindings-note-insert-link-key "m"
+	       "Key for `org-insert-link` in the eepkm-bindings Note section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     ;; Customizable key bindings for Window section
+	     (defcustom eepkm-bindings-window-split-horizontally-key "h"
+	       "Key for `split-window-below` in the eepkm-bindings Window section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     (defcustom eepkm-bindings-window-split-vertically-key "v"
+	       "Key for `split-window-right` in the eepkm-bindings Window section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     (defcustom eepkm-bindings-window-next-window-key "n"
+	       "Key for `next-window` in the eepkm-bindings Window section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     (defcustom eepkm-bindings-window-previous-window-key "p"
+	       "Key for `previous-window` in the eepkm-bindings Window section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     (defcustom eepkm-bindings-window-winner-undo-key "w"
+	       "Key for `winner-undo` in the eepkm-bindings Window section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     (defcustom eepkm-bindings-window-winner-redo-key "x"
+	       "Key for `winner-redo` in the eepkm-bindings Window section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     (defcustom eepkm-bindings-window-delete-other-windows-key "k"
+	       "Key for `delete-other-windows` in the eepkm-bindings Window section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     (defcustom eepkm-bindings-window-delete-window-key "d"
+	       "Key for `delete-window` in the eepkm-bindings Window section."
+	       :type 'string
+	       :group 'eepkm-bindings)
+	     
+	     
+	     )
 
-(pretty-hydra-define my-hydra
-		     (:title "Main Commands, leave with q" :color amaranth :quit-key "q")
-		     ("PKM"
-		      (("f" org-roam-node-find "Find a go to a node")
-		       ("i" org-roam-node-insert "Find and insert a link to a node")
-		       ("a" org-attach "Attach a document to the heading")
-		       )
-		      "Note"
-		      (("h" org-meta-return "Insert new heading or list")
-		       ("t" org-todo "Marka heading as TODO")
-		       ("e" org-export-dispatch "Export to another format")
-		       ("l" org-store-link "Store the link under the cursor")
-		       ("m" org-insert-link "Insert a link")
-		       )
-		      "Window"
-		      (("h" split-window-below "Split your window horizontaly")
-		       ("v" split-window-right "Split your window verticaly")
-		       ("n" next-window "Next window")
-		       ("p" previous-window "Previous window")
-		       ("w" winner-undo "Undo previous configuration of window(s)")
-		       ("x" winner-redo "Redo previous configuration of window(s)")
-		       ("k" delete-other-windows "Keep only the current window")
-		       ("d" delete-window "Delete current window")
-		       )
-		      ))
+(defgroup eepkm-bindings nil
+  "Customization subgroup for key bindings"
+  :group 'eepkm  
+  )
 
-;; (global-set-key (kbd "C-c h") 'my-hydra/body)
-(global-set-key (kbd "<escape>") 'my-hydra/body)
-;; (global-set-key (kbd "<f11>") 'my-hydra/body)
+(defcustom eepkm-bindings-menu "<f11>"
+  ;; (kbd "<escape>")
+  ;; (kbd "C-c h")
+  "Key for `org-roam-node-find` in the eepkm-bindings PKM section."
+  :type 'string
+  :group 'eepkm-bindings)
+
+(global-set-key (kbd eepkm-bindings-menu) 'eepkm-bindings/body)
+
+;; hydra-keyboard-quit
+(eval
+ `(pretty-hydra-define eepkm-bindings
+    (:title "Main Commands of the PKM" :color amaranth :quit-key "ESC" :exit t)
+    ("PKM"
+     ((,eepkm-bindings-find-node-key org-roam-node-find "Find and go to a node")
+      (,eepkm-bindings-insert-node-key org-roam-node-insert "Find and insert a link to a node")
+      (,eepkm-bindings-attach-key org-attach "Attach a document to the heading"))
+     "Note"
+     ((,eepkm-bindings-note-new-heading-key org-meta-return "Insert new heading or list")
+      (,eepkm-bindings-note-todo-key org-todo "Mark a heading as TODO")
+      (,eepkm-bindings-note-export-key org-export-dispatch "Export to another format")
+      (,eepkm-bindings-note-store-link-key org-store-link "Store the link under the cursor")
+      (,eepkm-bindings-note-insert-link-key org-insert-link "Insert a link"))
+     "Window"
+     ((,eepkm-bindings-window-split-horizontally-key split-window-below "Split your window horizontally")
+      (,eepkm-bindings-window-split-vertically-key split-window-right "Split your window vertically")
+      (,eepkm-bindings-window-next-window-key next-window "Next window")
+      (,eepkm-bindings-window-previous-window-key previous-window "Previous window")
+      (,eepkm-bindings-window-winner-undo-key winner-undo "Undo previous configuration of window(s)")
+      (,eepkm-bindings-window-winner-redo-key winner-redo "Redo previous configuration of window(s)")
+      (,eepkm-bindings-window-delete-other-windows-key delete-other-windows "Keep only the current window")
+      (,eepkm-bindings-window-delete-window-key delete-window "Delete current window")))))
 
 (use-package which-key
 	     :init
@@ -156,8 +267,8 @@
 	     (vertico-mode 1)
 	     :custom
 	     (vertico-cycle t)
-	     :custom-face
-	     (vertico-current ((t (:background "#3a3f5a"))))
+	     ;; :custom-face
+	     ;; (vertico-current ((t (:background "#3a3f5a"))))
 	     )
 
 ;; annotation in the minibuffer
@@ -351,3 +462,14 @@
 (setq dired-dwim-target t) ; qd t-on copies, if another dired is open, copies into it "directly".
 
 (load (concat user-emacs-directory "personal.el"))
+
+(customize-set-variable 'custom-file (no-littering-expand-etc-file-name "custom.el"))
+
+  ;; after-init-hook ?
+  (when (file-exists-p custom-file)
+    (load custom-file nil 'nomessage))
+
+;; (add-hook 'after-init-hook (lambda ()
+;; 				    (if (file-exists-p custom-file)
+;; 					(load custom-file nil 'nomessage)
+;; 				      (message "Le fichier de configuration custom-file [%s] n'existe pas" custom-file))))

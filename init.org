@@ -1,17 +1,16 @@
 #+title: Configuration file
+#+auto_tangle: t
 
-todo : police fira mono 
+todo :
+- police fira mono
+- all-the-icons-install-fonts ? comment faire ?
 
 * Introduction
-
-** Oriented User experience
 
 ** How this file works
 :PROPERTIES:
 :ID:       c4f1d90a-3afd-4884-af24-8134fb163535
 :END:
-
-You can skip this part if you want.
 
 This file is provided with the git repository: any updates (see the readme for update instructions) will reset this file as intended. Therefore, modifying it is pointless. However, to customize it, see [[id:c9bd19aa-b1c5-4d96-b4d9-1fb09aaedae8][How to modify the configuration]].
 
@@ -82,17 +81,17 @@ Remember, any change to a block with ":tangle" or ":noweb-ref" has broader impli
 
 *** Startup Page
 
-Here is the code allowing
+Here is the code allowing to start with the Tutorial.
 
 #+begin_src emacs-lisp :tangle yes
 
-(defun open-my-startup-file ()
-  "Open a specific file and maximize the Emacs window on startup."
-  (find-file (concat user-emacs-directory "tutorial.org"))  ; Change the path to your specific file
-  (delete-other-windows))
+  (defun open-my-startup-file ()
+    "Open a specific file and maximize the Emacs window on startup."
+    (find-file (concat user-emacs-directory "PKM/notes/" "tutorial.org"))  ; Change the path to your specific file
+    (delete-other-windows))
 
-;; Add the custom startup function to the Emacs startup hook
-(add-hook 'emacs-startup-hook 'open-my-startup-file)
+  ;; Add the custom startup function to the Emacs startup hook
+  (add-hook 'emacs-startup-hook 'open-my-startup-file)
 
 #+end_src
 
@@ -142,6 +141,29 @@ Here is the code allowing
 
 #+end_src
 
+*** Keep .emacs.d clean
+
+#+begin_src emacs-lisp :tangle yes 
+
+  (use-package no-littering
+	       :init
+	       (require 'no-littering)
+	       )
+
+#+end_src
+
+*** Variable of the PKM
+
+#+begin_src emacs-lisp :tangle yes 
+
+  (defgroup eepkm nil
+    "Customization group for EasyEmacsPKM"
+    :group 'main-group  ; Inherits from main-group
+    :prefix "eepkm-"
+    )
+
+
+#+end_src
 
 *** Encodings
 
@@ -161,43 +183,18 @@ Here is the code allowing
 
 #+end_src
 
-*** Replace text when copy and past
 
-*** Normal copy and past shortcut
+*** Leave with Escape key
 
-CUA Mode is a feature in Emacs that configures the keybindings to emulate the Common User Access (CUA) standard used in many other programs, particularly those in the Windows environment. This mode makes cut, copy, paste, and other common operations accessible through the familiar Ctrl-X, Ctrl-C, Ctrl-V, and Ctrl-Z shortcuts.
-
-#+begin_src emacs-lisp :tangle yes 
-
-(cua-mode 1)
-
-#+end_src
-
-
-*** Auto save
+To replace the classic "C-g".
 
 #+begin_src emacs-lisp :tangle yes 
 
-  (auto-save-visited-mode 1)
-  (setq auto-save-visited-interval 10) ; every X seconds
+  ;; make esc key do cancel. works only in gui emacs
+  (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
+  ;; the first don't work with all the time
+  (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 
-
-#+end_src
-
-*** Smart parens
-
-#+begin_src emacs-lisp :tangle yes 
-
-(use-package smartparens
-    :hook (org-mode . smartparens-mode)
-    :config
-    (sp-pair "\«" "\»")  
-    ;; the second argument is the closing delimiter, so you need to skip it with nil
-    (sp-pair "'" nil :actions :rem)  
-    (sp-local-pair 'org-mode "*" "*") ;; adds * as a local pair in org mode
-    (sp-local-pair 'org-mode "=" "=") ;; adds = as a local pair in org mode
-    (sp-local-pair 'org-mode "\/" "\/")
-    )
 
 #+end_src
 
@@ -221,6 +218,47 @@ visual-line-mode is a display mode in Emacs that wraps lines of text at the edge
 
 (auto-fill-mode 1)
 fill-column
+
+*** Smart parens
+
+#+begin_src emacs-lisp :tangle yes 
+
+(use-package smartparens
+    :hook (org-mode . smartparens-mode)
+    :config
+    (sp-pair "\«" "\»")  
+    ;; the second argument is the closing delimiter, so you need to skip it with nil
+    (sp-pair "'" nil :actions :rem)  
+    (sp-local-pair 'org-mode "*" "*") ;; adds * as a local pair in org mode
+    (sp-local-pair 'org-mode "=" "=") ;; adds = as a local pair in org mode
+    (sp-local-pair 'org-mode "\/" "\/")
+    )
+
+#+end_src
+
+
+*** Auto save
+
+#+begin_src emacs-lisp :tangle yes 
+
+  (auto-save-visited-mode 1)
+  (setq auto-save-visited-interval 10) ; every X seconds
+
+
+#+end_src
+
+*** Normal copy and past shortcut
+
+CUA Mode is a feature in Emacs that configures the keybindings to emulate the Common User Access (CUA) standard used in many other programs, particularly those in the Windows environment. This mode makes cut, copy, paste, and other common operations accessible through the familiar Ctrl-X, Ctrl-C, Ctrl-V, and Ctrl-Z shortcuts.
+
+#+begin_src emacs-lisp :tangle yes 
+
+(cua-mode 1)
+
+#+end_src
+
+
+*** Replace text when copy and past
 
 ** Aesthetics
 
@@ -356,13 +394,21 @@ Not very useful.
 
 ** Human-machine interface
 
-*** Interface for shortcut
+*** Interface for shortcut / keybinding
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle yes :noweb yes 
 
   (use-package hydra)
 
-  (use-package pretty-hydra)
+  (use-package pretty-hydra
+	       :init
+	       <<pretty-hydra-init>>
+	       )
+
+  (defgroup eepkm-bindings nil
+    "Customization subgroup for key bindings"
+    :group 'eepkm  
+    )
 
 #+end_src
 
@@ -371,43 +417,146 @@ Not very useful.
 :ID:       4be934ad-9e75-4b45-a0b1-adb6d26a8632
 :END:
 
-#+begin_src emacs-lisp :tangle yes
-
-  (pretty-hydra-define my-hydra
-		       (:title "Main Commands, leave with q" :color amaranth :quit-key "q")
-		       ("PKM"
-			(("f" org-roam-node-find "Find a go to a node")
-			 ("i" org-roam-node-insert "Find and insert a link to a node")
-			 ("a" org-attach "Attach a document to the heading")
-			 )
-			"Note"
-			(("h" org-meta-return "Insert new heading or list")
-			 ("t" org-todo "Marka heading as TODO")
-			 ("e" org-export-dispatch "Export to another format")
-			 ("l" org-store-link "Store the link under the cursor")
-			 ("m" org-insert-link "Insert a link")
-			 )
-			"Window"
-			(("h" split-window-below "Split your window horizontaly")
-			 ("v" split-window-right "Split your window verticaly")
-			 ("n" next-window "Next window")
-			 ("p" previous-window "Previous window")
-			 ("w" winner-undo "Undo previous configuration of window(s)")
-			 ("x" winner-redo "Redo previous configuration of window(s)")
-			 ("k" delete-other-windows "Keep only the current window")
-			 ("d" delete-window "Delete current window")
-			 )
-			))
-
-#+end_src
+***** Code of the menu
 
 Binding :
 
 #+begin_src emacs-lisp :tangle yes
 
-  ;; (global-set-key (kbd "C-c h") 'my-hydra/body)
-  (global-set-key (kbd "<escape>") 'my-hydra/body)
-  ;; (global-set-key (kbd "<f11>") 'my-hydra/body)
+  (defcustom eepkm-bindings-menu "<f11>"
+    ;; (kbd "<escape>")
+    ;; (kbd "C-c h")
+    "Key for `org-roam-node-find` in the eepkm-bindings PKM section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  (global-set-key (kbd eepkm-bindings-menu) 'eepkm-bindings/body)
+
+#+end_src
+
+Code :
+
+For instance, if you try to insert a keybinding from a variable directly into the pretty-hydra-define macro, the variable name itself is inserted rather than its value. This means that instead of creating a keybinding that reflects the current value of a variable, the hydra would literally try to use the variable's name as the key, which is not the intended behavior.
+
+This code resolve this issue, a evaluation of the code that have the variable evaluated.
+
+#+begin_src emacs-lisp :tangle yes
+
+  ;; hydra-keyboard-quit
+  (eval
+   `(pretty-hydra-define eepkm-bindings
+      (:title "Main Commands of the PKM" :color amaranth :quit-key "ESC" :exit t)
+      ("PKM"
+       ((,eepkm-bindings-find-node-key org-roam-node-find "Find and go to a node")
+	(,eepkm-bindings-insert-node-key org-roam-node-insert "Find and insert a link to a node")
+	(,eepkm-bindings-attach-key org-attach "Attach a document to the heading"))
+       "Note"
+       ((,eepkm-bindings-note-new-heading-key org-meta-return "Insert new heading or list")
+	(,eepkm-bindings-note-todo-key org-todo "Mark a heading as TODO")
+	(,eepkm-bindings-note-export-key org-export-dispatch "Export to another format")
+	(,eepkm-bindings-note-store-link-key org-store-link "Store the link under the cursor")
+	(,eepkm-bindings-note-insert-link-key org-insert-link "Insert a link"))
+       "Window"
+       ((,eepkm-bindings-window-split-horizontally-key split-window-below "Split your window horizontally")
+	(,eepkm-bindings-window-split-vertically-key split-window-right "Split your window vertically")
+	(,eepkm-bindings-window-next-window-key next-window "Next window")
+	(,eepkm-bindings-window-previous-window-key previous-window "Previous window")
+	(,eepkm-bindings-window-winner-undo-key winner-undo "Undo previous configuration of window(s)")
+	(,eepkm-bindings-window-winner-redo-key winner-redo "Redo previous configuration of window(s)")
+	(,eepkm-bindings-window-delete-other-windows-key delete-other-windows "Keep only the current window")
+	(,eepkm-bindings-window-delete-window-key delete-window "Delete current window")))))
+
+#+end_src
+
+***** Variable of bindings
+
+This is useful because the user will be able to change the place of the bindings just with the custom-menu.
+
+#+begin_src emacs-lisp :noweb-ref pretty-hydra-init
+
+  ;; Customizable key bindings for PKM section
+  (defcustom eepkm-bindings-find-node-key "f"
+    "Key for `org-roam-node-find` in the eepkm-bindings PKM section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  (defcustom eepkm-bindings-insert-node-key "i"
+    "Key for `org-roam-node-insert` in the eepkm-bindings PKM section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  (defcustom eepkm-bindings-attach-key "a"
+    "Key for `org-attach` in the eepkm-bindings PKM section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  ;; Customizable key bindings for Note section
+  (defcustom eepkm-bindings-note-new-heading-key "h"
+    "Key for `org-meta-return` in the eepkm-bindings Note section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  (defcustom eepkm-bindings-note-todo-key "t"
+    "Key for `org-todo` in the eepkm-bindings Note section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  (defcustom eepkm-bindings-note-export-key "e"
+    "Key for `org-export-dispatch` in the eepkm-bindings Note section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  (defcustom eepkm-bindings-note-store-link-key "l"
+    "Key for `org-store-link` in the eepkm-bindings Note section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  (defcustom eepkm-bindings-note-insert-link-key "m"
+    "Key for `org-insert-link` in the eepkm-bindings Note section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  ;; Customizable key bindings for Window section
+  (defcustom eepkm-bindings-window-split-horizontally-key "h"
+    "Key for `split-window-below` in the eepkm-bindings Window section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  (defcustom eepkm-bindings-window-split-vertically-key "v"
+    "Key for `split-window-right` in the eepkm-bindings Window section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  (defcustom eepkm-bindings-window-next-window-key "n"
+    "Key for `next-window` in the eepkm-bindings Window section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  (defcustom eepkm-bindings-window-previous-window-key "p"
+    "Key for `previous-window` in the eepkm-bindings Window section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  (defcustom eepkm-bindings-window-winner-undo-key "w"
+    "Key for `winner-undo` in the eepkm-bindings Window section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  (defcustom eepkm-bindings-window-winner-redo-key "x"
+    "Key for `winner-redo` in the eepkm-bindings Window section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  (defcustom eepkm-bindings-window-delete-other-windows-key "k"
+    "Key for `delete-other-windows` in the eepkm-bindings Window section."
+    :type 'string
+    :group 'eepkm-bindings)
+
+  (defcustom eepkm-bindings-window-delete-window-key "d"
+    "Key for `delete-window` in the eepkm-bindings Window section."
+    :type 'string
+    :group 'eepkm-bindings)
+
 
 #+end_src
 
@@ -440,8 +589,8 @@ Binding :
 	       (vertico-mode 1)
 	       :custom
 	       (vertico-cycle t)
-	       :custom-face
-	       (vertico-current ((t (:background "#3a3f5a"))))
+	       ;; :custom-face
+	       ;; (vertico-current ((t (:background "#3a3f5a"))))
 	       )
 
   ;; annotation in the minibuffer
@@ -484,6 +633,8 @@ Binding :
   (winner-mode 1)
 
 #+end_src
+
+
 
 ** Org and family
 
@@ -720,7 +871,7 @@ Binding :
 :ID:       c9bd19aa-b1c5-4d96-b4d9-1fb09aaedae8
 :END:
 
-[[elisp:(find-file (concat user-emacs-directory "personal.org"))][Go to personal configuration file]]
+[[elisp:(find-file (concat user-emacs-directory "personal.org"))][Go to personal configuration file]].
 
 You don't have the option to create another configuration file, as the base file will always be overwritten. Therefore, I've decided to create a second configuration file where you can simply copy and paste code snippets that suit your needs !
 
@@ -732,3 +883,19 @@ Load the personal configuration file.
 
 #+end_src
 
+And load the personal option via customize :
+
+#+begin_src emacs-lisp :tangle yes
+
+    (customize-set-variable 'custom-file (no-littering-expand-etc-file-name "custom.el"))
+
+    ;; after-init-hook ?
+    (when (file-exists-p custom-file)
+      (load custom-file nil 'nomessage))
+
+  ;; (add-hook 'after-init-hook (lambda ()
+  ;; 				    (if (file-exists-p custom-file)
+  ;; 					(load custom-file nil 'nomessage)
+  ;; 				      (message "Le fichier de configuration custom-file [%s] n'existe pas" custom-file))))
+
+#+end_src

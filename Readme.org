@@ -11,6 +11,7 @@ todo :
 - C:\Users\Username\AppData\Roaming
 - windows en bas à gauche
 - dire que le chargement dépend de la conextion, et que l'utilsateur doit voir des lignes en bas à gauche changer indiquant qu'emacs télécharge bien des choses
+- entre 5 et 20 mins, marche en arrière plan et juste pour la première fois
 
 * Purpose
 
