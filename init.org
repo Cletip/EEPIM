@@ -181,7 +181,7 @@ Better declaration of packages.
 
 #+begin_src emacs-lisp :tangle yes
 
-  ;; (elpaca-wait)
+  (elpaca-wait)
 
 #+end_src
 

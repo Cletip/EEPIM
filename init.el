@@ -61,7 +61,7 @@
     (setq use-package-always-defer t)
     ))
 
-;; (elpaca-wait)
+(elpaca-wait)
 
 (use-package restart-emacs)
 (add-hook 'elpaca-after-init-hook
