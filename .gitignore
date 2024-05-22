@@ -1,9 +1,10 @@
 # don't ignore the tutorial
-!/PKM/tutorial.org
+!/PKM/notes/tutorial/
 /PKM/
 
 /personal.org
 /personal.el
-/org-roam.db
-/elpa/
-/straight/
+
+/elpaca/
+/etc/
+/var/

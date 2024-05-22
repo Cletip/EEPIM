@@ -1,44 +1,130 @@
 ;; the code in this code block and ALL code block with ":tangle yes" will be exported
 
-(defun open-my-startup-file ()
-  "Open a specific file and maximize the Emacs window on startup."
-  (find-file (concat user-emacs-directory "PKM/notes/" "tutorial.org"))  ; Change the path to your specific file
-  (delete-other-windows))
+;; Install elpaca
+(defvar elpaca-installer-version 0.7)
+(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+			      :ref nil :depth 1
+			      :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+			      :build (:not elpaca--activate-package)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (order (cdr elpaca-order))
+       (default-directory repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
+  (unless (file-exists-p repo)
+    (make-directory repo t)
+    (when (< emacs-major-version 28) (require 'subr-x))
+    (condition-case-unless-debug err
+	(if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+		 ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+						 ,@(when-let ((depth (plist-get order :depth)))
+						     (list (format "--depth=%d" depth) "--no-single-branch"))
+						 ,(plist-get order :repo) ,repo))))
+		 ((zerop (call-process "git" nil buffer t "checkout"
+				       (or (plist-get order :ref) "--"))))
+		 (emacs (concat invocation-directory invocation-name))
+		 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+				       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+		 ((require 'elpaca))
+		 ((elpaca-generate-autoloads "elpaca" repo)))
+	    (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+	  (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  (unless (require 'elpaca-autoloads nil t)
+    (require 'elpaca)
+    (elpaca-generate-autoloads "elpaca" repo)
+    (load "./elpaca-autoloads")))
+;; change here, because after-init-hook don't exist ?
+(add-hook 'emacs-startup-hook #'elpaca-process-queues)
+(elpaca `(,@elpaca-order))
 
-;; Add the custom startup function to the Emacs startup hook
-(add-hook 'emacs-startup-hook 'open-my-startup-file)
+(add-hook 'elpaca-after-init-hook (lambda () (message "🪝 elpaca-after-init-hook")))
 
-;; Install straight.el
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
-      (bootstrap-version 7))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+(elpaca no-littering
+  ;; loading of no-littering
+  (require 'no-littering)
+  )
 
 ;; Install use-package
 (when (version< emacs-version "29")
-  (straight-use-package 'use-package))
+  (elpaca elpaca-use-package
+    ;; Enable use-package :ensure support for Elpaca.
+    (elpaca-use-package-mode)
 
-;; always download package automatically (without :ensure t)
-(setq use-package-always-ensure t)
+    ;; Download automatically packages missing (without :ensure t)
+    (require 'use-package-ensure)
+    (setq use-package-always-ensure t)
+    ;; always defer package to speed up time
+    (setq use-package-always-defer t)
+    ))
 
-;; Configure use-package to use straight.el by default
-(setq straight-use-package-by-default t)
+;; (elpaca-wait)
 
-(use-package no-littering
-	     :init
-	     (require 'no-littering)
-	     )
+(use-package restart-emacs)
+(add-hook 'elpaca-after-init-hook
+	  (lambda ()
+	    (if (eq 0 (elpaca-alist-get 'failed elpaca--status-counts 0))
+		(message "All the packages are installed")
+	      (when (yes-or-no-p "Emacs has not finish to download all packages, do you want to restart ?") (restart-emacs))
+	      ))
+	  )
+
+(with-eval-after-load 'no-littering
+  (customize-set-variable 'custom-file (no-littering-expand-etc-file-name "custom.el"))
+  )
+
+;;loading of saved customizations with elpaca
+(add-hook 'elpaca-after-init-hook (lambda ()
+				    (if (file-exists-p custom-file)
+					(load custom-file nil 'nomessage)
+				      (message "The customisation of the user [%s] is not present." custom-file))))
+
+;; make esc key do cancel. works only in gui emacs
+(define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
+;; the first don't work with all the time
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+
+(defun eepkm-check-init-and-window-setup ()
+    "Check if both elpaca and window setup are done and then run code."
+    (when (and eepkm-elpaca-init-done eepkm-window-setup-done)
+
+      ;; place here the things to do just after the starting.
+
+      (message "Emacs is ready!")
+      (open-main-tutorial)
+
+      ))
+
+  (defvar eepkm-elpaca-init-done nil
+    "Flag to indicate whether elpaca-after-init-hook has completed.")
+
+  (defvar eepkm-window-setup-done nil
+    "Flag to indicate whether window-setup-hook has completed.")
+
+  (defun eepkm-elpaca-setup-done ()
+    "Set elpaca setup done flag and check if ready to run final code."
+    (setq eepkm-elpaca-init-done t)
+    (eepkm-check-init-and-window-setup))
+
+  (defun eepkm-window-setup-done ()
+    "Set window setup done flag and check if ready to run final code."
+    (setq eepkm-window-setup-done t)
+    (eepkm-check-init-and-window-setup))
+
+  (add-hook 'elpaca-after-init-hook #'eepkm-elpaca-setup-done 90)
+  (add-hook 'window-setup-hook #'eepkm-window-setup-done 90)
+
+(defun open-main-tutorial ()
+  "Open a specific file and maximize the Emacs window on startup."
+  (interactive)
+  (find-file (concat user-emacs-directory "PKM/notes/tutorial/" "tutorial.org"))  ; Change the path to your specific file
+  (delete-other-windows))
+
+;; Add the custom startup function to the Emacs startup hook
+(add-hook 'elpaca-after-init-hook 'open-main-tutorial)
 
 (defgroup eepkm nil
   "Customization group for EasyEmacsPKM"
@@ -46,25 +132,15 @@
   :prefix "eepkm-"
   )
 
-;;; Encodings
-;; Contrary to what many Emacs users have in their configs, you don't need more
-;; than this to make UTF-8 the default coding system:
-(set-language-environment "UTF-8")
-;; ...but `set-language-environment' also sets `default-input-method', which is
-;; a step too opinionated.
-(setq default-input-method nil)
-;; ...And the clipboard on Windows could be in a wider encoding (UTF-16), so
-;; leave Emacs to its own devices.
-(when (memq system-type '(cygwin windows-nt ms-dos))
-  (setq selection-coding-system 'utf-8))
-
-;; make esc key do cancel. works only in gui emacs
-(define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
-;; the first don't work with all the time
-(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
-
 ;; visuellement
 (global-visual-line-mode 1)
+
+(defcustom eepkm-text-scale-increment 1
+  "Increment for text scaling in Emacs."
+  :type 'integer
+  :group 'eepkm)
+
+(text-scale-increase eepkm-text-scale-increment)
 
 (use-package smartparens
     :hook (org-mode . smartparens-mode)
@@ -72,7 +148,7 @@
     (sp-pair "\«" "\»")  
     ;; the second argument is the closing delimiter, so you need to skip it with nil
     (sp-pair "'" nil :actions :rem)  
-    (sp-local-pair 'org-mode "*" "*") ;; adds * as a local pair in org mode
+    ;; (sp-local-pair 'org-mode "*" "*") ;; adds * as a local pair in org mode
     (sp-local-pair 'org-mode "=" "=") ;; adds = as a local pair in org mode
     (sp-local-pair 'org-mode "\/" "\/")
     )
@@ -106,9 +182,19 @@
 	     (doom-modeline-gnus-timer nil)
 	     )
 
-(use-package all-the-icons-dired)
+(use-package nerd-icons
+	     :init
+	     (unless (member "Symbols Nerd Font Mono" (font-family-list))
+	       (nerd-icons-install-fonts t))
+	     )
 
-(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+(use-package nerd-icons-dired
+	     :hook
+	     (dired-mode . nerd-icons-dired-mode))
+
+(use-package good-scroll
+	     :hook (org-mode . good-scroll-mode)
+	     )
 
 (use-package nyan-mode
     :init (nyan-mode)
@@ -125,89 +211,113 @@
 (use-package pretty-hydra
 	     :init
 	     
-	     ;; Customizable key bindings for PKM section
-	     (defcustom eepkm-bindings-find-node-key "f"
-	       "Key for `org-roam-node-find` in the eepkm-bindings PKM section."
-	       :type 'string
-	       :group 'eepkm-bindings)
+	     (pretty-hydra-define eepkm-master-hydra
+	     		     (:title "Master Commands Menu" :color red :exit t :quit-key "ESC")
+	     		     ("Menus"
+	     		      (("o" eepkm-org-mode-hydra/body "Org Mode Menu (org-mode-hydra)")
+	     		       ("w" eepkm-window-management-hydra/body "Window Management (window-management-hydra)")
+	     		       ("e" eepkm-basic-editing-hydra/body "Basic Editing Commands (basic-editing-hydra)")
+	     		       ("b" eepkm-buffer-file-hydra/body "Buffer and File Management (buffer-file-hydra)")
+	     		       ("h" eepkm-help-and-customisation-hydra/body "Help and Documentation (help-documentation-hydra)")
+	     		       ("c" execute-extended-command "Execute a command with name (execute-extended-command)")
+	     		       )
 	     
-	     (defcustom eepkm-bindings-insert-node-key "i"
-	       "Key for `org-roam-node-insert` in the eepkm-bindings PKM section."
-	       :type 'string
-	       :group 'eepkm-bindings)
+	     		      "Nodes"
+	     		      (("f" org-roam-node-find "Find node (org-roam-node-find)")
+	     		       ("i" org-roam-node-insert "Insert node link (org-roam-node-insert)")
+	     		       ("s" switch-eepkm-include-tutorial "Activate or desactivate search in tutorial (switch-eepkm-include-tutorial)")
+	     		       ("t" open-main-tutorial "Go to tutorial (open-main-tutorial)")
+	     		       )
+	     		      "Attached file"
+	     		      (("a" org-attach "Attach document to node at point (org-attach)")
+	     		       ("r" org-attach-reveal "See attached document (org-attach-reveal)")
+	     		       )
+	     		      "Visualisation"
+	     		      (("g" org-roam-ui-open "Open the graphe in browser (org-roam-ui-open)"))
+	     		      ))
 	     
-	     (defcustom eepkm-bindings-attach-key "a"
-	       "Key for `org-attach` in the eepkm-bindings PKM section."
-	       :type 'string
-	       :group 'eepkm-bindings)
 	     
-	     ;; Customizable key bindings for Note section
-	     (defcustom eepkm-bindings-note-new-heading-key "h"
-	       "Key for `org-meta-return` in the eepkm-bindings Note section."
-	       :type 'string
-	       :group 'eepkm-bindings)
+	     (pretty-hydra-define eepkm-org-mode-hydra
+	     		     (:title "Org Mode Operations" :color blue :quit-key "ESC")
+	     		     ("Editing"
+	     		      (("h" org-meta-return "New heading/item (org-meta-return)")
+	     		       ("l" org-insert-link "Insert link (org-insert-link)")
+	     		       ("s" org-store-link "Store link (org-store-link)")
+	     		       ("t" org-todo "Toggle TODO (org-todo)"))
+	     		      "Navigation"
+	     		      (("u" outline-up-heading "Up heading (outline-up-heading)")
+	     		       ("n" org-next-visible-heading "Next heading (org-next-visible-heading)")
+	     		       ("p" org-previous-visible-heading "Previous heading (org-previous-visible-heading)"))
+	     		      "Misc"
+	     		      (("a" org-agenda "Open Agenda (org-agenda)")
+	     		       ("c" org-capture "Capture item (org-capture)")
+	     		       ("b" org-switchb "Switch org buffer (org-switchb)")
+	     		       ("e" org-export-dispatch "Export (org-export-dispatch)")
+	     		       )))
 	     
-	     (defcustom eepkm-bindings-note-todo-key "t"
-	       "Key for `org-todo` in the eepkm-bindings Note section."
-	       :type 'string
-	       :group 'eepkm-bindings)
 	     
-	     (defcustom eepkm-bindings-note-export-key "e"
-	       "Key for `org-export-dispatch` in the eepkm-bindings Note section."
-	       :type 'string
-	       :group 'eepkm-bindings)
+	     (pretty-hydra-define eepkm-window-management-hydra
+	       (:title "Window Management" :color teal :quit-key "ESC")
+	       ("Windows"
+	        (("s" split-window-below "Split horizontally (split-window-below)")
+	         ("v" split-window-right "Split vertically (split-window-right)")
+	         ("d" delete-window "Delete window (delete-window)")
+	         ("o" delete-other-windows "Delete other windows (delete-other-windows)"))
+	        "Frames"
+	        (("f" make-frame "New frame (make-frame)")
+	         ("x" delete-frame "Delete frame (delete-frame)"))
+	        "Screen"
+	        (("u" winner-undo "Undo layout (winner-undo)")
+	         ("r" winner-redo "Redo layout (winner-redo)"))))
 	     
-	     (defcustom eepkm-bindings-note-store-link-key "l"
-	       "Key for `org-store-link` in the eepkm-bindings Note section."
-	       :type 'string
-	       :group 'eepkm-bindings)
 	     
-	     (defcustom eepkm-bindings-note-insert-link-key "m"
-	       "Key for `org-insert-link` in the eepkm-bindings Note section."
-	       :type 'string
-	       :group 'eepkm-bindings)
+	     (pretty-hydra-define eepkm-basic-editing-hydra
+	       (:title "Basic Editing Commands" :color teal :quit-key "ESC")
+	       ("Edit"
+	        (("c" copy-region-as-kill "Copy (copy-region-as-kill)")
+	         ("x" kill-region "Cut (kill-region)")
+	         ("v" yank "Paste (yank)")
+	         ("z" undo "Undo (undo)"))
+	        "Search"
+	        (("s" isearch-forward "Search forward (isearch-forward)")
+	         ("r" isearch-backward "Search backward (isearch-backward)")
+	         ("q" query-replace "Query Replace (query-replace)"))))
 	     
-	     ;; Customizable key bindings for Window section
-	     (defcustom eepkm-bindings-window-split-horizontally-key "h"
-	       "Key for `split-window-below` in the eepkm-bindings Window section."
-	       :type 'string
-	       :group 'eepkm-bindings)
 	     
-	     (defcustom eepkm-bindings-window-split-vertically-key "v"
-	       "Key for `split-window-right` in the eepkm-bindings Window section."
-	       :type 'string
-	       :group 'eepkm-bindings)
+	     (pretty-hydra-define eepkm-buffer-file-hydra
+	       (:title "Buffer and File Management" :color pink :quit-key "ESC")
+	       ("File"
+	        (("f" find-file "Open file (find-file)")
+	         ("s" save-buffer "Save file (save-buffer)")
+	         ("w" write-file "Save file as... (write-file)"))
+	        "Buffer"
+	        (("b" switch-to-buffer "Switch buffer (switch-to-buffer)")
+	         ("k" kill-buffer "Kill buffer (kill-buffer)")
+	         ("r" revert-buffer "Revert buffer (revert-buffer)"))
+	        "Window"
+	        (("n" next-buffer "Next buffer (next-buffer)")
+	         ("p" previous-buffer "Previous buffer (previous-buffer)"))))
 	     
-	     (defcustom eepkm-bindings-window-next-window-key "n"
-	       "Key for `next-window` in the eepkm-bindings Window section."
-	       :type 'string
-	       :group 'eepkm-bindings)
 	     
-	     (defcustom eepkm-bindings-window-previous-window-key "p"
-	       "Key for `previous-window` in the eepkm-bindings Window section."
-	       :type 'string
-	       :group 'eepkm-bindings)
-	     
-	     (defcustom eepkm-bindings-window-winner-undo-key "w"
-	       "Key for `winner-undo` in the eepkm-bindings Window section."
-	       :type 'string
-	       :group 'eepkm-bindings)
-	     
-	     (defcustom eepkm-bindings-window-winner-redo-key "x"
-	       "Key for `winner-redo` in the eepkm-bindings Window section."
-	       :type 'string
-	       :group 'eepkm-bindings)
-	     
-	     (defcustom eepkm-bindings-window-delete-other-windows-key "k"
-	       "Key for `delete-other-windows` in the eepkm-bindings Window section."
-	       :type 'string
-	       :group 'eepkm-bindings)
-	     
-	     (defcustom eepkm-bindings-window-delete-window-key "d"
-	       "Key for `delete-window` in the eepkm-bindings Window section."
-	       :type 'string
-	       :group 'eepkm-bindings)
-	     
+	     (pretty-hydra-define eepkm-help-and-customisation-hydra
+	     		     (:title "Help and Customisation" :color amaranth :quit-key "ESC")
+	     		     ("Help"
+	     		      (("h" help-command "Help Prefix (help-command)")
+	     		       ("f" describe-function "Describe Function (describe-function)")
+	     		       ("v" describe-variable "Describe Variable (describe-variable)")
+	     		       ("k" describe-key "Describe Key (describe-key)")
+	     		       ("m" describe-mode "Describe Mode (describe-mode)"))
+	     		      "Documentation"
+	     		      (("i" info "Info (info)")
+	     		       ("e" view-echo-area-messages "View Messages (view-echo-area-messages)")
+	     		       ("l" view-lossage "Key Lossage (view-lossage)"))
+	     		      "Customize"
+	     		      (("V" customize-variable "Customize Variable")
+	     		       ("G" customize-group "Customize Group")
+	     		       ("F" customize-face "Customize Face")
+	     		       ("O" customize-option "Customize Option")
+	     		       ("T" customize-themes "Customize Themes"))
+	     		      ))
 	     
 	     )
 
@@ -216,38 +326,12 @@
   :group 'eepkm  
   )
 
-(defcustom eepkm-bindings-menu "<f11>"
-  ;; (kbd "<escape>")
-  ;; (kbd "C-c h")
+(defcustom eepkm-master-hydra "<f11>"
   "Key for `org-roam-node-find` in the eepkm-bindings PKM section."
   :type 'string
-  :group 'eepkm-bindings)
+  :group 'eepkm)
 
-(global-set-key (kbd eepkm-bindings-menu) 'eepkm-bindings/body)
-
-;; hydra-keyboard-quit
-(eval
- `(pretty-hydra-define eepkm-bindings
-    (:title "Main Commands of the PKM" :color amaranth :quit-key "ESC" :exit t)
-    ("PKM"
-     ((,eepkm-bindings-find-node-key org-roam-node-find "Find and go to a node")
-      (,eepkm-bindings-insert-node-key org-roam-node-insert "Find and insert a link to a node")
-      (,eepkm-bindings-attach-key org-attach "Attach a document to the heading"))
-     "Note"
-     ((,eepkm-bindings-note-new-heading-key org-meta-return "Insert new heading or list")
-      (,eepkm-bindings-note-todo-key org-todo "Mark a heading as TODO")
-      (,eepkm-bindings-note-export-key org-export-dispatch "Export to another format")
-      (,eepkm-bindings-note-store-link-key org-store-link "Store the link under the cursor")
-      (,eepkm-bindings-note-insert-link-key org-insert-link "Insert a link"))
-     "Window"
-     ((,eepkm-bindings-window-split-horizontally-key split-window-below "Split your window horizontally")
-      (,eepkm-bindings-window-split-vertically-key split-window-right "Split your window vertically")
-      (,eepkm-bindings-window-next-window-key next-window "Next window")
-      (,eepkm-bindings-window-previous-window-key previous-window "Previous window")
-      (,eepkm-bindings-window-winner-undo-key winner-undo "Undo previous configuration of window(s)")
-      (,eepkm-bindings-window-winner-redo-key winner-redo "Redo previous configuration of window(s)")
-      (,eepkm-bindings-window-delete-other-windows-key delete-other-windows "Keep only the current window")
-      (,eepkm-bindings-window-delete-window-key delete-window "Delete current window")))))
+(global-set-key (kbd eepkm-master-hydra) 'eepkm-master-hydra/body)
 
 (use-package which-key
 	     :init
@@ -303,12 +387,73 @@
 
 (winner-mode 1)
 
-(use-package org :straight (org :type git :repo "https://code.orgmode.org/bzg/org-mode.git")
-	     :config
+(use-package org 
+	     :ensure 
+	     ;; (org :type git :repo "https://code.orgmode.org/bzg/org-mode.git")
+	     (org :type git :repo "https://git.savannah.gnu.org/git/emacs/org-mode.git" :branch "bugfix")
+	     :init
 	     (setq org-directory (concat user-emacs-directory "PKM/notes/"))
+	     :config
+	     
+	     ;;Pour obtenir des polices proportionnelles
+	     (variable-pitch-mode 1)
+	     
+	     ;; Make sure org-indent face is available
+	     (require 'org-indent)
+	     
+	     (set-face-attribute 'org-document-title nil :font "Courier New" :weight 'bold :height 1.5)
+	     
+	     (dolist (face '((org-level-1 . 1.3)
+	     		(org-level-2 . 1.25)
+	     		(org-level-3 . 1.20)
+	     		(org-level-4 . 1.15)
+	     		(org-level-5 . 1.10)
+	     		(org-level-6 . 1.05)
+	     		(org-level-7 . 1.0)
+	     		(org-level-8 . 1.0)))
+	       (set-face-attribute (car face) nil :font "Courier New" :weight 'medium :height (cdr face)))
+	     
+	     
+	     ;; ;; Ensure that 
+	     ;; anything that should be fixed-pitch in Org files appears that way
+	     (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+	     (set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
+	     (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
+	     (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+	     (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
+	     (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+	     (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+	     (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+	     (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+	     
+	     ;;couleur des checkbox
+	     (defface org-checkbox-todo-text
+	       '((t (:inherit org-todo)))
+	       "Face for the text part of an unchecked org-mode checkbox.")
+	     
+	     (font-lock-add-keywords
+	      'org-mode
+	      `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?: \\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-todo-text prepend))
+	      'append)
+	     
+	     (defface org-checkbox-done-text
+	       '((t (:inherit org-done)))
+	       "Face for the text part of a checked org-mode checkbox.")
+	     
+	     (font-lock-add-keywords
+	      'org-mode
+	      `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-done-text prepend))
+	      'append)
+	     
+	     
+	     (setq org-startup-with-inline-images t
+	           ;; size of images
+	           org-image-actual-width 1000
+	           )
+	     
 	     )
 
-(defun my/org-export-output-dir (orig-fun &rest args)
+(defun eepkm-org-export-output-dir (orig-fun &rest args)
   "Modification of the export-output directory for Org-mode."
   (let ((old-default-directory default-directory))
     ;; Change working directory temporarily to 'export' directory.
@@ -318,59 +463,36 @@
     (setq default-directory old-default-directory)))
 
 ;; Applies directory modification function to all Org export functions.
-(advice-add 'org-export-to-file :around #'my/org-export-output-dir)
-
-;;Pour obtenir des polices proportionnelles
-(variable-pitch-mode 1)
-
-;; Make sure org-indent face is available
-(require 'org-indent)
-;; (set-face-attribute 'org-document-title nil :font "Fira Mono" :weight 'bold :height 1.5)
-;; (dolist (face '((org-level-1 . 1.3)
-;;                 (org-level-2 . 1.25)
-;;                 (org-level-3 . 1.20)
-;;                 (org-level-4 . 1.15)
-;;                 (org-level-5 . 1.10)
-;;                 (org-level-6 . 1.05)
-;;                 (org-level-7 . 1.0)
-;;                 (org-level-8 . 1.0)))
-;;   (set-face-attribute (car face) nil :font "Fira Mono" :weight 'medium :height (cdr face)))
-
-
-;; ;; Ensure that 
-;; anything that should be fixed-pitch in Org files appears that way
-(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
-(set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
-(set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
-(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
-
-;;couleur des checkbox
-(defface org-checkbox-todo-text
-  '((t (:inherit org-todo)))
-  "Face for the text part of an unchecked org-mode checkbox.")
-
-(font-lock-add-keywords
- 'org-mode
- `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?: \\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-todo-text prepend))
- 'append)
-
-(defface org-checkbox-done-text
-  '((t (:inherit org-done)))
-  "Face for the text part of a checked org-mode checkbox.")
-
-(font-lock-add-keywords
- 'org-mode
- `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-done-text prepend))
- 'append)
+(advice-add 'org-export-to-file :around #'eepkm-org-export-output-dir)
 
 (setq org-ellipsis "⬎")
 
 (add-hook 'org-mode-hook 'org-indent-mode)
+
+(use-package org-modern
+	     :init
+
+	     (defcustom eepkm-org-modern-mode nil
+	       "Toggle modern enhancements in Org mode."
+	       :type 'boolean
+	       :group 'eepkm)
+
+	     (when eepkm-org-modern-mode
+	       (add-hook 'org-mode-hook 'org-modern-mode)
+	       (add-hook 'org-agenda-finalize-hook 'org-modern-agenda))
+
+	     :config
+	     (setq 
+	      ;; don't hide the stars of heading
+	      org-modern-hide-stars nil
+	      org-hide-leading-stars t
+
+	      ;; desactivate code block
+	      org-modern-block-fringe nil
+	      org-modern-block-name nil
+
+	      )
+	     )
 
 (setq org-attach-dir (concat user-emacs-directory "PKM/data/org-attach"))
 
@@ -402,14 +524,112 @@
 		    #'org-roam-unlinked-references-section
 		    ))
 	     :config
+	     (custom-set-variables '(warning-suppress-types '((magit))))
 	     (setq org-roam-directory org-directory)
 	     ;; automatic sync with files 
 	     (org-roam-db-autosync-mode +1)
+	     
+	     (defcustom eepkm-include-tutorial t
+	       "If non-nil, include the tutorial in the personal DB."
+	       :type 'boolean
+	       :group 'eepkm)
+	     
+	     (defvar eepkm-note-tutorial-directory (concat org-directory "Tutorial/"))
+	     
+	     (defun toggle-eepkm-include-tutorial ()
+	       "Toggle the inclusion of tutorial notes in the Org Roam database."
+	       (interactive)
+	       (setq org-roam-db-node-include-function
+	     	(if eepkm-include-tutorial
+	     	    (lambda () t)  ; Always include the node.
+	     	  (lambda ()
+	     	    (let ((current-dir (file-name-directory (or buffer-file-name ""))))
+	     	      (equal eepkm-note-tutorial-directory current-dir)))))  ; Check directory.
+	       (message "Tutorial inclusion is now %s."
+	     	   (if eepkm-include-tutorial "enabled" "disabled")))
+	     
+	     (defun switch-eepkm-include-tutorial ()
+	       "Switch the value of `eepkm-include-tutorial` and update inclusion function."
+	       (interactive)
+	       (setq eepkm-include-tutorial (not eepkm-include-tutorial))
+	       (toggle-eepkm-include-tutorial))  ; Call the toggle function to update the function based on the new value.
+	     
+	     
+	     (setq org-roam-node-display-template " ${directory} ${hierarchy-light} ")
+	     
+	     
+	     (cl-defmethod org-roam-node-directory ((node org-roam-node))
+	       "Return the directory of the org-roam node, but only for tutorial directory."
+	       (let ((file-path (org-roam-node-file node)))
+	         (if (string-equal (file-name-nondirectory (directory-file-name (file-name-directory file-path))) "tutorial")
+	     	"Tutorial"
+	           (make-string (length "Tutorial") ?\s))))  ; Return an empty string if not in tutorial
+	     
+	     
+	     (cl-defmethod org-roam-node-hierarchy-light ((node org-roam-node))
+	       "Return a simple hierarchy for the given org-roam node."
+	       (let ((olp (org-roam-node-olp node))
+	             (title (org-roam-node-title node)))
+	         (if olp
+	             (concat (string-join olp " > ") " > " title)
+	           title)))
+	     
+	           (defun cp/org-roam-get-parent-node ()
+	           "Return the node of the current node at point, if any
+	       Recursively traverses up the headline tree to find the parent node.
+	       Take in accout if this is a file node."
+	           (save-restriction
+	     	(widen)
+	     	(save-excursion
+	     	  (let ((current-org-roam-node-id (org-roam-id-at-point)))
+	     	    ;; move to the good place
+	     	    (while (and 
+	     		    (if (equal (org-roam-id-at-point) current-org-roam-node-id)
+	     			t ; if this is the same node, say "continue"
+	     		      (not (org-roam-db-node-p)) ; check if this is a node. If not, continue. If yes, stop
+	     		      )
+	     		    (not (bobp))		; but stop if this is the end of the file
+	     		    )
+	     	      ;; command to go up 
+	     	      (org-roam-up-heading-or-point-min))
+	     	    ;; now this is the good place
+	     	    (let ((node-at-point (org-roam-node-at-point)))
+	     	      (when (and (org-roam-db-node-p) ; check if we are at a node (that can be not the case with "ROAM_EXCLUDE" at the beginning of a file)
+	     			 (not (equal (org-roam-node-id node-at-point) current-org-roam-node-id))) ; check if this if the node at point is not the same of the default
+	     		node-at-point
+	     		))))))
+	     
+	         (defun cp/org-roam-get-outline-path-with-aliases (&optional WITH-SELF USE-CACHE) ;argument to match the function org-get-outline-path
+	           "Get the full outline path with aliases for the current headline. Take in account a file node."
+	           ;; using the olp of the parent, because org-roam save node by files, from top to end
+	           (let ((parent-node (cp/org-roam-get-parent-node)))
+	     	(when parent-node
+	     	  (let* ((aliases (org-roam-node-aliases parent-node))
+	     		 (alias-str (if (> (length aliases) 0)
+	     				;; first separator after title
+	     				(concat ", " 
+	     					(mapconcat 'identity aliases
+	     						   ;; separator between aliases
+	     						   ", "))
+	     			      nil)))
+	     	    ;; let's append the title at the end
+	     	    (append (org-roam-node-olp parent-node) (list (concat (org-roam-node-title parent-node) alias-str))))))
+	           )
+	     
+	         (defun cp/replace-org-get-outline-path-advice (orig-func &rest args)
+	           "Temporarily override `org-get-outline-path` during `org-roam-db-insert-node-data` execution."
+	           (cl-letf (((symbol-function 'org-get-outline-path)
+	     		 (lambda (&optional with-self use-cache)
+	     		   (cp/org-roam-get-outline-path-with-aliases with-self use-cache))))
+	     	(apply orig-func args)))
+	     
+	         (advice-add 'org-roam-db-insert-node-data :around #'cp/replace-org-get-outline-path-advice)
+	     
 	     )
 
 (use-package org-roam-ui
     :after org-roam
-    :straight
+    :ensure
     (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
     ;; :hook (after-init . org-roam-ui-mode)
     :config
@@ -462,14 +682,3 @@
 (setq dired-dwim-target t) ; qd t-on copies, if another dired is open, copies into it "directly".
 
 (load (concat user-emacs-directory "personal.el"))
-
-(customize-set-variable 'custom-file (no-littering-expand-etc-file-name "custom.el"))
-
-  ;; after-init-hook ?
-  (when (file-exists-p custom-file)
-    (load custom-file nil 'nomessage))
-
-;; (add-hook 'after-init-hook (lambda ()
-;; 				    (if (file-exists-p custom-file)
-;; 					(load custom-file nil 'nomessage)
-;; 				      (message "Le fichier de configuration custom-file [%s] n'existe pas" custom-file))))

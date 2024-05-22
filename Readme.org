@@ -1,18 +1,5 @@
 #+title: EasyEmacsPKM
 
-
-
-todo :
-- mieux expliquer l'installation d'emacs windows (expliquer quel fichier prendre, le .exe)
-- expliquer une PKM ou bien modifier le titre PKM
-- changer userprofile sur autre chose
-- le mettre dans nomutilisteur/appdata/roaming/
-- cd $env:APPDATA
-- C:\Users\Username\AppData\Roaming
-- windows en bas à gauche
-- dire que le chargement dépend de la conextion, et que l'utilsateur doit voir des lignes en bas à gauche changer indiquant qu'emacs télécharge bien des choses
-- entre 5 et 20 mins, marche en arrière plan et juste pour la première fois
-
 * Purpose
 
 This guide is designed to provide a foundation of a "PKM", that mean "Personal Knowledge Management (system)". A "PKM" , is a set of method used to collect, organize, store, and share information by an individual, enhancing personal effectiveness and facilitating learning. Normally, a "PKM" is a set of tools. Here, the goal of this project/guide is to centralize all of this.
@@ -25,6 +12,8 @@ In this guide, we need to install two softwares to setup the new PKM :
 * Installation
 
 ** Download and Install Git
+
+*** Installation
 
 *Windows:*
 1. Download the Git installer from the official Git website: [[https://gitforwindows.org/][git download]].
@@ -39,7 +28,6 @@ In this guide, we need to install two softwares to setup the new PKM :
    #+end_src
 2. Click 'Install' when prompted to install the command line developer tools.
 3. After installation, verify Git is installed by typing `git --version` in the terminal.
-4. TODO configurer utilisateur et email
 
 *Linux:*
 1. Open a terminal.
@@ -62,9 +50,38 @@ In this guide, we need to install two softwares to setup the new PKM :
      
 3. Verify the installation by typing `git --version` in the terminal.
 
+
+*** Configuration
+
+*On all OS*,  configure your Git username and email : type the following commands, replacing Your Name and your_email@example.com with your actual name and email:
+- git config --global user.name "Your Name"
+- git config --global user.email "your_email@example.com"
+
 ** Download and Install Emacs
 
-- Visit the official GNU Emacs website: [[https://www.gnu.org/software/emacs/download.html][download page for emacs]].
+- *Windows*:
+  download and execute the [[http://gnu.c3sl.ufpr.br/ftp/emacs/windows/emacs-28/emacs-28.2-installer.exe][executable from source]].
+- *Linux*:
+  #+begin_src sh
+
+    # guix package -i emacs
+    sudo apt-get install emacs
+    # sudo pacman -S emacs
+    # sudo dnf install emacs
+    # sudo zypper install emacs
+
+  #+end_src
+- *MacOS*:
+  - Do the command:
+    #+begin_src sh
+
+      # Emacs can be installed on MacOS using Homebrew.
+      brew install --cask emacs
+      # Using MacPorts:
+      # sudo port install emacs-app
+
+    #+end_src
+
 - Choose the version suitable for your operating system. It is recommended to download at least version 28 for compatibility with most packages.
 - Follow the installation instructions on the website for your specific OS.
 
@@ -78,7 +95,7 @@ In this guide, we need to install two softwares to setup the new PKM :
 4. Navigate to your home directory:
    - *Windows*:
      #+begin_src sh
-     cd %USERPROFILE%
+     cd $env:APPDATA
      #+end_src
    - *macOS/Linux*:
      #+begin_src sh
@@ -103,8 +120,8 @@ In this guide, we need to install two softwares to setup the new PKM :
 ** Launch Emacs
 
 - Open Emacs by searching for it in your start menu or using a command line interface.
-- The first time you start Emacs, it may take some time to load as it configures itself.
-- If everything is good,, you are in the tutorial ! Just read and learn how to use it.
+- The first time you start Emacs, it may take some time to load as it configures itself (between 5 and 20 minutes, depending of the connection.)
+- If everything is good, you are in the tutorial ! Just read and learn how to use it.
 
 * Update
 
