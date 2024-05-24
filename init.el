@@ -75,7 +75,7 @@
 (add-hook 'elpaca-after-init-hook
 	  (lambda ()
 	    (if (eq 0 (elpaca-alist-get 'failed elpaca--status-counts 0))
-		(message "All the packages are installed")
+		(message "All the packages are installed, Emacs is ready !")
 	      (when (yes-or-no-p "Emacs has not finish to download all packages, do you want to restart ?") (restart-emacs))
 	      ))
 	  )
@@ -138,7 +138,14 @@
 (custom-set-faces
  '(minibuffer-prompt ((t (:foreground "gold" :weight bold :height 1.7)))))
 
-(setq initial-major-mode 'org-mode)
+(setq initial-scratch-message "This buffer is for text that is NOT saved.\nTo visit your node, open the menu and find a node.\n\n")
+
+(defun set-scratch-to-org-mode ()
+  "Set the *scratch* buffer to use org-mode."
+  (with-current-buffer "*scratch*"
+    (org-mode)))
+
+(add-hook 'elpaca-after-init-hook 'set-scratch-to-org-mode)
 
 (defgroup eepkm nil
   "Customization group for EasyEmacsPKM"
@@ -149,7 +156,7 @@
 ;; visuellement
 (global-visual-line-mode 1)
 
-(defcustom eepkm-text-scale 170
+(defcustom eepkm-text-scale 150
     "Size of text in Emacs."
     :type 'integer
     :group 'eepkm)
@@ -292,13 +299,13 @@
 	     :init
 	     
 	     (pretty-hydra-define eepkm-master-hydra
-	     		     (:title "Master Commands Menu" :color red :exit t :quit-key "ESC")
+	     		     (:title "Master Commands Menu" :color red :exit t :quit-key "ESC" :foreign-keys run)
 	     		     ("Menus"
-	     		      (("o" eepkm-org-mode-hydra/body "Org Mode Menu (org-mode-hydra)")
-	     		       ("w" eepkm-window-management-hydra/body "Window Management (window-management-hydra)")
+	     		      (("o" eepkm-org-mode-hydra/body "Org Mode Menu (eepkm-org-mode-hydra)")
+	     		       ("w" eepkm-window-management-hydra/body "Window Management (eepkm-window-management-hydra)")
 	     		       ("e" eepkm-movement-and-editing-hydra/body "Basic Movement and Editing Commands (eepkm-movement-and-editing-hydra)")
-	     		       ("b" eepkm-buffer-file-hydra/body "Buffer and File Management (buffer-file-hydra)")
-	     		       ("h" eepkm-help-and-customisation-hydra/body "Help and Documentation (help-documentation-hydra)")
+	     		       ("b" eepkm-buffer-file-hydra/body "Buffer and File Management (eepkm-buffer-file-hydra)")
+	     		       ("h" eepkm-help-and-customisation-hydra/body "Help and Customisation (eepkm-help-and-customisation-hydra)")
 	     		       ("c" execute-extended-command "Execute a command with name (execute-extended-command)")
 	     		       )
 	     		      "Nodes"
@@ -306,16 +313,14 @@
 	     		       ("i" org-roam-node-insert "Insert node link (org-roam-node-insert)")
 	     		       ("s" switch-eepkm-include-tutorial "Activate or desactivate search in tutorial (switch-eepkm-include-tutorial)")
 	     		       ("t" open-main-tutorial "Go to tutorial (open-main-tutorial)")
-	     		       ("g" org-roam-ui-open "Open the graphe of nodes in browser (org-roam-ui-open)")
-	     		       )
-	     		      "Attached file"
-	     		      (("a" org-attach "Attach document to node at point (org-attach)")
+	     		       ("a" org-attach "Attach document to node at point (org-attach)")
 	     		       ("r" org-attach-reveal "See attached document for the node (org-attach-reveal)")
+	     		       ("g" org-roam-ui-open "Open the graphe of nodes in browser (org-roam-ui-open)")
 	     		       )))
 	     
 	     
 	     (pretty-hydra-define eepkm-org-mode-hydra
-	     		     (:title "Org Mode Operations" :color blue :quit-key "ESC")
+	     		     (:title "Org Mode Operations" :color blue :quit-key "ESC" :foreign-keys run)
 	     		     ("Editing"
 	     		      (("h" org-meta-return "New heading/item (org-meta-return)")
 	     		       ("l" org-insert-link "Insert link (org-insert-link)")
@@ -326,7 +331,8 @@
 	     		       ("n" org-next-visible-heading "Next heading (org-next-visible-heading)")
 	     		       ("p" org-previous-visible-heading "Previous heading (org-previous-visible-heading)"))
 	     		      "Misc"
-	     		      (("a" org-agenda "Open Agenda (org-agenda)")
+	     		      (("a" org-agenda "Open Agenda in emacs (org-agenda)")
+	     		       ("A" org-hyperscheduler-open "Open Agenda in external (org-hyperscheduler-open)")
 	     		       ("c" org-capture "Capture item (org-capture)")
 	     		       ("b" org-switchb "Switch org buffer (org-switchb)")
 	     		       ("e" org-export-dispatch "Export (org-export-dispatch)")
@@ -334,7 +340,7 @@
 	     
 	     
 	     (pretty-hydra-define eepkm-window-management-hydra
-	       (:title "Window Management" :color teal :quit-key "ESC")
+	       (:title "Window Management" :color teal :quit-key "ESC" :foreign-keys run)
 	       ("Windows"
 	        (("s" split-window-below "Split horizontally (split-window-below)")
 	         ("v" split-window-right "Split vertically (split-window-right)")
@@ -364,7 +370,7 @@
 	         "Position saved to mark ring, go back with the menu eepkm-movement-and-editing-hydra.")))
 	     
 	     (pretty-hydra-define eepkm-movement-and-editing-hydra
-	       (:title "Basic Editing Commands" :color teal :quit-key "ESC")
+	       (:title "Basic Editing Commands" :color teal :quit-key "ESC" :foreign-keys run)
 	       (
 	     "Movement"
 	        (("m" (lambda () (interactive) (set-mark-command t)) "Go to the previous mark (set-mark-command t)"))
@@ -422,7 +428,7 @@
 	     	(mapc (lambda (xfpath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" xfpath))) xfileList))))))
 	     
 	     (pretty-hydra-define eepkm-buffer-file-hydra
-	     		     (:title "Buffer and File Management" :color pink :quit-key "ESC")
+	     		     (:title "Buffer and File Management" :color pink :quit-key "ESC" :foreign-keys run)
 	     		     ("File"
 	     		      (("f" find-file "Open file (find-file)")
 	     		       ("s" save-buffer "Save file (save-buffer)")
@@ -435,7 +441,7 @@
 	     
 	     
 	     (pretty-hydra-define eepkm-help-and-customisation-hydra
-	     		     (:title "Help and Customisation" :color amaranth :quit-key "ESC")
+	     		     (:title "Help and Customisation" :color amaranth :quit-key "ESC" :foreign-keys run)
 	     		     ("Help"
 	     		      (("h" help-command "Help Prefix (help-command)")
 	     		       ("f" describe-function "Describe Function (describe-function)")
@@ -456,10 +462,12 @@
 	     
 	     )
 
-(defgroup eepkm-bindings nil
-  "Customization subgroup for key bindings"
-  :group 'eepkm  
-  )
+;; todo
+;; (defgroup eepkm-bindings nil
+;;   "Customization subgroup for key bindings"
+;;   :group 'eepkm  
+;;   )
+;; think to do (eval (pretty-hydra-define … `(variable)))
 
 (defcustom eepkm-master-hydra "<f11>"
   "Key for `org-roam-node-find` in the eepkm-bindings PKM section."
@@ -579,6 +587,8 @@
 	       (add-hook 'org-insert-heading-hook 'eepkm-org-insert-id))
 	     
 	     )
+
+(use-package org-hyperscheduler)
 
 (defun eepkm-org-export-output-dir (orig-fun &rest args)
   "Modification of the export-output directory for Org-mode."
