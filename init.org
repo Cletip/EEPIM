@@ -138,6 +138,14 @@ Remember, any change to a block with ":tangle" or ":noweb-ref" has broader impli
   (add-hook 'emacs-startup-hook #'elpaca-process-queues)
   (elpaca `(,@elpaca-order))
 
+  ;; Uncomment for systems which cannot create symlinks:
+  (when (memq system-type '(
+			    ;; cygwin 
+			    windows-nt
+			    ;; ms-dos
+			    ))
+    (elpaca-no-symlink-mode))
+
   (add-hook 'elpaca-after-init-hook (lambda () (message "🪝 elpaca-after-init-hook")))
 
 #+end_src
@@ -181,7 +189,7 @@ Better declaration of packages.
 
 #+begin_src emacs-lisp :tangle yes
 
-  (elpaca-wait)
+  ;; (elpaca-wait)
 
 #+end_src
 
@@ -208,15 +216,20 @@ Better declaration of packages.
 
 #+begin_src emacs-lisp :tangle yes
 
-(with-eval-after-load 'no-littering
-  (customize-set-variable 'custom-file (no-littering-expand-etc-file-name "custom.el"))
-  )
+  (with-eval-after-load 'no-littering
+    (customize-set-variable 'custom-file (no-littering-expand-etc-file-name "custom.el"))
+    )
 
-;;loading of saved customizations with elpaca
-(add-hook 'elpaca-after-init-hook (lambda ()
-				    (if (file-exists-p custom-file)
-					(load custom-file nil 'nomessage)
-				      (message "The customisation of the user [%s] is not present." custom-file))))
+  ;; load before everything else
+  (if (file-exists-p custom-file)
+					  (load custom-file nil 'nomessage)
+					(message "The customisation of the user [%s] is not present." custom-file))
+
+  ;;loading of saved customizations with elpaca
+  ;; (add-hook 'elpaca-after-init-hook (lambda ()
+  ;; 				    (if (file-exists-p custom-file)
+  ;; 					(load custom-file nil 'nomessage)
+  ;; 				      (message "The customisation of the user [%s] is not present." custom-file))))
 
 #+end_src
 
@@ -237,20 +250,6 @@ Better declaration of packages.
   (setq selection-coding-system 'utf-8))
 
 #+end_src
-
-*** Leave with Escape key
-
-To replace the classic "C-g".
-
-#+begin_src emacs-lisp :tangle yes 
-
-  ;; make esc key do cancel. works only in gui emacs
-  (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
-  ;; the first don't work with all the time
-  (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
-
-#+end_src
-
 
 *** Things just after the starting
 
@@ -294,7 +293,7 @@ We don't know if this is elpaca-after-init-hook or window-setup-hook that will b
 
 **** Startup page
 
-Here is the code allowing to start with the Tutorial.
+Here is the code to start with the Tutorial.
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -309,6 +308,90 @@ Here is the code allowing to start with the Tutorial.
 
 #+end_src
 
+** Things for beginners
+
+*** If not in the minibuffer when active, close it
+
+#+begin_src emacs-lisp :tangle yes 
+
+(defun stop-using-minibuffer (&optional arg)
+  "Kill the minibuffer when Emacs loses focus or the mouse leaves the buffer."
+  (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
+    (abort-recursive-edit)))
+
+;; Add to mouse-leave-buffer-hook to handle mouse leaving Emacs window
+(add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
+
+#+end_src
+
+
+*** Leave with Escape key
+
+To replace the classic "C-g".
+
+#+begin_src emacs-lisp :tangle yes 
+
+  ;; make esc key do cancel. works only in gui emacs
+  (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
+  ;; the first don't work with all the time
+  (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+
+#+end_src
+
+
+*** Normal copy and past shortcut
+
+CUA Mode is a feature in Emacs that configures the keybindings to emulate the Common User Access (CUA) standard used in many other programs, particularly those in the Windows environment. This mode makes cut, copy, paste, and other common operations accessible through the familiar Ctrl-X, Ctrl-C, Ctrl-V, and Ctrl-Z shortcuts.
+
+#+begin_src emacs-lisp :tangle yes 
+
+(cua-mode 1)
+
+#+end_src
+
+
+*** Auto save
+
+#+begin_src emacs-lisp :tangle yes 
+
+  (defcustom eepkm-auto-save t
+    "If t, save after `auto-save-visited-interval'"
+    :type 'boolean
+    :group 'eepkm)
+
+  (when (>= emacs-major-version 26)
+    ;; real auto save
+    (auto-save-visited-mode eepkm-auto-save))
+
+#+end_src
+
+*** Show cursor
+
+#+begin_src emacs-lisp
+
+  (use-package beacon
+	       :init (beacon-mode)
+	       :config
+	       (setq beacon-blink-when-focused t
+		     beacon-blink-when-point-moves-vertically 1
+		     )
+	       )
+
+#+end_src
+
+*** Better echo-area and minibuffer prompt
+
+#+begin_src emacs-lisp :tangle yes 
+
+(defun eepkm-display-message (msg)
+  "Display the message MSG in the echo area with yellow foreground."
+  (propertize msg 'face '(:foreground "gold" :weight bold :height 1.7)))
+(setq set-message-function #'eepkm-display-message)
+
+(custom-set-faces
+ '(minibuffer-prompt ((t (:foreground "gold" :weight bold :height 1.7)))))
+
+#+end_src
 
 ** Variable of the PKM
 
@@ -346,12 +429,12 @@ fill-column
 
 #+begin_src emacs-lisp :tangle yes 
 
-  (defcustom eepkm-text-scale-increment 1
-    "Increment for text scaling in Emacs."
+  (defcustom eepkm-text-scale 170
+    "Size of text in Emacs."
     :type 'integer
     :group 'eepkm)
 
-  (text-scale-increase eepkm-text-scale-increment)
+(set-face-attribute 'default (selected-frame) :height eepkm-text-scale)
 
 #+end_src
 
@@ -383,24 +466,34 @@ fill-column
 
 #+end_src
 
-*** Normal copy and past shortcut
+*** Replace text when copy and past
 
-CUA Mode is a feature in Emacs that configures the keybindings to emulate the Common User Access (CUA) standard used in many other programs, particularly those in the Windows environment. This mode makes cut, copy, paste, and other common operations accessible through the familiar Ctrl-X, Ctrl-C, Ctrl-V, and Ctrl-Z shortcuts.
+
+*** Margin
 
 #+begin_src emacs-lisp :tangle yes 
 
-(cua-mode 1)
+  (defcustom eepkm-margin 170
+    "Increment for text scaling in Emacs."
+    :type 'integer
+    :group 'eepkm)
+
+  (use-package perfect-margin
+	       :init (perfect-margin-mode)
+	       :config (setq perfect-margin-visible-width eepkm-margin)
+	       )
 
 #+end_src
 
-
-*** Replace text when copy and past
-
-** Aesthetics
+** Global Aesthetics
 
 *** Mode line
 
-#+begin_src emacs-lisp :tangle yes 
+#+begin_src emacs-lisp :tangle yes
+
+  ;; nice color mode line
+  (custom-set-faces
+   '(mode-line ((t (:box (:line-width 1 :color "#1A2F54") :foreground "#85CEEB" :background "#335EA8")))))
 
   (use-package doom-modeline
 	       :init
@@ -519,10 +612,14 @@ Not very useful.
 #+begin_src emacs-lisp :tangle yes 
 
   (use-package doom-themes
-	       :config
+	       :init
 	       ;; (load-theme 'doom-moonlight t)
-	       (load-theme 'leuven t)
+	       ;; (load-theme 'leuven t)
 	       )
+
+  (use-package leuven-theme
+	       :init
+	       (load-theme 'leuven-dark t))
 
 #+end_src
 
@@ -602,25 +699,22 @@ So, we need to construct the code himself, and then use the function "eval", to 
 		       ("Menus"
 			(("o" eepkm-org-mode-hydra/body "Org Mode Menu (org-mode-hydra)")
 			 ("w" eepkm-window-management-hydra/body "Window Management (window-management-hydra)")
-			 ("e" eepkm-basic-editing-hydra/body "Basic Editing Commands (basic-editing-hydra)")
+			 ("e" eepkm-movement-and-editing-hydra/body "Basic Movement and Editing Commands (eepkm-movement-and-editing-hydra)")
 			 ("b" eepkm-buffer-file-hydra/body "Buffer and File Management (buffer-file-hydra)")
 			 ("h" eepkm-help-and-customisation-hydra/body "Help and Documentation (help-documentation-hydra)")
 			 ("c" execute-extended-command "Execute a command with name (execute-extended-command)")
 			 )
-
 			"Nodes"
 			(("f" org-roam-node-find "Find node (org-roam-node-find)")
 			 ("i" org-roam-node-insert "Insert node link (org-roam-node-insert)")
 			 ("s" switch-eepkm-include-tutorial "Activate or desactivate search in tutorial (switch-eepkm-include-tutorial)")
 			 ("t" open-main-tutorial "Go to tutorial (open-main-tutorial)")
+			 ("g" org-roam-ui-open "Open the graphe of nodes in browser (org-roam-ui-open)")
 			 )
 			"Attached file"
 			(("a" org-attach "Attach document to node at point (org-attach)")
-			 ("r" org-attach-reveal "See attached document (org-attach-reveal)")
-			 )
-			"Visualisation"
-			(("g" org-roam-ui-open "Open the graphe in browser (org-roam-ui-open)"))
-			))
+			 ("r" org-attach-reveal "See attached document for the node (org-attach-reveal)")
+			 )))
 
 #+end_src
 
@@ -668,21 +762,38 @@ So, we need to construct the code himself, and then use the function "eval", to 
 
 #+end_src
 
-****** Basic Editing
+****** Basic Movement and Editing
 
 #+begin_src emacs-lisp :noweb-ref pretty-hydra-init :noweb yes
 
-(pretty-hydra-define eepkm-basic-editing-hydra
+(defun org-mark-ring-push (&optional pos buffer)
+  "Put the current position into the mark ring and rotate it.
+Also push position into the Emacs mark ring.  If optional
+argument POS and BUFFER are not nil, mark this location instead."
+  (interactive)
+  (let ((pos (or pos (point)))
+	(buffer (or buffer (current-buffer))))
+    (with-current-buffer buffer
+      (org-with-point-at pos (push-mark nil t)))
+    (setq org-mark-ring (nthcdr (1- org-mark-ring-length) org-mark-ring))
+    (move-marker (car org-mark-ring) pos buffer))
+  (message
+   (substitute-command-keys
+    "Position saved to mark ring, go back with the menu eepkm-movement-and-editing-hydra.")))
+
+(pretty-hydra-define eepkm-movement-and-editing-hydra
   (:title "Basic Editing Commands" :color teal :quit-key "ESC")
-  ("Edit"
+  (
+"Movement"
+   (("m" (lambda () (interactive) (set-mark-command t)) "Go to the previous mark (set-mark-command t)"))
+"Edit"
    (("c" copy-region-as-kill "Copy (copy-region-as-kill)")
     ("x" kill-region "Cut (kill-region)")
     ("v" yank "Paste (yank)")
     ("z" undo "Undo (undo)"))
    "Search"
-   (("s" isearch-forward "Search forward (isearch-forward)")
-    ("r" isearch-backward "Search backward (isearch-backward)")
-    ("q" query-replace "Query Replace (query-replace)"))))
+   (("s" consult-line "Search (consult-line)")
+    ("q" query-replace "Replace occurence (query-replace)"))))
 
 #+end_src
 
@@ -690,19 +801,60 @@ So, we need to construct the code himself, and then use the function "eval", to 
 
 #+begin_src emacs-lisp :noweb-ref pretty-hydra-init :noweb yes
 
-(pretty-hydra-define eepkm-buffer-file-hydra
-  (:title "Buffer and File Management" :color pink :quit-key "ESC")
-  ("File"
-   (("f" find-file "Open file (find-file)")
-    ("s" save-buffer "Save file (save-buffer)")
-    ("w" write-file "Save file as... (write-file)"))
-   "Buffer"
-   (("b" switch-to-buffer "Switch buffer (switch-to-buffer)")
-    ("k" kill-buffer "Kill buffer (kill-buffer)")
-    ("r" revert-buffer "Revert buffer (revert-buffer)"))
-   "Window"
-   (("n" next-buffer "Next buffer (next-buffer)")
-    ("p" previous-buffer "Previous buffer (previous-buffer)"))))
+  (defun xah-open-in-external-app (&optional Fname)
+    "Open the current file or dired marked files in external app.
+  When called in emacs lisp, if Fname is given, open that.
+
+  URL `http://xahlee.info/emacs/emacs/emacs_dired_open_file_in_ext_apps.html'
+  Version: 2019-11-04 2023-03-10 2023-04-05"
+    (interactive)
+    (let (xfileList xdoIt)
+      (setq xfileList
+	    (if Fname
+		(list Fname)
+	      (if (string-equal major-mode "dired-mode")
+		  (dired-get-marked-files)
+		(list buffer-file-name))))
+      (setq xdoIt (if (<= (length xfileList) 10) t (y-or-n-p "Open more than 10 files? ")))
+      (when xdoIt
+	(cond
+	 ((string-equal system-type "windows-nt")
+	  (let ((xoutBuf (get-buffer-create "*xah open in external app*"))
+		(xcmdlist (list "PowerShell" "-Command" "Invoke-Item" "-LiteralPath")))
+	    (mapc
+	     (lambda (x)
+	       (message "%s" x)
+	       (apply 'start-process (append (list "xah open in external app" xoutBuf) xcmdlist (list (format "'%s'" (if (string-match "'" x) (replace-match "`'" t t x) x))) nil)))
+	     xfileList)
+	    ;; (switch-to-buffer-other-window xoutBuf)
+	    )
+	  ;; old code. calling shell. also have a bug if filename contain apostrophe
+	  ;; (mapc (lambda (xfpath) (shell-command (concat "PowerShell -Command \"Invoke-Item -LiteralPath\" " "'" (shell-quote-argument (expand-file-name xfpath)) "'"))) xfileList)
+	  )
+	 ((string-equal system-type "darwin")
+	  (mapc (lambda (xfpath) (shell-command (concat "open " (shell-quote-argument xfpath)))) xfileList))
+	 ((string-equal system-type "gnu/linux")
+	  (mapc (lambda (xfpath)
+		  (call-process shell-file-name nil nil nil
+				shell-command-switch
+				(format "%s %s"
+					"xdg-open"
+					(shell-quote-argument xfpath))))
+		xfileList))
+	 ((string-equal system-type "berkeley-unix")
+	  (mapc (lambda (xfpath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" xfpath))) xfileList))))))
+
+  (pretty-hydra-define eepkm-buffer-file-hydra
+		       (:title "Buffer and File Management" :color pink :quit-key "ESC")
+		       ("File"
+			(("f" find-file "Open file (find-file)")
+			 ("s" save-buffer "Save file (save-buffer)")
+			 ("o" xah-open-in-external-app "Open thing under cursor outside emacs (xah-open-in-external-app)")
+			 )
+			"Buffer"
+			(("b" switch-to-buffer "Switch buffer (switch-to-buffer)")
+			 ("k" kill-buffer "Kill buffer (kill-buffer)")
+			 ("r" revert-buffer "Revert buffer (revert-buffer)"))))
 
 #+end_src
 
@@ -718,16 +870,16 @@ So, we need to construct the code himself, and then use the function "eval", to 
 			 ("v" describe-variable "Describe Variable (describe-variable)")
 			 ("k" describe-key "Describe Key (describe-key)")
 			 ("m" describe-mode "Describe Mode (describe-mode)"))
-			"Documentation"
-			(("i" info "Info (info)")
-			 ("e" view-echo-area-messages "View Messages (view-echo-area-messages)")
-			 ("l" view-lossage "Key Lossage (view-lossage)"))
 			"Customize"
 			(("V" customize-variable "Customize Variable")
 			 ("G" customize-group "Customize Group")
 			 ("F" customize-face "Customize Face")
 			 ("O" customize-option "Customize Option")
 			 ("T" customize-themes "Customize Themes"))
+			"Documentation"
+			(("i" info "Info (info)")
+			 ("e" view-echo-area-messages "View Messages (view-echo-area-messages)")
+			 ("l" view-lossage "Key Lossage (view-lossage)"))
 			))
 
 #+end_src
@@ -764,6 +916,22 @@ So, we need to construct the code himself, and then use the function "eval", to 
 	       ;; :custom-face
 	       ;; (vertico-current ((t (:background "#3a3f5a"))))
 	       )
+
+
+
+  ;; (use-package vertico-posframe
+  ;; 	     :after vertico
+  ;; 	     ;; :hook(vertico-mode . vertico-posframe-mode)
+  ;; 	     :init 
+  ;; 	     (vertico-posframe-mode)
+  ;; 	     :config
+  ;; 	     (setq
+  ;; 	      vertico-posframe-poshandler #'posframe-poshandler-frame-top-center
+  ;; 	      vertico-posframe-border-width 2
+  ;; 	      vertico-posframe-width nil ;;pile la bonne largeur
+  ;; 	      vertico-posframe-height nil ;;pile la bonne hauteur
+		;; )
+	       ;; )
 
   ;; annotation in the minibuffer
   (use-package marginalia
@@ -954,6 +1122,8 @@ So, we need to construct the code himself, and then use the function "eval", to 
 		org-modern-hide-stars nil
 		org-hide-leading-stars t
 
+org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "▽" "□" "■" "☐" "♦")
+
 		;; desactivate code block
 		org-modern-block-fringe nil
 		org-modern-block-name nil
@@ -981,6 +1151,29 @@ So, we need to construct the code himself, and then use the function "eval", to 
     "Return the path to attach a file with an id"
     (format "%s" id))
 
+
+#+end_src
+
+
+**** Creation of nodes
+
+#+begin_src emacs-lisp :noweb-ref org-config
+
+  (defcustom eepkm-create-node-every-heading t
+    "If non-nil, after create a heading, create a node."
+    :type 'boolean
+    :group 'eepkm)
+
+  (defun eepkm/org-insert-id ()
+    (let ((buffer-path (buffer-file-name))
+	  (roam-dir (expand-file-name org-roam-directory)))
+      (when (and buffer-path (string-prefix-p roam-dir buffer-path))
+	(save-excursion
+	  (org-back-to-heading)
+	  (org-id-get-create)))))
+
+  (when eepkm-create-node-every-heading
+    (add-hook 'org-insert-heading-hook 'eepkm/org-insert-id))
 
 #+end_src
 

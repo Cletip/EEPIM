@@ -19,7 +19,7 @@ In this guide, we need to install two softwares to setup the new PKM :
 1. Download the Git installer from the official Git website: [[https://gitforwindows.org/][git download]].
 2. Run the downloaded `.exe` file to start the installer.
 3. Follow the installation prompts. Make sure to choose options that add Git to your PATH, which makes it accessible from the command prompt.
-4. To verify installation, open Command Prompt and type `git --version`. It should return the installed version of Git.
+4. To verify installation, open PowerShell and type `git --version`. It should return the installed version of Git.
 
 *macOS:*
 1. The easiest way to install Git on macOS is to install the Xcode Command Line Tools. Open a terminal and type:
@@ -91,11 +91,13 @@ In this guide, we need to install two softwares to setup the new PKM :
 
 1. First, ensure that you have Git installed (as per the instructions above).
 2. Do the same for Emacs (as per the instructions above).
-3. Open your command line interface (Command Prompt for Windows, Terminal for macOS and Linux).
+3. Open your command line interface (PowerShell for Windows, Terminal for macOS and Linux).
 4. Navigate to your home directory:
    - *Windows*:
      #+begin_src sh
-     cd $env:APPDATA
+       cd $env:APPDATA
+       # or
+       # cd %USERPROFILE%\AppData
      #+end_src
    - *macOS/Linux*:
      #+begin_src sh
@@ -126,7 +128,7 @@ In this guide, we need to install two softwares to setup the new PKM :
 * Update
 
 1. Open your command line interface:
-   Windows: Open Command Prompt or PowerShell.
+   Windows: Open PowerShell.
    macOS/Linux: Open Terminal.
 2. Navigate to your .emacs.d directory in your home directory: All OS:
     #+begin_src sh
@@ -139,3 +141,28 @@ In this guide, we need to install two softwares to setup the new PKM :
    #+end_src
 
 4. Restart Emacs to apply the updates.
+
+
+
+* Contributor
+
+The aim to this project is to facilitate the adoption of Emacs by people, using the concept of PKM.
+
+** Main files and directory
+
+- init.org:
+  This file acts as the configuration backbone for the entire PKM system. It contains settings and customization scripts that tailor the environment to your specific needs. When Emacs starts, it loads the settings from this file to set up the PKM system according to the predefined configurations.
+- directory "PKM"
+  - directory "tutorial"
+    - tutorial.org:
+       Main file for the comprehensive tutorial designed to help users understand how to use the PKM system effectively. It includes step-by-step instructions, examples, and tips to guide users through the various features and functionalities of the system. This document has to be the most friendly possible.
+    - other files :
+      used to facilated the explanation of tutorial.org
+  - data
+    used to store the other files that are not a note
+    - directory "export"
+      all the exportation of notes will go here
+    - directory "org-attach"
+      files attached with a heading
+- personal.org:
+  This file is meant for the user’s personal code. It serves as a personal configuration. It must no be create, because the git will ignore it.
