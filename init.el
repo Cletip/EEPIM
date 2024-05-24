@@ -827,4 +827,6 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 (setq dired-recursive-deletes 'always) ; asks for more to delete recursively
 (setq dired-dwim-target t) ; qd t-on copies, if another dired is open, copies into it "directly".
 
-(load (concat user-emacs-directory "personal.el"))
+(if (file-exists-p (concat user-emacs-directory "personal.el"))
+    (load (concat user-emacs-directory "personal.el") nil 'nomessage)
+  (message "The personal configuration of the user [%s] is not present." (concat user-emacs-directory "personal.el")))

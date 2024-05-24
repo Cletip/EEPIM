@@ -1430,7 +1430,9 @@ Load the personal configuration file.
 
 #+begin_src emacs-lisp :tangle yes
 
-  (load (concat user-emacs-directory "personal.el"))
+  (if (file-exists-p (concat user-emacs-directory "personal.el"))
+      (load (concat user-emacs-directory "personal.el") nil 'nomessage)
+    (message "The personal configuration of the user [%s] is not present." (concat user-emacs-directory "personal.el")))
 
 #+end_src 
 
