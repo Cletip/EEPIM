@@ -61,16 +61,6 @@ In this guide, we need to install two softwares to setup the new PKM :
 
 - *Windows*:
   download and execute the [[http://gnu.c3sl.ufpr.br/ftp/emacs/windows/emacs-28/emacs-28.2-installer.exe][executable from source]].
-- *Linux*:
-  #+begin_src sh
-
-    # guix package -i emacs
-    sudo apt-get install emacs
-    # sudo pacman -S emacs
-    # sudo dnf install emacs
-    # sudo zypper install emacs
-
-  #+end_src
 - *MacOS*:
   - Do the command:
     #+begin_src sh
@@ -81,11 +71,21 @@ In this guide, we need to install two softwares to setup the new PKM :
       # sudo port install emacs-app
 
     #+end_src
+- *Linux*:
+  #+begin_src sh
+
+    # guix package -i emacs
+    sudo apt-get install emacs
+    # sudo pacman -S emacs
+    # sudo dnf install emacs
+    # sudo zypper install emacs
+
+  #+end_src
 
 - Choose the version suitable for your operating system. It is recommended to download at least version 28 for compatibility with most packages.
 - Follow the installation instructions on the website for your specific OS.
 
-** Set Up the PKM
+** Setup the PKM
 
 *Windows, macOS, and Linux:*
 
@@ -117,13 +117,28 @@ In this guide, we need to install two softwares to setup the new PKM :
    
    This command creates a new `.emacs.d` directory with the contents of the repository.
 
-7. Once the cloning is complete, you can start Emacs.
+7. Once the cloning, download and install fonts :
 
-** Launch Emacs
+   1. Open the directory where fonts are
 
-- Open Emacs by searching for it in your start menu or using a command line interface.
-- The first time you start Emacs, it may take some time to load as it configures itself (between 5 and 20 minutes, depending of the connection.)
-- If everything is good, you are in the tutorial ! Just read and learn how to use it.
+      - *Windows*:
+	#+begin_src sh
+	  Invoke-Item .\.emacs.d\fonts\
+	#+end_src
+      - *macOS*:
+	#+begin_src sh
+	  open ./.emacs.d/fonts/
+	#+end_src
+      - *Linux*
+	#+begin_src sh
+	  xdg-open ./.emacs.d/fonts/
+	#+end_src
+
+   2. Install all the fonts by double-clicking on each one (and maybe click "install" after).
+
+8. Now, you can launch Emacs like any other program.
+   - The first time you start Emacs, it might take a while to load as it configures itself. The first loading time can vary between 5 and 20 minutes, depending on your internet connection and your computer.
+   - If everything goes well, you will see the tutorial. Just read through it and learn how to use Emacs.
 
 * Update
 

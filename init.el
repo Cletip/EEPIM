@@ -182,6 +182,19 @@
 
 (set-face-attribute 'default (selected-frame) :height eepkm-text-scale)
 
+(let ((font-name-1 "DejaVu Sans Mono")
+      (font-name-2 "DejaVu Serif")
+      (fallback-font "Courier New"))
+  (if (and (find-font (font-spec :name font-name-1)) (find-font (font-spec :name font-name-2)))
+      (progn
+	(set-face-attribute 'default nil :family font-name-1)
+	(set-face-attribute 'fixed-pitch nil :family font-name-1)
+	(set-face-attribute 'variable-pitch nil :family font-name-2))  ; Keeping 'DejaVu Serif' for variable-pitch as before
+    (progn
+      (set-face-attribute 'default nil :family fallback-font)
+      (set-face-attribute 'fixed-pitch nil :family fallback-font)
+      (set-face-attribute 'variable-pitch nil :family fallback-font))))
+
 (use-package smartparens
     :hook (org-mode . smartparens-mode)
     :config
@@ -236,8 +249,8 @@
 
 (use-package nerd-icons
 	     :init
-	     (unless (member "Symbols Nerd Font Mono" (font-family-list))
-	       (nerd-icons-install-fonts t))
+	     ;; (unless (member "Symbols Nerd Font Mono" (font-family-list))
+	       ;; (nerd-icons-install-fonts t))
 	     )
 
 (use-package nerd-icons-dired
@@ -255,12 +268,49 @@
 (use-package doom-themes
 	     :init
 	     ;; (load-theme 'doom-moonlight t)
-	     ;; (load-theme 'leuven t)
 	     )
 
 (use-package leuven-theme
 	     :init
-	     (load-theme 'leuven-dark t))
+	     ;; (load-theme 'leuven t)
+	     ;; (load-theme 'leuven-dark t)
+	     )
+
+(use-package ef-themes
+	     :init
+
+	     (defcustom eepkm-dark-theme t
+	       "If non-nil, launch emacs with the dark-theme."
+	       :type 'boolean
+	       :group 'eepkm)
+
+	     (defun eepkm-ef-themes-select (theme &optional variant)
+	       "Function to select and apply an EF theme."
+
+	       ;; Set variables before the package is loaded
+	       (setq ef-themes-to-toggle '(ef-duo-dark ef-duo-light)
+		     ef-themes-region '(intense)
+		     ef-themes-mixed-fonts t
+		     ef-themes-variable-pitch-ui t
+		     ef-themes-headings '((0 . (variable-pitch light 1.9))
+					  (1 . (variable-pitch light 1.8))
+					  (2 . (variable-pitch regular 1.7))
+					  (3 . (variable-pitch regular 1.6))
+					  (4 . (variable-pitch regular 1.5))
+					  (5 . (variable-pitch 1.4))  ; absence of weight means `bold'
+					  (6 . (variable-pitch 1.3))
+					  (7 . (variable-pitch 1.2))
+					  (t . (variable-pitch 1.1))))
+
+	       (load-theme theme t))
+
+	     (eepkm-ef-themes-select 'ef-duo-dark)
+
+	     (when (not eepkm-dark-theme)
+	       (ef-themes-toggle)
+	       )
+
+	     )
 
 (use-package hydra)
 
@@ -458,15 +508,21 @@
 
 ;; vertical completion
 (use-package vertico
-	     :init
-	     (vertico-mode 1)
+	     :hook (window-setup . vertico-mode)
 	     :custom
 	     (vertico-cycle t)
 	     ;; :custom-face
 	     ;; (vertico-current ((t (:background "#3a3f5a"))))
 	     )
 
-
+(use-package vertico-prescient
+	     :custom
+	     (vertico-prescient-enable-sorting t "Enable sorting in Vertico via Prescient")
+	     (vertico-prescient-enable-filtering nil "Disable filtering in Vertico via Prescient")
+	     (prescient-history-length 1000 "Set the history length for Prescient")
+	     :hook ((vertico-mode . vertico-prescient-mode)
+		    (vertico-prescient-mode . prescient-persist-mode)
+		    ))  ; Automatically enable vertico-prescient-mode in vertico-mode
 
 ;; (use-package vertico-posframe
 ;; 	     :after vertico
@@ -479,8 +535,8 @@
 ;; 	      vertico-posframe-border-width 2
 ;; 	      vertico-posframe-width nil ;;pile la bonne largeur
 ;; 	      vertico-posframe-height nil ;;pile la bonne hauteur
-	      ;; )
-	     ;; )
+;; )
+;; )
 
 ;; annotation in the minibuffer
 (use-package marginalia
@@ -523,54 +579,7 @@
 	     :config
 	     
 	     ;;Pour obtenir des polices proportionnelles
-	     (variable-pitch-mode 1)
-	     
-	     ;; Make sure org-indent face is available
-	     (require 'org-indent)
-	     
-	     (set-face-attribute 'org-document-title nil :font "Courier New" :weight 'bold :height 1.5)
-	     
-	     (dolist (face '((org-level-1 . 1.3)
-	     		(org-level-2 . 1.25)
-	     		(org-level-3 . 1.20)
-	     		(org-level-4 . 1.15)
-	     		(org-level-5 . 1.10)
-	     		(org-level-6 . 1.05)
-	     		(org-level-7 . 1.0)
-	     		(org-level-8 . 1.0)))
-	       (set-face-attribute (car face) nil :font "Courier New" :weight 'medium :height (cdr face)))
-	     
-	     
-	     ;; ;; Ensure that 
-	     ;; anything that should be fixed-pitch in Org files appears that way
-	     (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-	     (set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
-	     (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
-	     (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-	     (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
-	     (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-	     (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-	     (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-	     (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
-	     
-	     ;;couleur des checkbox
-	     (defface org-checkbox-todo-text
-	       '((t (:inherit org-todo)))
-	       "Face for the text part of an unchecked org-mode checkbox.")
-	     
-	     (font-lock-add-keywords
-	      'org-mode
-	      `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?: \\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-todo-text prepend))
-	      'append)
-	     
-	     (defface org-checkbox-done-text
-	       '((t (:inherit org-done)))
-	       "Face for the text part of a checked org-mode checkbox.")
-	     
-	     (font-lock-add-keywords
-	      'org-mode
-	      `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-done-text prepend))
-	      'append)
+	     (add-hook 'org-mode-hook 'variable-pitch-mode)
 	     
 	     
 	     (setq org-startup-with-inline-images t
@@ -584,7 +593,7 @@
 	       :type 'boolean
 	       :group 'eepkm)
 	     
-	     (defun eepkm/org-insert-id ()
+	     (defun eepkm-org-insert-id ()
 	       (let ((buffer-path (buffer-file-name))
 	     	(roam-dir (expand-file-name org-roam-directory)))
 	         (when (and buffer-path (string-prefix-p roam-dir buffer-path))
@@ -593,7 +602,7 @@
 	     	(org-id-get-create)))))
 	     
 	     (when eepkm-create-node-every-heading
-	       (add-hook 'org-insert-heading-hook 'eepkm/org-insert-id))
+	       (add-hook 'org-insert-heading-hook 'eepkm-org-insert-id))
 	     
 	     )
 
@@ -640,17 +649,29 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 		)
 	       )
 
+(use-package org-appear
+  :hook (org-mode . org-appear-mode)  ; Automatically enable org-appear-mode in org-mode
+  :custom
+  (org-appear-autolinks t "Automatically reveal the details of links")
+  (org-appear-autoentities t "Automatically reveal the details of entities, see https://orgmode.org/manual/Special-Symbols.html")
+  (org-appear-autosubmarkers t "Automatically reveal sub- and superscripts")
+  :config
+  ;; You can add any additional configuration that needs to be executed after the package is loaded here
+  ;; For example, if you want to enable pretty entities globally, you could uncomment the following line:
+  ;; (setq org-pretty-entities-include-sub-superscripts t)
+  )
+
 (setq org-attach-dir (concat user-emacs-directory "PKM/data/org-attach"))
 
 ;; each attached document go to the ID of the nodes
 
 ;;The first function in this list defines the preferred function which will be used when creating new attachment folders.
 (setq org-attach-id-to-path-function-list
-      '(cp/org-attach-id-uuid-folder-format
+      '(eepkm-org-attach-id-uuid-folder-format
 	;; org-attach-id-uuid-folder-format
 	))
 
-(defun cp/org-attach-id-uuid-folder-format (id)
+(defun eepkm-org-attach-id-uuid-folder-format (id)
   "Return the path to attach a file with an id"
   (format "%s" id))
 
@@ -720,7 +741,7 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	             (concat (string-join olp " > ") " > " title)
 	           title)))
 	     
-	           (defun cp/org-roam-get-parent-node ()
+	           (defun eepkm-org-roam-get-parent-node ()
 	           "Return the node of the current node at point, if any
 	       Recursively traverses up the headline tree to find the parent node.
 	       Take in accout if this is a file node."
@@ -745,10 +766,10 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	     		node-at-point
 	     		))))))
 	     
-	         (defun cp/org-roam-get-outline-path-with-aliases (&optional WITH-SELF USE-CACHE) ;argument to match the function org-get-outline-path
+	         (defun eepkm-org-roam-get-outline-path-with-aliases (&optional WITH-SELF USE-CACHE) ;argument to match the function org-get-outline-path
 	           "Get the full outline path with aliases for the current headline. Take in account a file node."
 	           ;; using the olp of the parent, because org-roam save node by files, from top to end
-	           (let ((parent-node (cp/org-roam-get-parent-node)))
+	           (let ((parent-node (eepkm-org-roam-get-parent-node)))
 	     	(when parent-node
 	     	  (let* ((aliases (org-roam-node-aliases parent-node))
 	     		 (alias-str (if (> (length aliases) 0)
@@ -762,14 +783,14 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	     	    (append (org-roam-node-olp parent-node) (list (concat (org-roam-node-title parent-node) alias-str))))))
 	           )
 	     
-	         (defun cp/replace-org-get-outline-path-advice (orig-func &rest args)
+	         (defun eepkm-replace-org-get-outline-path-advice (orig-func &rest args)
 	           "Temporarily override `org-get-outline-path` during `org-roam-db-insert-node-data` execution."
 	           (cl-letf (((symbol-function 'org-get-outline-path)
 	     		 (lambda (&optional with-self use-cache)
-	     		   (cp/org-roam-get-outline-path-with-aliases with-self use-cache))))
+	     		   (eepkm-org-roam-get-outline-path-with-aliases with-self use-cache))))
 	     	(apply orig-func args)))
 	     
-	         (advice-add 'org-roam-db-insert-node-data :around #'cp/replace-org-get-outline-path-advice)
+	         (advice-add 'org-roam-db-insert-node-data :around #'eepkm-replace-org-get-outline-path-advice)
 	     
 	     )
 
