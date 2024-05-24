@@ -118,7 +118,6 @@ In this guide, we need to install two softwares to setup the new PKM :
    This command creates a new `.emacs.d` directory with the contents of the repository.
 
 7. Once the cloning, download and install fonts :
-
    1. Open the directory where fonts are
 
       - *Windows*:

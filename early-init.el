@@ -1,8 +1,3 @@
-(add-hook 'before-init-hook (lambda () (message "🪝 before-init-hook")))
-(add-hook 'after-init-hook (lambda () (message "🪝 after-init-hook")))
-(add-hook 'emacs-startup-hook (lambda () (message "🪝 emacs-startup-hook")))
-(add-hook 'window-setup-hook (lambda ()(message "🪝 window-setup-hook")))
-
 ;; Disable package.el in favor of elpaca
 (setq package-enable-at-startup nil)
 

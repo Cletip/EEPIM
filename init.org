@@ -77,7 +77,8 @@ Remember, any change to a block with ":tangle" or ":noweb-ref" has broader impli
 
 *** Information about loading
 
-#+begin_src emacs-lisp :tangle early-init.el
+ :tangle early-init.el
+#+begin_src emacs-lisp
 
   (add-hook 'before-init-hook (lambda () (message "🪝 before-init-hook")))
   (add-hook 'after-init-hook (lambda () (message "🪝 after-init-hook")))
@@ -146,7 +147,7 @@ Remember, any change to a block with ":tangle" or ":noweb-ref" has broader impli
 			    ))
     (elpaca-no-symlink-mode))
 
-  (add-hook 'elpaca-after-init-hook (lambda () (message "🪝 elpaca-after-init-hook")))
+  ;; (add-hook 'elpaca-after-init-hook (lambda () (message "🪝 elpaca-after-init-hook")))
 
 #+end_src
 
@@ -253,44 +254,6 @@ Better declaration of packages.
 
 *** Things just after the starting
 
-**** Functions
-
-We don't know if this is elpaca-after-init-hook or window-setup-hook that will be done first.
-
-#+begin_src emacs-lisp :tangle yes
-
-  (defun eepkm-check-init-and-window-setup ()
-      "Check if both elpaca and window setup are done and then run code."
-      (when (and eepkm-elpaca-init-done eepkm-window-setup-done)
-
-	;; place here the things to do just after the starting.
-
-	(message "Emacs is ready!")
-	(open-main-tutorial)
-
-	))
-
-    (defvar eepkm-elpaca-init-done nil
-      "Flag to indicate whether elpaca-after-init-hook has completed.")
-
-    (defvar eepkm-window-setup-done nil
-      "Flag to indicate whether window-setup-hook has completed.")
-
-    (defun eepkm-elpaca-setup-done ()
-      "Set elpaca setup done flag and check if ready to run final code."
-      (setq eepkm-elpaca-init-done t)
-      (eepkm-check-init-and-window-setup))
-
-    (defun eepkm-window-setup-done ()
-      "Set window setup done flag and check if ready to run final code."
-      (setq eepkm-window-setup-done t)
-      (eepkm-check-init-and-window-setup))
-
-    (add-hook 'elpaca-after-init-hook #'eepkm-elpaca-setup-done 90)
-    (add-hook 'window-setup-hook #'eepkm-window-setup-done 90)
-
-#+end_src
-
 **** Startup page
 
 Here is the code to start with the Tutorial.
@@ -300,11 +263,11 @@ Here is the code to start with the Tutorial.
   (defun open-main-tutorial ()
     "Open a specific file and maximize the Emacs window on startup."
     (interactive)
-    (find-file (concat user-emacs-directory "PKM/notes/tutorial/" "tutorial.org"))  ; Change the path to your specific file
-    (delete-other-windows))
+    (find-file (concat user-emacs-directory "PKM/notes/tutorial/" "tutorial.org")))
 
-  ;; Add the custom startup function to the Emacs startup hook
-  (add-hook 'elpaca-after-init-hook 'open-main-tutorial)
+(add-hook 'elpaca-after-init-hook
+	    #'open-main-tutorial
+	    )
 
 #+end_src
 
