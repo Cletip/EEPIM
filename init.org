@@ -260,14 +260,14 @@ Here is the code to start with the Tutorial.
 
 #+begin_src emacs-lisp :tangle yes
 
-(setq inhibit-startup-screen t)
+  (setq inhibit-startup-screen t )
 
   (defun open-main-tutorial ()
     "Open a specific file and maximize the Emacs window on startup."
     (interactive)
     (find-file (concat user-emacs-directory "PKM/notes/tutorial/" "tutorial.org")))
 
-(add-hook 'elpaca-after-init-hook
+  (add-hook 'elpaca-after-init-hook
 	    #'open-main-tutorial
 	    )
 
