@@ -1,6 +1,7 @@
-# don't ignore the tutorial
+# don't ignore the tutorial, but the PKM/
+/PKM/*
+!/PKM/notes/
 !/PKM/notes/tutorial/
-/PKM/
 
 /personal.org
 /personal.el
