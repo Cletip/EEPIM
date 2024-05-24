@@ -138,6 +138,8 @@
 (custom-set-faces
  '(minibuffer-prompt ((t (:foreground "gold" :weight bold :height 1.7)))))
 
+(setq initial-major-mode 'org-mode)
+
 (defgroup eepkm nil
   "Customization group for EasyEmacsPKM"
   :group 'main-group  ; Inherits from main-group
@@ -590,7 +592,7 @@
 ;; Applies directory modification function to all Org export functions.
 (advice-add 'org-export-to-file :around #'eepkm-org-export-output-dir)
 
-(setq org-ellipsis "⬎")
+(setq org-ellipsis "⤵")
 
 (add-hook 'org-mode-hook 'org-indent-mode)
 

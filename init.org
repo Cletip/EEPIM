@@ -358,6 +358,15 @@ CUA Mode is a feature in Emacs that configures the keybindings to emulate the Co
 
 #+end_src
 
+
+*** Mode of scratch buffer
+
+#+begin_src emacs-lisp :tangle yes 
+
+(setq initial-major-mode 'org-mode)
+
+#+end_src
+
 ** Variable of the PKM
 
 #+begin_src emacs-lisp :tangle yes 
@@ -1061,7 +1070,7 @@ argument POS and BUFFER are not nil, mark this location instead."
 
 #+begin_src emacs-lisp :tangle yes 
 
-  (setq org-ellipsis "⬎")
+  (setq org-ellipsis "⤵")
 
 #+end_src
 
