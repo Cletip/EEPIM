@@ -1,6 +1,10 @@
-# don't ignore the tutorial, but the PKM/
-/PKM/*
-!/PKM/notes/
+# ignore data, but preserve the directory
+/PKM/data/export/*
+/PKM/data/org-attach/*
+
+# ignore notes, but don't ignore the tutorial
+
+/PKM/notes/*
 !/PKM/notes/tutorial/
 
 /personal.org

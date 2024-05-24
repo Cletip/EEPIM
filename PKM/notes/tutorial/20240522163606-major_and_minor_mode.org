@@ -1,0 +1,5 @@
+:PROPERTIES:
+:ID:       cfa35bf5-e1cf-4639-be04-b3d70427e8a6
+:END:
+#+title: Major and Minor mode
+

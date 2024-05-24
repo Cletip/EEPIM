@@ -1,0 +1,5 @@
+:PROPERTIES:
+:ID:       d576171c-80e8-4fa4-95a0-266990051a6d
+:END:
+#+title: Customize a variable
+
