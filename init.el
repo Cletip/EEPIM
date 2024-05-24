@@ -95,9 +95,13 @@
 ;; 					(load custom-file nil 'nomessage)
 ;; 				      (message "The customisation of the user [%s] is not present." custom-file))))
 
+<<<<<<< HEAD
 (setq inhibit-startup-screen t)
 
   (defun open-main-tutorial ()
+=======
+(defun open-main-tutorial ()
+>>>>>>> f0b2b75fd6e5c086e0de374a9b70a8f120f96643
     "Open a specific file and maximize the Emacs window on startup."
     (interactive)
     (find-file (concat user-emacs-directory "PKM/notes/tutorial/" "tutorial.org")))
