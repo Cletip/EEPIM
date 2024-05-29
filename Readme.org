@@ -85,6 +85,27 @@ In this guide, we need to install two softwares to setup the new PKM :
 - Choose the version suitable for your operating system. It is recommended to download at least version 28 for compatibility with most packages.
 - Follow the installation instructions on the website for your specific OS.
 
+
+** Extra dependencies
+
+For *Windows*:
+- C Compiler
+  - Download and use the installer in the [[https://www.msys2.org][official MSYS2 website]]
+  - Extract the installer of the folder and execute the installer
+  - Follow the instruction by clicking "Next"
+  - At the end, run MSYS2 and, in its terminal, (where you can type), type the following : pacman -S gcc
+  - Answer “Y”
+  - Now we will add "C:\msys64\usr\bin" to the PATH in your environmental variables :
+    - Search for "Environment Variables" in Windows Search, OR Go to Windows Explorer > Right click on "This PC" > Properties > Advanced system settings > Environment Variables
+    - At the bottom "System Variables" panel, look for a Variable named "Path" and double click on it.
+    - Click on "New", and add this :
+      C:\msys64\usr\bin.
+      If the previous method (Click on "New") don't work, add this at the end :
+      ; C:\msys64\usr\bin
+    - Click Ok, Ok
+
+Finish ! Well done !
+
 ** Setup the PKM
 
 *Windows, macOS, and Linux:*

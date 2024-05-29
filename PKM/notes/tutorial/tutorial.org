@@ -7,46 +7,734 @@ For the moment, just read the text and go down with the mouse. But if it's not y
 
 For a first-time user, the advise is to go as far as creating a node and inserting links. That's really the basics, and you don't necessarily need the rest if you don't want more.
 
-tout faire en fonction du menu ?
-
-** TODO node à faire
+** TODO choses à faire
 
 - customize une variable
-- touche RET explication F12 etc pour configurer les variables (    ;; (kbd "<escape>")
-    ;; (kbd "C-c h")) "<f11>"
-- différence org-mode Emacs
 - explication de major et minor mode
 - explication de hook ?
-- personnal file
-- what mean Meta
+- personal file
+
+et after ? now that you have all understand, you can start a fresh configuration, with your own configuration.
+
+Parcourir la config et faire tutorial à chaque fois !
+
+à la fin : clear les statebook, vérifier les liens
+
+** Introduction
+
+You're using a program called "Emacs". 
+
+Emacs is a highly expansive and versatile piece of software. Due to its broad functionality and customizable capabilities, Emacs can indeed feel overwhelming to new users. 
+
+This tutorial focus of the main information needed to use this software, but contain some links that you can click to have more informations (sometimes some "node" of the tutorial, sometimes the correct page in the manuel (in Emacs itself !), sometimes external link…) to have more information.
+ *You don't need to click on this link, but you can if you are curious.*
+
+*** Use the Menu Bar
+
+The Menu Bar in Emacs is a horizontal bar at the top of the Emacs window that provides easy access to various features via dropdown menus. It is similar to Menu Bars in other applications, offering clickable items organized into categories such as "File", "Edit", "Options", "Buffers", and "Help".
+
+Users can interact with the Menu Bar to use Emacs without needing to remember keyboard shortcuts !
+
+For example, try this :
+
+#+begin_example
+File > New Window Bellow.
+#+end_example
+
+Oh my god, what did you do !
+
+You just split the "=frame=" (the total part of Emacs) in two "=windows=". Each window has a "=buffer=" : that can be a document, an image, etc.
+That is very useful : for example, you can have two buffer to view two different document, or just to be in two different places in the same document.
+
+To switch to another buffer, just click on "Buffer" in the Menu Bar. For example, switch to the buffer "=*scratch*=".
+This buffer is special : he is always created, and the text inside will not be saved. It is just to try some things !
+
+To restore the frame as before, click on the buffer of the Tutorial, and in the Menu Bar, do File > Remove Other Windows.
+
+Well done again !
+
+In the menu selection, you can see things like "C-x 1", or "M-g a". This is the keyboard shortcut ("key binding" or "keybinding") assigned to a "functionally". All "functionalities" are =command=, and you call command by several ways. The first method is to use the Menu Bar, the second is with shortcut.
+
+=C= stands for Ctrl. 
+=M=, for Windows, it's Alt.
+
+So =C-x C-s= is:
+
+Ctrl + X, then Ctrl + S (this will be, while you keep pressing Ctrl, press x then s). This will call the command "save-buffer" : you just save this file, well done !
+
+[[file:images/2021-08-07T135603.png]]
+
+*** Call commands, cancel command you are typing
+
+=M-x= is a special command in Emacs. When you call it, your cursor moves to the bottom part of the screen, prompting you to type a command. This is the the "=Minibuffer=" in Emacs : when Emacs will ask you something, that will always be here !
+
+Let's try to hide and show the Menu Bar as an example.
+
+Press =M-x= and type "=menu-bar-mode=", then type =RET=.
+
+This operation is usually written as :
+=M-x menu-bar-mode= or =M-x menu-bar-mode RET=.
+
+Menu Bar on top disappears with the text in Minibuffer saying, "Menu Bar mode disabled".
+
+#+caption: Menu Bar is turned off and not visible any more
+[[file:images/2021-08-07T135811.png]]
+
+If you call the same command again, the Menu Bar appears again ("Menu Bar mode enabled").
+
+#+caption: Menu Bar is visible on top of the window
+[[file:images/2021-08-07T135844.png]]
+
+Notice that you could have select, in the Menu Bar : Options > Show/Hide > Menu Bar.
+
+In Minibuffer, you can also just type "me ba mo" (or "bar mo men" the order doesn't matter) because the search is very versatile.
+Then, you can select =menu-bar-mode= (using the arrow if it's not the first choice), and press =RET=. You can press "=TAB=" (tabulation) to complete the current candidate.
+
+To cancel a command, like =M-x=, just press =ESC= (Escape). You will see "Quit" displayed in the Minibuffer as you can see in the image below.
+
+[[file:images/2021-10-15T180145.png]]
+
+*** Edit a file
+
+Let's go edit a document.
+
+Split you frame in two windows, and switch to the buffer "=*scratch*=". In this buffer, add a "=heading=" and some texts : A =heading= is use to struture some notes.
+To create a heading, just type =*=, then SPC (=SPC= stands for the space bar) and then type something some text to create a "heading".
+
+Now, create a "subheading" : press "RET" two time, and type two time "*", then SPC, and then some text (like the first heading).
+
+Then, add some normal text : press "RET" two time again, and type some text (to create… some text, wow !).
+
+Now, click on the first heading, and press "TAB".
+
+What did you do, all just deseapear !
+
+No worry, the subheading and text is just "hidden" : pressing "TAB"" on a heading cause the text (and subheading) under that heading to disappear or fold. This feature is known as folding or collapsing, and it's very useful for managing large documents by temporarily hiding parts you're not currently working on.
+
+The visibility of a heading is a cycle, like that :
+
+#+begin_example
+
+Folding -> Press TAB -> View only subheading -> Press TAB -> View all the text -> Press TAB -> Folding -> …
+
+#+end_example
+
+Now you understand that, how can you access of all the magic ? In the Menu Bar of course !
+All of this is in the "Org" section.
+Why "Org" ?
+Because Emacs use some "Packages" : a package is a group of functionalities that can be built-in or downloaded.
+The package to do all this things is "Org". Simpe isn't it ?
+
+#+caption: Menu Bar section for Org Mode
+[[file:images/2021-10-16T115900.png]]
+
+The Menu Bar Section of "Org-mode" is not the exhaustive list of things you can do with Org mode (you can do a lot of things !), but it is handy for a beginner.
+We will dive into it later.
+
+As you maybe notice, you can fold the document of the Tutorial, because it use "Org" too !
+
+*** Select area of text
+
+Probably the easiest to select an area of text is to use your mouse; just drag an area (called a "region" in Emacs).
+
+[[file:images/2021-10-16T110926.png]]
+
+You can use =ESC= to remove the selection.
+
+If you are looking for a way to select the whole text, try the Menu Bar, =Edit > Select All=. It's also assigned to =C-a=. This operation to select an area of text is called "mark" (you are marking a region), and selecting the whole text you are looking at is done via a function called =mark-whole-buffer=.
+
+#+caption: Select all the text from Menu Bar
+[[file:images/2021-10-16T110955.png]]
+
+** The Menu
+
+While keyboard shortcuts are efficient and can speed up your workflow, frequently using specific combinations like Ctrl + a can become cumbersome. To enhance your experience and simplify navigation, I've designed a menu-based interface for you. This interface will serve as the primary tutorial, providing a comprehensive guide to all the available features and functionalities.
+
+To open the menu, just press "F11", and you will have something like that :
+
+[[file:images/menu.png]]
+
+(If you want change the shortcut to open the Menu, customize the variable "eepkm-master-hydra".)
+
+As you can see, on the right, you have a section "Nodes", and on the left, you have other Submenus.
+
+To use the menu, just type the letter, and the command associated with it will run.
+
+*** Nodes
+
+This section is the most important part : taking notes and make some links.
+Org focus on taking notes, Org-roam, another package, is a powerful tool for networked note-taking within Emacs.
+
+**** What is a "Node" ?
+
+In Org-roam, a "node" can be thought of something searchable, (meaning with an "attached unique identifier" (ID)). Nodes are designed to be part of a connected knowledge network : a big part of the PKM.
+
+This "Tutorial" is… a node. 
+The heading "What is a Node ?" is also a node.
+
+But… where is this famous ID ?
+
+The ID is in the "Properties "Drawer"… wait, you never see one ?
+To view it, do M-x org-tidy-mode.
+
+Yes, the drawer was just here !
+
+Re-call te command to hide the drawer.
+
+If you want to always see the drawer, customize the variable "eepkm-org-tidy".
+
+**** Find and Insertion 
+
+To find a node, just open the menu, and call "org-roam-node-find", and to insert a link, call "org-roam-node-find".
+As you can see, you can jump and insert to any section of this tutoriel, because all heading are actually… nodes.
+
+The display of this two commands are very handy : you can search like if you search a command (so you can put some SPC), and you can see with a hierarchical view to know : what does X mean, oh yes, it is in Y, I remember now !
+To finish, you can use the arrow to have a preview of each node if you are still not sure of what node it is.
+
+***** Link
+
+A link in Org is like this (without the space between the "[]") :
+#+begin_example
+
+[ [typeOfLink:destination] [Description] ]
+
+#+end_example
+
+To modify the link, you have two choice :
+- put the cursor on the link, and call the command org-insert-link : Menu Bar > Org > Hyperlinks > Insert Link (or use the menu)
+- toggle the visibility of link to show the complete link and not only the description : Menu Bar > Org > Hyperlinks > Literal link (command org-toggle-link-display)
+
+To have more detail, you can check the [[info:org#Hyperlinks][manual]].
+
+***** Node that doesn't exist yet
+
+What happen if you complete the command "org-roam-node-insert" or "org-roam-node-find" with something that… don't exist ?
+
+This will create a new node for you ! You will have something like that :
+
+[[file:images/capture-basic.png]]
+
+You can write what you want, and then finish the "capture" process.
+
+To have your own template, you can view this : [[id:29254ea8-09b8-4456-98c8-690433b84bca][Exemple 2 : Org-roam templates]].
+
+***** Alias
+
+Sometimes, you want to find a note by writing "Hello", but the node has the name of "World".
+To overcome this problem, the command "org-roam-alias-add" exists, which allows you to add an alias, and despite to be able to search for nodes with another name.
+
+***** Deactivate the tutorial in nodes search
+
+Maybe you don't won't to be polluted with nodes of the Tutorial.
+To deactivate all the search in the Tutorial, you can customize the variable "eepkm-include-tutorial".
+
+**** Visualisation of the graphe
+
+**** Graphical user interface
+
+Org-Roam-UI is an extension for Org-Roam that provides a graphical user interface (UI) for navigating and visualizing your network of notes. It enhances the capabilities of Org-Roam by offering a more intuitive and interactive way to explore your notes and their connections.
+
+***** Using the "org-roam-ui"
+
+To access Org-Roam-UI, simply call the "org-roam-ui-open" command within Emacs. This command launches the Org-Roam-UI interface, displaying the interactive graph visualization of your notes network.
+
+Once Org-Roam-UI is open, you can interact with the graph, explore your notes, and leverage its features to gain a deeper understanding of your knowledge base organized with Org-Roam.
+
+***** Key Features of Org-Roam-UI 
+:PROPERTIES:
+:ORG-MODIFIED-SUPPRESS: t
+:ID:       b9e36d95-f31e-48e2-b8db-0f79e79f8320
+:END:
+
+1. **Interactive Graph Visualization:** Org-Roam-UI presents your notes as nodes in a graph, with connections between them represented as edges. This graphical representation allows you to visually explore the relationships between your notes and quickly identify patterns and clusters.
+
+2. **Node Information:** When you select a node in the graph, Org-Roam-UI displays information about the selected note, such as its title, tags, and backlinks. This contextual information provides valuable insights into the content and connections of the selected note.
+
+3. **Search and Filtering:** Org-Roam-UI includes search and filtering capabilities that allow you to narrow down your view of the graph based on specific criteria, such as tags or keywords. This makes it easier to focus on relevant subsets of your notes and navigate your network more efficiently.
+
+4. **Graph Navigation:** You can navigate through the graph using various navigation controls provided by Org-Roam-UI. These controls allow you to zoom in and out, pan across the graph, and reposition nodes to optimize your view.
+
+*** Other Submenu
+
+Not everything fits into one menu, thus the creation of submenus.
+Each submenu has its specificities.
+
+**** Org Submenu
+
+If a command is related to a specific Org mode functionality being searched for, it will be quickly found within this section.
+
+The "Org Submenu" will gather the most useful commands, but  many of the command descriptions are clear enough to be used without further explanation.
+
+However, for more details about all the concept that Org mode can handle, you can consult this section.
+
+In some section, there will be the default shortcut, because some shortcut of Org are very handy.
+
+***** Org manual
+
+The org-info command in Emacs Org mode is a convenient way to access Org mode manual directly within Emacs. This manual provides detailed information on all aspects of Org mode, from basic usage to advanced features.
+
+To open the manual, call the command org-info (in the "Misc" section of the submenu of Org mode).
+
+You can navigate with the mouse, but press "i" to initiate a search is often quicker.
+
+For example, call "org-info", press "i", and search "timestamps". This will direct you to the section of the manual that discusses how to use timestamps in your Org documents.
+
+To move through the sections of the manual, you can press "n" (for next), "p" (for previous), "m" to go inside a subsection, and "u" for the upper section. 
+
+***** Main things to know for taking notes in Org
+
+****** All is plaintext
+
+Org mode in Emacs is designed around a simple yet powerful principle: plain text.
+
+This plain text approach ensures that Org files are lightweight and editable with any text editor, not just within Emacs (even if it's better inside it).
+
+This core concept is to enable to organize notes, maintain to-do lists, track tasks, and even write complex documents like books or academic papers, all within a simple, readable format that's easy to edit and maintain. This format uses straightforward, intuitive syntax to denote structure (like headings, lists, and links), metadata (like tags and properties), and formatting (like bold or italic text).
+
+The text will be here, forever.
+
+As wrote before, *All* =is= *text*. So, for example, if a command add "TODO", you can write yourself "TODO" : it's the same, the command is just here to facility the interaction with Org.
+
+******* Modern style
+
+By default, notes are only plain text, which is functional but may not visually highlight the structure or important elements of your notes effectively. 
+If the variable "eepkm-org-modern-mode" is set to "t", Emacs will add additional styling like font changes, color highlights, or other typographical enhancements that make the notes easier to read and navigate (but you will not see always the text !).
+
+The suggestion is to activate this variable when you are comfortable with Org-mode.
+
+TODO lien. To activate this, just activate the variable "eepkm-org-moderne-mode".
+
+TODO understand difference between emacs and org-mode
+
+Before the activation :
+[[file:images/org-modern-text.png]]
+
+After the activation :
+[[file:images/org-modern-activate.png]]
+
+****** Heading
+
+In Org mode, headings are the building blocks of your documents. They help you organize your content hierarchically. A heading is a line of text that starts with one or more asterisks (*) . The number of asterisks determines the level of the heading:
+
+- One asterisk (*) represents a top-level heading.
+- Two asterisks (**) represent a second-level heading (subheading).
+- Three asterisks (***) represent a third-level heading, and so on.
+
+M-RET (org-meta-return) is used to quickly insert a new heading or list item directly below the current line, depending on the context:
+- In a heading context: When the cursor is at a heading, M-RET will insert a new heading of the same level immediately after the current heading. This is useful for expanding sections or adding new topics to your document without disrupting your workflow.
+- In a list context: If the cursor is at a list item, pressing M-RET will create a new list item at the same level as the current one. This makes it very convenient to extend lists without having to manually format each new item.
+
+[[info:org#Headlines][More information in the manual]].
+
+****** List
+
+List are very easy to create. To simplify, just but "1." or "-", and do the command "org-meta-return" to create new item.
+
+You can do several operation on list, like cycle between "1." and "-", or why not sort the list ?
+
+The command "org-toggle-heading" is very handy to switch between list and heading (don't forget to select the text that you want modify before).
+
+[[info:org#Plain Lists][The manual is very well documented for more explanation]].
+
+****** Visibility
+
+One essential navigation command is pressing the TAB key. When you press TAB, it cycles through different levels of visibility or "folding" in the document.
+
+TAB (org-cycle) cycles the visibility of headings and content in Org mode. When you press TAB at a heading, it toggles between showing and hiding the content under that heading. If the heading is collapsed, pressing TAB will expand it to show its direct children. Pressing TAB again will expand it further to show all sub-content recursively or collapse it back.
+
+Shift-TAB (org-shifttab) cycles the visibility of all headings and content in the document. It's useful for quickly expanding or collapsing all sections of your document. The cycling usually goes through states where all headings are shown but content is hidden, all content under headings is shown, and finally, all content is collapsed.
+
+See also [[info:org#Global and local cycling][Global and local cycling in the manual]].
+
+****** Operation on Headings
+
+You can move headings up and down within the document.
+
+M-up/down (org-metaup/org-metadown) allow you to move the entire subtree (the current heading and all its children) up or down, respectively. It's a quick way to reorder sections or tasks within your Org document without having to cut and paste.
+
+You can also promote or demote headings to change their level.
+
+M-left/right (org-metaleft/org-metaright) will promote/demote the current heading. Conversely, pressing Alt + Right will demote the current heading, increasing its depth and making it a lower-level heading. This affects the hierarchy of your document's structure.
+
+If you want to promode/demote the heading and all his child, you can us M-Shift-left/right.
+
+[[info:org#Structure Editing][View in the manual]] for more details.
+
+****** Emphasis
+
+To keep notes, there is some markup to make things stand out a bit more visual. You can use the following markup:
+
+#+begin_example
+
+You can make words *bold*, /italic/, _underlined_, =code= and ~verbatim~, and, if you must, +strike-through+.
+
+#+end_example
+
+The render will be like this:
+
+*Bold*, /italic/, _underlined_, =code= and ~verbatim~, and, +strike-through+.
+
+You can use the one you want, for whatever you want !
+
+More information in the [[info:org#Emphasis and Monospace][manual]].
+
+***** Links
+
+In Org mode, links are a powerful way to connect your notes to other sections of your document, external files, websites, and even other Org mode documents. There is two primary commands: =org-insert-link= and =org-store-link=.
+
+****** Link with other node
+
+As explain before, there is a lot of type of link. For the convenience, you can quickly add a link to a node in the menu find with the command "org-roam-node-insert".
+
+But, how can you link other things, like document and website ?
+
+****** Store and insert link
+
+You can, everywhere and in (almost) every document (even if you are in the manual of Emacs !) store a "link" with the command "org-store-link".
+
+When you store a link, you will have something like this :
+
+[[file:images/org-store-link-result.png]]
+
+Then, you will be able to insert the link (or any type of link) with the command "org-insert-link" :
+
+[[file:images/org-insert-link-type.png]]
+
+As you can see, stored link are on the top.
+
+If it's a url, you can simply put the url here.
+After select the type of link you want (or paste the url), you will be asked to the "description" :  this will be the way the link will be displayed in the notes (to see the complete links, see the command "org-toggle-link-display").
+
+You have a lot of type possible. The most important is maybe the "file:" type link : you can link to any other document of your computer.
+
+BUT, you will maybe use another… file system with org-mode ! Check the TODO org-attach.
+
+***** Todo
+
+A main feature in Org-mode is his capability to organise the task. TODO entries in Org mode are used to track tasks within your documents, allowing you to easily see what needs to be done, what is in progress, and what has been completed.
+
+In Org mode, to create a "TODO entries", you just have to add "TODO" in the beginning of a headlines marked. The command "org-todo" simplify this. To mark a heading as "DONE", just replace "TODO" with "DONE", org recall the command "org-todo"
+
+You can also use Shift-left/right to cycle between the state !
+
+Consult the TODO section to consult all your todo.
+
+[[info:org#TODO Items][Page in the manual]]
+
+***** Timestamp
+
+All related with the agenda.
+
+***** Tags
+
+Tags are a fundamental feature in Org mode : they can be used to filter and search through your documents quickly, making it easier to manage large amounts of information.
+
+In Org mode, tags are keywords attached to headlines. Tags are typically displayed at the end of a headline, enclosed in colons, like :thisIsTag:. You can write this yourself, or call the command "org-set-tags-command" to add tag easier.
+
+Consult the TODO section to consult all your tag.
+
+[[info:org#Tags][Page in the manual]]
+
+***** Attach
+
+Attaching documents to a heading in Org mode is a practical way to manage and link related files directly within your notes or tasks. The file can be images, directory, pdf, etc.
+
+This capability is particularly useful for keeping all relevant resources close to their respective topics or tasks. This method, with the connected knowledge network, can replace your classic hierarchical file-system !
+
+****** Attaching something
+
+To attach a file, you can follow this step :
+
+1. Navigate to a Heading: Move your cursor to the heading where you want to attach a file.
+2. Attach a File: call the command "org-attach" to initiate attachment options. Here is a lot of option, but the best are "c" for "copy" and "m" for move the file.
+   [[file:images/org-attach.png]]
+3. This will open a file dialogue or prompt you to enter the path of the file you wish to attach (by default, the directory is the "Download" directory).
+   [[file:images/attach-file.png]]
+4. Select the File: Navigate to the file you want to attach and select it by pressing RET. Org mode will attach this file to the heading, creating the tag "ATTACH" in the same time
+
+****** Managing attachments
+
+Here’s how to handle common tasks related to attachments.
+
+******* Open attachment
+
+To open attachment, just call the command "org-attach-open" : this will display a list of attached files.
+
+Use the arrow keys to navigate to the file you wish to open and press RET to open.
+
+Org mode will open the selected file using the default application associated with its file type.
+
+******* See all attachment
+
+To see all attachments, call the command "org-attach-reveal" : this opens the directory attached directory associated with the heading, where all attachments for the current heading are stored.
+
+This is particularly useful when you want to manage files using your system’s file manager or check the contents of the attachment directory.
+
+******* Insert attachment in notes as a link
+
+You can have some link directly in your notes to visit your attachments.
+
+To do this, place your cursor where you want to insert the link in your Org document, then call the command "org-insert-link", and select the "attachment:": A list of attached files will appear. Use the arrow keys to select the file you want to link to and press RET.
+Finally,  enter a description for the link.
+
+******* Open in external application
+
+When you open attachment, you want maybe not be inside Emacs. To do that, just use the command "xah-open-in-external-app".
+
+***** Agenda and views
+
+Org-agenda is part of the Org mode package in Emacs. It can compiles several views from all your Org files into a single buffer, helping you track TODO, schedule and deadlines tasks, tags, and more.
+
+This is not only a "Agenda", because it can be use for many other things.
+
+Use the command "org-agenda" to open the main menu of org-agenda.
+
+[[file:images/org-agenda-menu.png]]
+
+The main features are :
+- a : shows timestamps, scheduled, and deadline for the current week.
+  You can use f (forward) and b (backward) to navigate through time in your agenda. Furthermore, press d to see the agenda just for a day, and w to return to the week view.
+- t : if you want to know all your TODO, you can do for it.
+- m : search for some tags
+- e : export your agenda into another format
+
+After select the option, you can press TAB (to move to the heading and keep open the buffer Org-agenda) or RET (to move to the heading and hide the buffer Org-agenda) to directly jump in the right place !
+
+To have all options possible inside the org-agenda, press "v" inside the org-agenda buffer.
+
+****** Managing heading within Org-agenda
+
+When in Org-agenda buffer, you can use "t" to cycle through TODO states (e.g., TODO -> DONE).
+To schedule a task, press "s" to schedule a date. The same for set a deadline but with "d".
+
+****** Filtering
+
+You can filtering with a tag, expression, or even more.
+
+To have even more method to filter, you can check the [[info:org#Filtering/limiting agenda items][manual]].
+
+***** Capture
+
+Work in progress.
+
+***** Exportation
+
+You can export 
+
+**** Windows/Buffer/File Management
+
+This submenu is useful to organise the disposition of document in Emacs
+
+***** Frame and Windows
+
+- Splitting Windows: You can split the current window into two, either horizontally (split-window-below) or vertically (split-window-right). This allows you to view and edit multiple buffers side-by-side within the same frame.
+
+- Deleting Windows: You can close the current window (delete-window) or all other windows except the current one (delete-other-windows), helping to clean up your workspace.
+
+- Frame Management: Similar to window management, but at the frame level — creating a new frame (make-frame) or closing the current frame (delete-frame).
+
+- Layout Undo/Redo: With winner-undo and winner-redo, you can undo or redo changes to the arrangement of windows and frames, allowing you to revert to previous layouts if you mistakenly change something.
+
+***** Buffer
+
+A buffer in Emacs is a region of text that has been read into Emacs's memory, which could be part of a file, a document, a process output, etc.
+
+- Switching Buffers: The switch-to-buffer command allows you to switch your current window to display a different buffer, effectively changing what you're working on without altering the window layout.
+
+- Killing Buffers: The kill-buffer command closes the current buffer. If the buffer has unsaved changes, Emacs will prompt you to save those changes before closing.
+
+- Refreshing Buffers: revert-buffer reloads the current buffer from its file on disk. This is useful if the file has been changed outside of Emacs, allowing you to update Emacs's buffer to match the file's current contents.
+
+***** Bookmark Management
+
+Bookmarks in Emacs are pointers to locations in files, making it easy to return to specific places without remembering exact file names or line numbers.
+
+- Setting Bookmarks: The bookmark-set command allows you to create a bookmark at your current location in a file, which you can return to later with bookmark-jump.
+
+- Jumping to Bookmarks: bookmark-jump moves your cursor to the location of a previously set bookmark, facilitating easy navigation across complex projects or documents.
+
+- Bookmark Window Layouts: With bookmark-view-save, you can save the current arrangement of windows and buffers as a bookmark, enabling you to restore that exact layout at a later time. To restore it, just use the command "bookmark-jump" 
+
+**** Basic Movement and Edition
+
+This menu is quite clear and doesn't require any additional explanations or points.
+
+It's there to facilitate the movement and editing of Emacs.
+
+Most tools are available in the Menu Bar. 
+
+**** Help and Customisation
+
+This section is useful to better understand Emacs and to customize it.
+
+***** Help
+
+This section provides quick access to tools for understanding and using various Emacs features:
+
+- Describe Function: Allows you to enter a function's name to get detailed information about what the function does and how to use it.
+- Describe Variable: Useful for finding out details about configuration options (variables), including their current values and documentation.
+- Describe Key: Tells you what a specific key combination does in Emacs.
+- Describe Mode: Provides information about the currently active modes and their features. Customize This section focuses on commands that let you configure and personalize Emacs:
+
+***** Customisation of variable
+
+This section is very important : this is here were you will have the most customisation.
+
+- Customize Variable: Opens an interface for changing the value of a variable, with changes that can be saved permanently.
+- Customize Group: Allows you to modify settings related to a group of related options, making it easier to configure aspects of Emacs related to a particular feature.
+- Customize Face: Useful for altering the appearance (like font size, color, and style) of text in Emacs.
+- Customize Option: Lets you tweak individual configuration options directly.
+- Customize Themes: Provides a way to change the overall look and feel of Emacs through themes.
+
+***** Documentation
+
+This section is geared towards accessing general and specific documentation:
+
+- Info (info): Opens the Info viewer, which contains detailed documentation for Emacs and many packages.
+- View all Messages (view-echo-area-messages): Displays all the messages that have appeared in the echo area, useful for reviewing past notifications and errors.
+
+**** Execute a command with name
+
+This is exactly like M-x, but placed in the menu to be more convenient.
+
+
+** The world of Org (node todo)
+
+There will be a lot of shortcut in this section, but don't forget that can also rely on the Menu Bar, the Org Submenu, or even M-x if you want to just try a command for example.
+
+Don't forget too : you can fold and jump to the part that interest you the most !
+You don't have to
+
+*** Create new Heading/Node/Item
+
+To create new heading quickly, you can use the command "org-meta-return" : allows you to create a new heading or list item in an Org mode document.
+
+*** Handle links
+
+Insert Link (org-insert-link)
+Description: This command is used to insert a hyperlink in your Org document.
+Tutorial:
+
+Navigate to the position in your Org file where you want to insert a link.
+Press C-c C-l (org-insert-link).
+First, you’ll be prompted to enter the link URL. After entering the URL, press Enter.
+Next, enter the descriptive text for the link and press Enter. The link will be inserted in the format [[URL][Description]].
+Store Link (org-store-link)
+Description: This function lets you store a link to the current location (in any buffer or file) that you can later insert using org-insert-link.
+Tutorial:
+
+Go to the item (such as a web page in a browser, a location in a file, etc.) to which you want to link.
+Press C-c l (org-store-link) to store the link.
+Later, when editing an Org file, use org-insert-link to insert the stored link.
+Toggle TODO (org-todo)
+Description: Toggle the TODO state of a heading. Org mode supports TODO sequences to track the status of tasks.
+Tutorial:
+
+Position your cursor at the beginning of a heading.
+Press C-c C-t (org-todo). Each press cycles through the configured TODO states (e.g., TODO -> DONE -> NONE).
+Add a Tag to Heading (org-set-tags-command)
+Description: This command adds tags to an Org mode heading, which helps in categorizing and filtering sections.
+Tutorial:
+
+Move the cursor to the desired heading.
+Press C-c C-q (org-set-tags-command).
+Enter the tags separated by colons and press Enter. Tags will be displayed at the end of the heading in the format :tag1:tag2:.
+2. Navigation
+Up Heading (outline-up-heading)
+Description: Move the cursor to the parent heading of the current section.
+Tutorial:
+
+Place your cursor under a subheading.
+Press M-{ (outline-up-heading) to move directly to the parent heading.
+Next Heading (org-next-visible-heading)
+Description: Navigate to the next heading in your Org document.
+Tutorial:
+
+Press C-c C-n (org-next-visible-heading) to move the cursor to the next visible heading.
+Previous Heading (org-previous-visible-heading)
+Description: Navigate to the previous heading in your Org document.
+Tutorial:
+
+Press C-c C-p (org-previous-visible-heading) to move the cursor to the previous visible heading.
+3. Misc
+Attach Document to Node (org-attach)
+Description: Attach files or documents to an Org node, which is helpful for keeping related files linked to your notes or tasks.
+Tutorial:
+
+Position your cursor at an Org heading.
+Press C-c C-a a (org-attach). Follow the prompts to select and attach files.
+See Attached Document for the Node (org-attach-reveal)
+Description: Open a directory listing of all files attached to the current Org node.
+Tutorial:
+
+Ensure your cursor is at a heading with attachments.
+Press C-c C-a r (org-attach-reveal) to open the directory containing the attachments.
+Open Agenda (org-agenda)
+Description: Access the powerful Org agenda views to see a summary of tasks and schedule.
+Tutorial:
+
+Press C-c a (org-agenda).
+Choose an agenda view (e.g., press a for the agenda for the current week).
+Open Agenda in External (org-hyperscheduler-open)
+Description: This typically refers to opening an Org-mode agenda in an external application or view, but specifics depend on how org-hyperscheduler is set up.
+Tutorial:
+
+Ensure org-hyperscheduler is properly configured.
+Press the designated shortcut (not provided in standard Org mode).
+Capture Item (org-capture)
+Description: Quickly capture new notes, tasks, or other items without having to navigate away from your current work context.
+Tutorial:
+
+Press C-c c (org-capture).
+Select the type of item you want to capture (e.g., a todo item, a note) and follow the prompts.
+Switch Org Buffer (org-switchb)
+Description: Switch between open Org buffers easily.
+Tutorial:
+
+Press C-c b (org-switchb).
+Choose from the list of open Org buffers to switch to.
+Export (org-export-dispatch)
+Description: Export your Org document to various formats (PDF, HTML, etc.).
+Tutorial:
+
+With an Org file open, press C-c C-e (org-export-dispatch).
+Choose the desired export format and follow the prompts.
+Toggle Node<->Heading (eepkm-toggle-roam-exclude)
+Description: This custom function might toggle certain properties or metadata related to Org-roam or other configurations for a heading.
+Tutorial:
+
+Place your cursor on the heading to toggle.
+Press the designated shortcut for eepkm-toggle-roam-exclude (you need to specify or ensure it's set up in your configuration).
+Each tutorial here is designed to be a straightforward introduction, assuming no prior knowledge of these features.
+
+
+** Find more information
+
+- browse the built-in tutorial that will familiar things for you
+- browse the manual info-emacs-manual (search with "m", "q" to quit, "h" for a big help)
+- do the command "org-info" and explore org-mode !
+- 
+- online
+  - reddit
+  - chatgpt
 
 ** The basics 
 :PROPERTIES:
 :ID:       1c0933eb-e0b9-4f90-a98b-1a034f6a8a32
 :END:
-:LOGBOOK:
-- State "TODO"       from              [2024-05-14 Tue 20:17]
-:END:
-
-You're using a program called "Emacs". 
-Emacs is a highly expansive and versatile piece of software. Due to its broad functionality and customizable capabilities, Emacs can indeed feel overwhelming to new users. 
-This tutorial focus of the main information needed to use this software, but contain some links that you can click to have more informations (sometimes some "node" of the tutorial, sometimes the correct page in the manuel (in Emacs itself !), sometimes external link…) to have more information.
- *You don't need to click on this link, but you can if you are curious.*
 
 *** The interface
 
 The whole things is call a "frame". 
 In this frame, there is one window, containing several parts (from top to down):
 
-TODO faire un node :
-
-1. The menu bar: offers access to almost all Emacs functionalities through drop-down menus. It categorizes options under headings like File, Edit, Options, Buffers, Tools… You can explore this menu, but it is not the main to retain.
-2. The toolbar: typically provides quick access to frequently used commands such as opening, saving, copying, and pasting files, among other things. It is displayed as a row of icons below the menu bar.
+1. The Menu Bar: offers access to almost all Emacs functionalities through drop-down menus. It categorizes options under headings like File, Edit, Options, Buffers, Tools… You can explore this menu, but it is not the main to retain.
+2. The toolbar: typically provides quick access to frequently used commands such as opening, saving, copying, and pasting files, among other things. It is displayed as a row of icons below the Menu Bar.
 3. A window (a frame can have several windows !), containing :
    1. The Buffer: The main area of the Emacs window is called the buffer. This is where files, text, and other content are displayed. When you first open Emacs, the Tutorial is automatically open for you.
    2. The Mode Line: Near the bottom of the window, there's a line called the mode line. This provides information about the current buffer, such as its name, the major and minor modes it's using, and whether the content has been modified.
 4. The Echo Area: At the very bottom of the window, below the mode line, is the echo area. This area displays helpful messages, prompts for input, and shows the results of commands.
-5. And finally, The Minibuffer (hidden): Located at the very bottom, the minibuffer is *where Emacs asks you for input*. You’ll type file names, search queries, and other commands here.
+5. And finally, The Minibuffer (hidden): Located at the very bottom, the Minibuffer is *where Emacs asks you for input*. You’ll type file names, search queries, and other commands here.
 
 See also [[info:emacs#Commands][The Organization Of The Screen in the manual]].
 
@@ -64,9 +752,9 @@ This helps keep your notebook tidy and makes it easier to navigate through large
 
 A menu is implemented for the main commands that are useful.
 
-Press F12 if you want to see it, simple and intuitive, just type the letter when you are in the menu to do what you want.
+Press F11 if you want to see it, simple and intuitive, just type the letter when you are in the menu to do what you want.
 
-By default, the menu is bound to the key "F12" : try to open the menu ! If you miss and don't want to do something, you can quit by pressing Escape.
+By default, the menu is bound to the key "F11" : try to open the menu ! If you miss and don't want to do something, you can quit by pressing Escape.
 
 For each 
 
@@ -90,7 +778,7 @@ There are four main ways to access commands in Emacs. The first is the only one 
 
 2. Using the command "execute-extended-command" (mapped in the menu) or by pressing Meta+x: Here, you can type the name of the command (you can complete a command name with "TAB", and move with the arrow to chose the command) you want to execute and press Enter to run it. This method is particularly useful when you know the name of the command but not its keybinding. The completion system is flexible : you can type "to ba" to find "tool-bar-mode" for example.
 
-3. Using the Menu at the Top: Emacs has a menu bar at the top of the window, similar to other graphical applications. You can use this menu bar to find and execute commands by navigating through the menus and submenus.
+3. Using the Menu at the Top: Emacs has a Menu Bar at the top of the window, similar to other graphical applications. You can use this Menu Bar to find and execute commands by navigating through the menus and submenus.
 
 4. Using Keyboard Shortcuts: You can execute commands by pressing the appropriate key sequence, often consisting of a combination of modifier keys (such as Ctrl or Meta) and regular keys. For example, Control-a is entered by holding down the Ctrl key while pressing a; we will refer to this as C-a for short. Similarly, Meta-a, or M-a for short, is entered by holding down the Alt key and pressing a.
 
@@ -105,15 +793,6 @@ To stop a command during his process, press ESCAPE (or Control + G), e.g. to qui
 
 The Menu is a graphical way to have the information about the command that you will execute, but you have several other ways to execute commands.
 
-*** Find more information
-
-- browse the built-in tutorial that will familiar things for you
-- browse the manual info-emacs-manual (search with "m", "q" to quit, "h" for a big help)
-- 
-- online
-  - reddit
-  - chatgpt
-
 *** The size of text
 
 The variable "eepkm-text-scale" controls the size of the  in Emacs, specifically tailored for customization for you, the user. TODO lien changer variable : Changing this variable to another number allows you to customize how much the text size changes when you use scaling commands.
@@ -121,83 +800,12 @@ A negative number is possible to reduce the size.
 
 For the margin, same with "eepkm-margin". The number correspond to the "size" of text display.
 
-** Windows and buffer
+** Backlinks !
 
-Within the menu, under the "Window" section, you have several commands to manage windows:
-
-- Split Horizontally: Splits the current window into two, top and bottom.
-- Split Vertically: Splits the current window into two, left and right.
-- Undo Window Changes: Reverts to the previous window layout.
-- Redo Window Changes: Reapplies the last undone layout.
-- Close Other Windows: Makes the current window the only one visible.
-- Close Current Window: Closes the focused window.
-
-Test it to be confident !
-
-** Understanding Headings and Subheadings in Org Mode
-
-In Org mode, headings are the building blocks of your documents. They help you organize your content hierarchically. A heading is a line of text that starts with one or more asterisks (*) . The number of asterisks determines the level of the heading:
-
-- One asterisk (*) represents a top-level heading.
-- Two asterisks (**) represent a second-level heading (subheading).
-- Three asterisks (***) represent a third-level heading, and so on.
-
-[[info:org#Headlines][More information in the manual]].
-
-*** Visibility
-
-One essential navigation command is pressing the TAB key. When you press TAB, it cycles through different levels of visibility or "folding" in the document.
-
-Try to be on a heading and type TAB to cycle !
-
-See also [[info:org#Global and local cycling][Global and local cycling in the manual]].
-
-*** Create heading
-
-To create a heading, simply type an asterisk (*) followed by a space and the title of your heading.
-
-You can also do the commande "org-meta-return".
-*** Moving Headings
-
-You can move headings up and down within the document:
-
-- M-up moves the current heading and its subtree up.
-- M-down moves the current heading and its subtree down.
-
-*** Increasing and Decreasing Heading Levels
-
-You can promote or demote headings to change their level:
-
-- M-left demotes the current heading, making it a subheading of the previous heading.
-- M-right promotes the current heading, making it a sibling of the previous heading.
-
-*** Modern style
-
-By default, notes are only plain text, which is functional but may not visually highlight the structure or important elements of your notes effectively. 
-If the variable "eepkm-org-modern-mode" is set to "t", Emacs will add additional styling like font changes, color highlights, or other typographical enhancements that make the notes easier to read and navigate (but you will not the always the text).
-
-TODO lien. To activate this, just activate the variable "eepkm-org-moderne-mode".
-
-TODO understand difference between emacs and org-mode
-
-Before the activation :
-[[file:org-modern-text.png]]
-
-After the activation :
-[[file:org-modern-activate.png]]
-
-** Understand nodes
-
-Now that you now create some notes, it's important to link this notes together. We will see how to create a "node", that is define as an entry point in your PKM.
-
-** Searching and inserting 
-
-*** Searching node
+** Searching and inserting
 
 To search a node, call the command "org-roam-node-find".
 To insert a node in anothe node, call the command "org-roam-node-insert".
-
-*** Searching text
 
 To search through the text of the current node, call "consult-grep".
 To search through the whole PKM, call "consult-org-roam-file-find".
@@ -211,28 +819,6 @@ Now that you know how to create notes and links them together, I will explain ho
 *** Other
 
 *** Para
-
-** Graphical user interface
-
-Org-Roam-UI is an extension for Org-Roam that provides a graphical user interface (UI) for navigating and visualizing your network of notes. It enhances the capabilities of Org-Roam by offering a more intuitive and interactive way to explore your notes and their connections.
-
-*** Using the "org-roam-ui"
-
-To access Org-Roam-UI, simply call the "org-roam-ui" command within Emacs. This command launches the Org-Roam-UI interface, displaying the interactive graph visualization of your notes network.
-
-Once Org-Roam-UI is open, you can interact with the graph, explore your notes, and leverage its features to gain a deeper understanding of your knowledge base organized with Org-Roam.
-
-Org-Roam-UI enhances the usability and accessibility of Org-Roam by providing a graphical interface that simplifies navigation and visualization of your interconnected notes network. It's a valuable tool for knowledge management and research in Emacs.
-
-*** Key Features of Org-Roam-UI 
-
-1. **Interactive Graph Visualization:** Org-Roam-UI presents your notes as nodes in a graph, with connections between them represented as edges. This graphical representation allows you to visually explore the relationships between your notes and quickly identify patterns and clusters.
-
-2. **Node Information:** When you select a node in the graph, Org-Roam-UI displays information about the selected note, such as its title, tags, and backlinks. This contextual information provides valuable insights into the content and connections of the selected note.
-
-3. **Search and Filtering:** Org-Roam-UI includes search and filtering capabilities that allow you to narrow down your view of the graph based on specific criteria, such as tags or keywords. This makes it easier to focus on relevant subsets of your notes and navigate your network more efficiently.
-
-4. **Graph Navigation:** You can navigate through the graph **using various navigation controls provided by Org-Roam-UI. These controls allow you to zoom in and out, pan across the graph, and reposition nodes to optimize your view.
 
 ** Setting up tasks
 
@@ -294,7 +880,9 @@ All the exported document will be in the directory .emacs.d/PKM/data/export.
 ** Setting up org-attach (with proper UUID generation)
 
 
-** Synchronise between devices
+** Other
+
+*** Synchronise between devices
 :PROPERTIES:
 :ID:       76f3af94-c957-49c3-94f7-b83ff8b67ea9
 :END:
@@ -308,13 +896,14 @@ Synchronizing your Org mode files between multiple devices allows you to access 
 
 By using Syncthing to synchronize your Org mode files between devices, you can maintain a consistent and up-to-date repository of notes, tasks, and documents across all your devices. This ensures that you have access to your Org mode workflow wherever you go, whether you're using Emacs on your desktop, laptop, or mobile device.
 
-** Phone Case (Incomplete)
+*** Phone Case (Incomplete)
 
 Unfortunately, implementing the phone case feature is too complicated for beginners. I will create a tutorial for phone usage later because it's genuinely too complex. This involves using Termux, a terminal emulator for Android, which may not be familiar to everyone. Additionally, there are various technical challenges and considerations involved. Due to these complexities, it's best to defer this topic for a later, more advanced tutorial.
 
 In the meantime, you can use Orgzly to access your agenda on your phone (if you have [[id:76f3af94-c957-49c3-94f7-b83ff8b67ea9][synchronise your files between devices]]). However, it's important to note that Orgzly does not currently support following Org-Roam links (see this [[https://github.com/orgzly-revived/orgzly-android-revived/issues/174][issue on github]] to know when that will work). While Orgzly provides a convenient way to view and manage your Org mode files on mobile devices, including tasks, notes, and appointments, its functionality is limited in this regard. You may still benefit from using Orgzly to stay organized and keep track of your schedule, but for accessing Org-Roam links, you will need to wait or to use termux.
 
-** Conclusion
+
+** Conclusion ?
 
 You can now :
 - 

@@ -100,7 +100,21 @@
 (defun open-main-tutorial ()
   "Open a specific file and maximize the Emacs window on startup."
   (interactive)
-  (find-file (concat user-emacs-directory "PKM/notes/tutorial/" "tutorial.org")))
+
+  ;; trigger the loading of org-mode
+
+  (find-file (concat user-emacs-directory "PKM/notes/tutorial/" "tutorial.org"))
+
+  ;; all the things loading after will go here
+
+  ;; to have access for all org variable.
+  (require 'org-capture)
+
+  (if (file-exists-p custom-file)
+      (load custom-file nil 'nomessage)
+    (message "The customisation of the user [%s] is not present (second time)." custom-file))
+
+  )
 
 (add-hook 'elpaca-after-init-hook
 	  #'open-main-tutorial
@@ -114,6 +128,11 @@
 ;; Add to mouse-leave-buffer-hook to handle mouse leaving Emacs window
 (add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
 
+;; minibuffer, stop cursor going into prompt
+(customize-set-variable
+ 'minibuffer-prompt-properties
+ (quote (read-only t cursor-intangible t face minibuffer-prompt)))
+
 ;; make esc key do cancel. works only in gui emacs
 (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
 ;; the first don't work with all the time
@@ -121,14 +140,29 @@
 
 (cua-mode 1)
 
+(global-set-key (kbd "C-a") 'mark-whole-buffer)
+
+(global-set-key (kbd "C-c +") 'text-scale-increase)
+(global-set-key (kbd "C-c -") 'text-scale-decrease)
+
 (defcustom eepkm-auto-save t
-  "If t, save after `auto-save-visited-interval'"
+  "If t, activate the `auto-save-visited-mode', so save every `auto-save-visited-interval'."
   :type 'boolean
   :group 'eepkm)
 
 (when (>= emacs-major-version 26)
   ;; real auto save
   (auto-save-visited-mode eepkm-auto-save))
+
+(setq make-backup-files t)
+
+(use-package beacon
+	     :init (beacon-mode)
+	     :config
+	     (setq beacon-blink-when-focused t
+		   beacon-blink-when-point-moves-vertically 1
+		   )
+	     )
 
 (defun eepkm-display-message (msg)
   "Display the message MSG in the echo area with yellow foreground."
@@ -138,7 +172,7 @@
 (custom-set-faces
  '(minibuffer-prompt ((t (:foreground "gold" :weight bold :height 1.7)))))
 
-(setq initial-scratch-message "This buffer is for text that is NOT saved.\nTo visit your node, open the menu and find a node.\n\n")
+(setq initial-scratch-message "This buffer is for text that is NOT saved.\n")
 
 (defun set-scratch-to-org-mode ()
   "Set the *scratch* buffer to use org-mode."
@@ -146,6 +180,30 @@
     (org-mode)))
 
 (add-hook 'elpaca-after-init-hook 'set-scratch-to-org-mode)
+
+(use-package helpful
+	     :init
+	     ;; Remap standard help commands to use helpful instead
+	     (global-set-key [remap describe-function] 'helpful-callable)
+	     (global-set-key [remap describe-variable] 'helpful-variable)
+	     (global-set-key [remap describe-key] 'helpful-key)
+	     (global-set-key [remap describe-command] 'helpful-command)
+	     )
+
+;; demo in the doc
+(use-package elisp-demos
+	     :init
+	     (advice-add 'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
+	     (with-eval-after-load 'helpful
+	       (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+	     )
+
+(use-package autorevert
+	     :ensure nil  ; autorevert is built-in, no need to download
+	     :hook (window-setup . global-auto-revert-mode)  
+	     :config
+	     (setq global-auto-revert-non-file-buffers t)  
+	     )
 
 (defgroup eepkm nil
   "Customization group for EasyEmacsPKM"
@@ -190,14 +248,14 @@
 (auto-save-visited-mode 1)
 (setq auto-save-visited-interval 10) ; every X seconds
 
-(defcustom eepkm-margin 170
-  "Increment for text scaling in Emacs."
+(defcustom eepkm-margin 100
+  "Increment have more text in one buffer of Emacs."
   :type 'integer
   :group 'eepkm)
 
-(use-package perfect-margin
-	     :init (perfect-margin-mode)
-	     :config (setq perfect-margin-visible-width eepkm-margin)
+(use-package olivetti
+	     :hook (org-mode . olivetti-mode)
+	     :config (setq olivetti-body-width eepkm-margin)
 	     )
 
 ;; nice color mode line
@@ -242,6 +300,15 @@
 	     :hook (org-mode . good-scroll-mode)
 	     )
 
+(use-package beacon
+	     :init (beacon-mode)
+	     :config
+	     (setq beacon-blink-delay 0.0)
+	     (setq beacon-blink-duration 0.5)
+	     (setq beacon-size 60)
+	     ;; (setq beacon-color "#ffa38f")
+	     (setq beacon-color "blue"))
+
 (use-package nyan-mode
     :init (nyan-mode)
     )
@@ -260,7 +327,7 @@
 (use-package ef-themes
 	     :init
 
-	     (defcustom eepkm-dark-theme t
+	     (defcustom eepkm-dark-theme nil
 	       "If non-nil, launch emacs with the dark-theme."
 	       :type 'boolean
 	       :group 'eepkm)
@@ -293,65 +360,109 @@
 
 	     )
 
+(setq
+
+ display-buffer-base-action
+ '(display-buffer-reuse-mode-window
+   display-buffer-reuse-window
+   display-buffer-same-window)
+
+ window-combination-resize t
+ even-window-sizes 'height-only
+ window-sides-vertical nil
+ switch-to-buffer-in-dedicated-window 'pop
+ split-height-threshold 80
+ split-width-threshold 125
+ window-min-height 3
+ window-min-width 30
+ )
+
+(use-package goggles
+	     :hook ((prog-mode text-mode) . goggles-mode))
+
 (use-package hydra)
 
 (use-package pretty-hydra
 	     :init
 	     
 	     (pretty-hydra-define eepkm-master-hydra
-	     		     (:title "Master Commands Menu" :color red :exit t :quit-key "ESC" :foreign-keys run)
+	     		     (:title "Master Commands Menu" :color red :exit t :quit-key "ESC" :foreign-keys run :exit t)
 	     		     ("Menus"
 	     		      (("o" eepkm-org-mode-hydra/body "Org Mode Menu (eepkm-org-mode-hydra)")
-	     		       ("w" eepkm-window-management-hydra/body "Window Management (eepkm-window-management-hydra)")
+	     		       ("w" eepkm-WBF-management-hydra/body "Window Management (eepkm-WBF-management-hydra)")
 	     		       ("e" eepkm-movement-and-editing-hydra/body "Basic Movement and Editing Commands (eepkm-movement-and-editing-hydra)")
-	     		       ("b" eepkm-buffer-file-hydra/body "Buffer and File Management (eepkm-buffer-file-hydra)")
 	     		       ("h" eepkm-help-and-customisation-hydra/body "Help and Customisation (eepkm-help-and-customisation-hydra)")
 	     		       ("c" execute-extended-command "Execute a command with name (execute-extended-command)")
 	     		       )
 	     		      "Nodes"
 	     		      (("f" org-roam-node-find "Find node (org-roam-node-find)")
 	     		       ("i" org-roam-node-insert "Insert node link (org-roam-node-insert)")
+	     		       ("a" org-roam-alias-add "Add an alias to the node (org-roam-alias-add)")
 	     		       ("s" switch-eepkm-include-tutorial "Activate or desactivate search in tutorial (switch-eepkm-include-tutorial)")
 	     		       ("t" open-main-tutorial "Go to tutorial (open-main-tutorial)")
-	     		       ("a" org-attach "Attach document to node at point (org-attach)")
-	     		       ("r" org-attach-reveal "See attached document for the node (org-attach-reveal)")
 	     		       ("g" org-roam-ui-open "Open the graphe of nodes in browser (org-roam-ui-open)")
 	     		       )))
 	     
 	     
 	     (pretty-hydra-define eepkm-org-mode-hydra
-	     		     (:title "Org Mode Operations" :color blue :quit-key "ESC" :foreign-keys run)
+	     		     (:title "Org Mode Operations" :color blue :quit-key "ESC" :foreign-keys run :exit t :exit t)
 	     		     ("Editing"
-	     		      (("h" org-meta-return "New heading/item (org-meta-return)")
-	     		       ("l" org-insert-link "Insert link (org-insert-link)")
-	     		       ("s" org-store-link "Store link (org-store-link)")
-	     		       ("t" org-todo "Toggle TODO (org-todo)"))
-	     		      "Navigation"
-	     		      (("u" outline-up-heading "Up heading (outline-up-heading)")
-	     		       ("n" org-next-visible-heading "Next heading (org-next-visible-heading)")
-	     		       ("p" org-previous-visible-heading "Previous heading (org-previous-visible-heading)"))
+	     		      (("h" org-meta-return "New heading/item/element list (org-meta-return)")
+	     		       ("li" org-insert-link "Insert link (org-insert-link)")
+	     		       ("ls" org-store-link "Store link (org-store-link)")
+	     		       ("tt" org-todo "Toggle TODO (org-todo)")
+	     		       ("ts" org-time-stamp "Add a timestamp (org-deadline)")
+	     		       ("s" org-schedule "Schedule a heading (org-schedule)")
+	     		       ("d" org-deadline "Deadline a heading (org-deadline)")
+	     		       ("ta" org-set-tags-command "Add a tag to heading (org-set-tags-command)")
+	     		       )
+	     		      ;; "Navigation"
+	     		      ;; (("u" outline-up-heading "Up heading (outline-up-heading)")
+	     		      ;;  ("n" org-next-visible-heading "Next heading (org-next-visible-heading)")
+	     		      ;;  ("p" org-previous-visible-heading "Previous heading (org-previous-visible-heading)"))
 	     		      "Misc"
-	     		      (("a" org-agenda "Open Agenda in emacs (org-agenda)")
+	     		      (("d" org-attach "Attach document to node at point (org-attach)")
+	     		       ("o" org-attach-open "Open an attachment (org-attach-open)")
+	     		       ("r" org-attach-reveal "See attached document (org-attach-open)")
+	     		       ("a" org-agenda "Open Agenda in emacs (org-agenda)")
 	     		       ("A" org-hyperscheduler-open "Open Agenda in external (org-hyperscheduler-open)")
 	     		       ("c" org-capture "Capture item (org-capture)")
-	     		       ("b" org-switchb "Switch org buffer (org-switchb)")
 	     		       ("e" org-export-dispatch "Export (org-export-dispatch)")
+	     		       ("R" eepkm-toggle-roam-exclude "Toggle node<->heading (eepkm-toggle-roam-exclude)")
+	     		       ("i" org-info "Manual of Org-mode (org-info)")
 	     		       )))
 	     
 	     
-	     (pretty-hydra-define eepkm-window-management-hydra
-	       (:title "Window Management" :color teal :quit-key "ESC" :foreign-keys run)
-	       ("Windows"
-	        (("s" split-window-below "Split horizontally (split-window-below)")
-	         ("v" split-window-right "Split vertically (split-window-right)")
-	         ("d" delete-window "Delete window (delete-window)")
-	         ("o" delete-other-windows "Delete other windows (delete-other-windows)"))
-	        "Frames"
-	        (("f" make-frame "New frame (make-frame)")
-	         ("x" delete-frame "Delete frame (delete-frame)"))
-	        "Screen"
-	        (("u" winner-undo "Undo layout (winner-undo)")
-	         ("r" winner-redo "Redo layout (winner-redo)"))))
+	     (pretty-hydra-define eepkm-WBF-management-hydra
+	     		     (:title "Window Management" :color teal :quit-key "ESC" :foreign-keys run :exit t)
+	     
+	     		     ("Windows and Frame"
+	     		      (("s" split-window-below "Split horizontally (split-window-below)")
+	     		       ("v" split-window-right "Split vertically (split-window-right)")
+	     		       ("d" delete-window "Delete window (delete-window)")
+	     		       ("o" delete-other-windows "Delete other windows (delete-other-windows)")
+	     		       ("f" make-frame "New frame (make-frame)")
+	     		       ("x" delete-frame "Delete frame (delete-frame)")
+	     		       ("u" winner-undo "Undo layout (winner-undo)")
+	     		       ("r" winner-redo "Redo layout (winner-redo)")
+	     		       )
+	     
+	     		      "Buffer"
+	     		      (("b" switch-to-buffer "Switch buffer (switch-to-buffer)")
+	     		       ("k" kill-buffer "Kill buffer (kill-buffer)")
+	     		       ("r" revert-buffer "Refresh/Revert buffer (revert-buffer)"))
+	     		      "File"
+	     		      (
+	     		       ("o" xah-open-in-external-app "Open outside Emacs (xah-open-in-external-app)")
+	     		       ("s" save-buffer "Save file (save-buffer)")
+	     
+	     		       ("j" bookmark-jump "Jump to a bookmark (bookmark-jump)")
+	     		       ("s" bookmark-set "Set a bookmark in a file (bookmark-set)")
+	     		       ("w" bookmark-view-save "Save the windows disposition (bookmark-view-save)")
+	     		       ("f" find-file "Open file (find-file)")
+	     		       )
+	     
+	     		      ))
 	     
 	     
 	     (defun org-mark-ring-push (&optional pos buffer)
@@ -370,81 +481,24 @@
 	         "Position saved to mark ring, go back with the menu eepkm-movement-and-editing-hydra.")))
 	     
 	     (pretty-hydra-define eepkm-movement-and-editing-hydra
-	       (:title "Basic Editing Commands" :color teal :quit-key "ESC" :foreign-keys run)
-	       (
-	     "Movement"
-	        (("m" (lambda () (interactive) (set-mark-command t)) "Go to the previous mark (set-mark-command t)"))
-	     "Edit"
-	        (("c" copy-region-as-kill "Copy (copy-region-as-kill)")
-	         ("x" kill-region "Cut (kill-region)")
-	         ("v" yank "Paste (yank)")
-	         ("z" undo "Undo (undo)"))
-	        "Search"
-	        (("s" consult-line "Search (consult-line)")
-	         ("q" query-replace "Replace occurence (query-replace)"))))
-	     
-	     
-	     (defun xah-open-in-external-app (&optional Fname)
-	       "Open the current file or dired marked files in external app.
-	     When called in emacs lisp, if Fname is given, open that.
-	     
-	     URL `http://xahlee.info/emacs/emacs/emacs_dired_open_file_in_ext_apps.html'
-	     Version: 2019-11-04 2023-03-10 2023-04-05"
-	       (interactive)
-	       (let (xfileList xdoIt)
-	         (setq xfileList
-	     	  (if Fname
-	     	      (list Fname)
-	     	    (if (string-equal major-mode "dired-mode")
-	     		(dired-get-marked-files)
-	     	      (list buffer-file-name))))
-	         (setq xdoIt (if (<= (length xfileList) 10) t (y-or-n-p "Open more than 10 files? ")))
-	         (when xdoIt
-	           (cond
-	            ((string-equal system-type "windows-nt")
-	     	(let ((xoutBuf (get-buffer-create "*xah open in external app*"))
-	     	      (xcmdlist (list "PowerShell" "-Command" "Invoke-Item" "-LiteralPath")))
-	     	  (mapc
-	     	   (lambda (x)
-	     	     (message "%s" x)
-	     	     (apply 'start-process (append (list "xah open in external app" xoutBuf) xcmdlist (list (format "'%s'" (if (string-match "'" x) (replace-match "`'" t t x) x))) nil)))
-	     	   xfileList)
-	     	  ;; (switch-to-buffer-other-window xoutBuf)
-	     	  )
-	     	;; old code. calling shell. also have a bug if filename contain apostrophe
-	     	;; (mapc (lambda (xfpath) (shell-command (concat "PowerShell -Command \"Invoke-Item -LiteralPath\" " "'" (shell-quote-argument (expand-file-name xfpath)) "'"))) xfileList)
-	     	)
-	            ((string-equal system-type "darwin")
-	     	(mapc (lambda (xfpath) (shell-command (concat "open " (shell-quote-argument xfpath)))) xfileList))
-	            ((string-equal system-type "gnu/linux")
-	     	(mapc (lambda (xfpath)
-	     		(call-process shell-file-name nil nil nil
-	     			      shell-command-switch
-	     			      (format "%s %s"
-	     				      "xdg-open"
-	     				      (shell-quote-argument xfpath))))
-	     	      xfileList))
-	            ((string-equal system-type "berkeley-unix")
-	     	(mapc (lambda (xfpath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" xfpath))) xfileList))))))
-	     
-	     (pretty-hydra-define eepkm-buffer-file-hydra
-	     		     (:title "Buffer and File Management" :color pink :quit-key "ESC" :foreign-keys run)
-	     		     ("File"
-	     		      (("f" find-file "Open file (find-file)")
-	     		       ("s" save-buffer "Save file (save-buffer)")
-	     		       ("o" xah-open-in-external-app "Open thing under cursor outside emacs (xah-open-in-external-app)")
-	     		       )
-	     		      "Buffer"
-	     		      (("b" switch-to-buffer "Switch buffer (switch-to-buffer)")
-	     		       ("k" kill-buffer "Kill buffer (kill-buffer)")
-	     		       ("r" revert-buffer "Revert buffer (revert-buffer)"))))
+	     		     (:title "Basic Editing Commands" :color teal :quit-key "ESC" :foreign-keys run :exit t)
+	     		     (
+	     		      "Movement"
+	     		      (("m" (lambda () (interactive) (set-mark-command t)) "Go to the previous mark (set-mark-command t)"))
+	     		      "Editing"
+	     		      (("c" copy-region-as-kill "Copy (copy-region-as-kill)")
+	     		       ("x" kill-region "Cut (kill-region)")
+	     		       ("v" yank "Paste (yank)")
+	     		       ("z" undo "Undo (undo)"))
+	     		      "Search"
+	     		      (("s" consult-line "Search inside the document (consult-line)")
+	     		       ("q" query-replace "Search and replace (query-replace)"))))
 	     
 	     
 	     (pretty-hydra-define eepkm-help-and-customisation-hydra
-	     		     (:title "Help and Customisation" :color amaranth :quit-key "ESC" :foreign-keys run)
+	     		     (:title "Help and Customisation" :color amaranth :quit-key "ESC" :foreign-keys run :exit t)
 	     		     ("Help"
-	     		      (("h" help-command "Help Prefix (help-command)")
-	     		       ("f" describe-function "Describe Function (describe-function)")
+	     		      (("f" describe-function "Describe Function (describe-function)")
 	     		       ("v" describe-variable "Describe Variable (describe-variable)")
 	     		       ("k" describe-key "Describe Key (describe-key)")
 	     		       ("m" describe-mode "Describe Mode (describe-mode)"))
@@ -456,25 +510,77 @@
 	     		       ("T" customize-themes "Customize Themes"))
 	     		      "Documentation"
 	     		      (("i" info "Info (info)")
-	     		       ("e" view-echo-area-messages "View Messages (view-echo-area-messages)")
-	     		       ("l" view-lossage "Key Lossage (view-lossage)"))
+	     		       ("e" view-echo-area-messages "View all Messages (view-echo-area-messages)"))
 	     		      ))
 	     
 	     )
 
+;; (use-package hydra-posframe
+;; 	     :ensure (:type git :host github :repo "Ladicle/hydra-posfram")
+;; 	     )
+
 ;; todo
 ;; (defgroup eepkm-bindings nil
-;;   "Customization subgroup for key bindings"
+;; "Customization subgroup for key bindings"
 ;;   :group 'eepkm  
 ;;   )
 ;; think to do (eval (pretty-hydra-define … `(variable)))
 
 (defcustom eepkm-master-hydra "<f11>"
-  "Key for `org-roam-node-find` in the eepkm-bindings PKM section."
+  "Key for `org-roam-node-find` in the eepkm-bindings PKM section.
+Some example of binding are :
+    <tab>
+    <f11>
+    C-c h
+    <escape>
+    "
   :type 'string
   :group 'eepkm)
 
 (global-set-key (kbd eepkm-master-hydra) 'eepkm-master-hydra/body)
+
+(defun xah-open-in-external-app (&optional Fname)
+    "Open the current file or dired marked files in external app.
+    When called in emacs lisp, if Fname is given, open that.
+
+    URL `http://xahlee.info/emacs/emacs/emacs_dired_open_file_in_ext_apps.html'
+    Version: 2019-11-04 2023-03-10 2023-04-05"
+    (interactive)
+    (let (xfileList xdoIt)
+      (setq xfileList
+	    (if Fname
+		(list Fname)
+	      (if (string-equal major-mode "dired-mode")
+		  (dired-get-marked-files)
+		(list buffer-file-name))))
+      (setq xdoIt (if (<= (length xfileList) 10) t (y-or-n-p "Open more than 10 files? ")))
+      (when xdoIt
+	(cond
+	 ((string-equal system-type "windows-nt")
+	  (let ((xoutBuf (get-buffer-create "*xah open in external app*"))
+		(xcmdlist (list "PowerShell" "-Command" "Invoke-Item" "-LiteralPath")))
+	    (mapc
+	     (lambda (x)
+	       (message "%s" x)
+	       (apply 'start-process (append (list "xah open in external app" xoutBuf) xcmdlist (list (format "'%s'" (if (string-match "'" x) (replace-match "`'" t t x) x))) nil)))
+	     xfileList)
+	    ;; (switch-to-buffer-other-window xoutBuf)
+	    )
+	  ;; old code. calling shell. also have a bug if filename contain apostrophe
+	  ;; (mapc (lambda (xfpath) (shell-command (concat "PowerShell -Command \"Invoke-Item -LiteralPath\" " "'" (shell-quote-argument (expand-file-name xfpath)) "'"))) xfileList)
+	  )
+	 ((string-equal system-type "darwin")
+	  (mapc (lambda (xfpath) (shell-command (concat "open " (shell-quote-argument xfpath)))) xfileList))
+	 ((string-equal system-type "gnu/linux")
+	  (mapc (lambda (xfpath)
+		  (call-process shell-file-name nil nil nil
+				shell-command-switch
+				(format "%s %s"
+					"xdg-open"
+					(shell-quote-argument xfpath))))
+		xfileList))
+	 ((string-equal system-type "berkeley-unix")
+	  (mapc (lambda (xfpath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" xfpath))) xfileList))))))
 
 (use-package which-key
 	     :init
@@ -490,11 +596,16 @@
 
 ;; vertical completion
 (use-package vertico
+	     ;; load extension
+	     :ensure (:files (:defaults "extensions/*"))
 	     :hook (window-setup . vertico-mode)
 	     :custom
 	     (vertico-cycle t)
 	     ;; :custom-face
 	     ;; (vertico-current ((t (:background "#3a3f5a"))))
+	     :config
+	     ;; don't work (open the buffer message), why ?
+	     ;; (vertico-mouse-mode)
 	     )
 
 (use-package vertico-prescient
@@ -542,8 +653,7 @@
 ;; better searching 
 (use-package consult
 	     :config
-	     ;; Replace bindings with Consult commands
-	     (global-set-key (kbd "C-s") 'consult-line)
+	     (global-set-key (kbd "C-f") 'consult-line)
 	     (global-set-key (kbd "C-x b") 'consult-buffer)
 	     (global-set-key (kbd "M-y") 'consult-yank-pop)
 	     (global-set-key [remap switch-to-buffer] 'consult-buffer)
@@ -551,6 +661,8 @@
 	     (global-set-key [remap switch-to-buffer-other-frame] 'consult-buffer-other-frame))
 
 (winner-mode 1)
+
+(use-package bookmark-view)
 
 (use-package org 
 	     :ensure 
@@ -563,6 +675,19 @@
 	     ;;Pour obtenir des polices proportionnelles
 	     (add-hook 'org-mode-hook 'variable-pitch-mode)
 	     
+	     
+	     ;; refresh image after insert
+	     (defun eepkm-org-display-inline-if-image ( &optional COMPLETE-FILE LINK-LOCATION DESCRIPTION)
+	       "Display inline images if a 'file:' link pointing to an image is inserted."
+	       (let* ((element (org-element-context))
+	     	 (link-type (org-element-property :type element))
+	     	 (path (org-element-property :path element)))
+	         (when (and (string= link-type "file")
+	     	       (member (file-name-extension path) image-file-name-extensions))
+	           (org-display-inline-images))))
+	     
+	     
+	     (advice-add 'org-insert-link :after #'eepkm-org-display-inline-if-image)
 	     
 	     (setq org-startup-with-inline-images t
 	           ;; size of images
@@ -645,6 +770,19 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
   ;; (setq org-pretty-entities-include-sub-superscripts t)
   )
 
+(defcustom eepkm-org-tidy nil
+  "If t, hide the drawer of org-mode."
+  :type 'boolean
+  :group 'eepkm)
+
+(use-package org-tidy
+	     :init
+	     (when eepkm-org-tidy
+	       (add-hook 'org-mode-hook 'org-tidy-mode))
+	     :config
+	     (setq org-tidy-properties-style 'fringe)
+	     )
+
 (setq org-attach-dir (concat user-emacs-directory "PKM/data/org-attach"))
 
 ;; each attached document go to the ID of the nodes
@@ -658,6 +796,45 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 (defun eepkm-org-attach-id-uuid-folder-format (id)
   "Return the path to attach a file with an id"
   (format "%s" id))
+
+(defun eepkm-eepkm-get-linux-download-directory ()
+  "Retrieve the XDG download directory path from user-dirs.dirs."
+  (let ((config-file (expand-file-name "~/.config/user-dirs.dirs")))
+    (when (file-exists-p config-file)
+      (with-temp-buffer
+	(insert-file-contents config-file)
+	(if (re-search-forward "XDG_DOWNLOAD_DIR=\"$HOME/\\([^\"\n]+\\)\"" nil t)
+	    (file-name-as-directory (expand-file-name (match-string 1) (getenv "HOME")))
+	  ;; If not found, default to ~/Downloads
+	  (file-name-as-directory (expand-file-name "~/Downloads")))))))
+
+
+(defun eepkm-get-downloads-directory ()
+  "Return the path to the Downloads directory, depending on the operating system."
+  (interactive)
+  (cond
+   ((eq system-type 'windows-nt)  ; For Windows
+    (file-name-as-directory (expand-file-name "Downloads" (getenv "USERPROFILE"))))
+   ((eq system-type 'darwin)      ; For macOS
+    (file-name-as-directory (expand-file-name "Downloads" (getenv "HOME"))))
+   ((eq system-type 'gnu/linux)   ; For Linux
+    (eepkm-get-linux-download-directory))
+   (t
+    (message "Operating system not supported."))))
+
+(defun eepkm-org-attach-read-file-name-downloads (&rest args)
+  `("Select file to attach: " ,(if (memq system-type '(gnu gnu/linux gnu/kfreebsd berkeley-unix))
+				   "~/Téléchargements/"
+				 (concat (getenv "USERPROFILE") "\\Downloads")
+				 )))
+
+(advice-add 'org-attach :before (lambda () 
+				  (advice-add 'read-file-name :filter-args 'eepkm-org-attach-read-file-name-downloads)
+				  ))
+
+(advice-add 'org-attach :after (lambda () 
+				 (advice-remove 'read-file-name 'eepkm-org-attach-read-file-name-downloads)
+				 ))
 
 (use-package org-roam
 	     :init
@@ -687,23 +864,11 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	     
 	     (defvar eepkm-note-tutorial-directory (concat org-directory "Tutorial/"))
 	     
-	     (defun toggle-eepkm-include-tutorial ()
-	       "Toggle the inclusion of tutorial notes in the Org Roam database."
-	       (interactive)
-	       (setq org-roam-db-node-include-function
-	     	(if eepkm-include-tutorial
-	     	    (lambda () t)  ; Always include the node.
-	     	  (lambda ()
-	     	    (let ((current-dir (file-name-directory (or buffer-file-name ""))))
-	     	      (equal eepkm-note-tutorial-directory current-dir)))))  ; Check directory.
-	       (message "Tutorial inclusion is now %s."
-	     	   (if eepkm-include-tutorial "enabled" "disabled")))
-	     
-	     (defun switch-eepkm-include-tutorial ()
-	       "Switch the value of `eepkm-include-tutorial` and update inclusion function."
-	       (interactive)
-	       (setq eepkm-include-tutorial (not eepkm-include-tutorial))
-	       (toggle-eepkm-include-tutorial))  ; Call the toggle function to update the function based on the new value.
+	     (if eepkm-include-tutorial
+	         (lambda () t)  ; Always include the node.
+	       (lambda ()
+	         (let ((current-dir (file-name-directory (or buffer-file-name ""))))
+	           (equal eepkm-note-tutorial-directory current-dir))))
 	     
 	     
 	     (setq org-roam-node-display-template " ${directory} ${hierarchy-light} ")

@@ -1,0 +1,229 @@
+:PROPERTIES:
+:ID:       d576171c-80e8-4fa4-95a0-266990051a6d
+:END:
+#+title: Customize Emacs
+
+This note is a guide to the various methods of customization.
+
+There is three different methods to customize Emacs.
+
+* Customize with Menu Bar
+:PROPERTIES:
+:ID:       40951656-eea9-4f05-8713-eafb5bfa709e
+:END:
+
+The most simple method : You can use the Menu Bar for some customization.
+
+One example is to hide the tool bar, the bar with the icons as shown in the screen shot below. It's highlighted in green.
+
+[[file:images/2021-11-12T123456.png]]
+
+Navigate the "Option" menu tree like so, and click on Tool Bar.
+
+[[file:images/2021-11-12T123714.png]]
+
+You will see the tick box next to it is removed, and no longer see the tool bar. If you look at the Minibuffer at the bottom, you will also see =showhide-tool-bar= command was used to toggle the tool bar.
+
+[[file:images/2021-11-12T123839.png]]
+
+Now... It's a temporary change; once you quick Emacs and launch it again, the tool bar will be shown. How can we make the change survive the quick and launch ? The simple answer is that you can save this change by another selection in the Menu Bar.
+
+[[file:images/2021-11-12T124119.png]]
+
+Try pressing "Save Options". 
+
+Here we are !
+
+Now, try to add the "Tab bar", in
+
+#+begin_example
+Options > Show and Hide
+#+end_example
+
+You can know view just under the Tool Bar files that are open !
+Don't forget to save if you want to keep this.
+
+* Customize variables
+
+When you [[id:40951656-eea9-4f05-8713-eafb5bfa709e][Customize with Menu Bar]], you just change some "variables". You don't have access to all the variable with the Menu Bar, but Emacs has a lot of variables that influence his behavior.
+
+Some variable begin with "eepkm-", that mean that there are especially to facility, you, the user, the configuration of some things.
+
+To customize variables, can just customize one variable (command "customize-variable") or several variable that are grouped (command "customize-group").
+
+You will find this command in the submenu "Help and Customisation".
+
+We will dive into several exemple to customize variables.
+
+** What you always will see
+:PROPERTIES:
+:ID:       3281af81-18de-4817-97d4-4119001ea864
+:END:
+
+When you want to customize variable, you always will have this at the top :
+
+[[file:images/capture-always-see.png]]
+
+To top to bottom, you have :
+- the Menu Bar (changed to customize variable)
+- the Tool Bar (changed to customize variable)
+- Two link that you can click to have more information
+- A search bar for other variable
+- 3 Buttons :
+  - Revert: This button will undo any changes made to the settings in the current buffer since the last save. It’s useful if you’ve made changes that you decide against implementing.
+  - Apply: Clicking this will immediately apply the changes made to the settings without closing the customization buffer. This allows you to see the effects of your changes in real-time.
+  - Apply and Save: This button is for applying the current settings and saving them permanently to your Emacs configuration. This ensures that the changes persist across Emacs sessions.
+ 
+When making adjustments in the customization buffer, it is a good practice to use the Apply button to preview changes without making them permanent. Once satisfied with the configuration, you can use Apply and Save to make your changes persistent.
+
+If you ever need to reference how to use the customization buffer or get more detailed guidance on the options available, the Help link in the top-right corner can be very useful.
+
+To finish, you will see the description of the variables UNDER the variable customisation.
+
+** Exemple 1 : eepkm-auto-save
+:PROPERTIES:
+:ID:       f50e865e-ecc5-42a1-86b4-d4da910d4a2e
+:END:
+
+To customize the variable "eepkm-auto-save", call the command "customize-variable", and you will have this :
+
+[[file:images/auto-save.png]]
+
+As you can see, this variable permit to save a file after a… "auto-save-visited-interval".
+You can click on it to have a description :
+
+[[file:images/auto-save-interval.png]]
+
+As you can see, this value is 10.
+At the bottom, you can read "You can customize this variable".
+Click on "customize" to change the time of every save !
+
+[[file:images/auto-save-time.png]]
+
+Now you can change the number of "10" by the number you want : don't forget to "Apply and Save" !
+
+Well done, you know now how to customize a variable and navigate into the menu of "Customize".
+
+** Exemple 2 : Org-roam templates
+:PROPERTIES:
+:ID:       29254ea8-09b8-4456-98c8-690433b84bca
+:END:
+
+This is a most than the [[id:f50e865e-ecc5-42a1-86b4-d4da910d4a2e][Exemple 1 : eepkm-auto-save]], but this is essential !
+
+*** Org-roam-capture-templates
+
+Capture templates in Org Roam are predefined templates that help you quickly capture notes with predefined formats and structure.
+When you select a node that doesn't exist yet, you will have the possibility to choose the template to use.
+
+The purpose of this is to have something like this :
+
+[[file:images/template-key.png]]
+
+To customize templates, customize the variable "org-roam-capture-templates".
+
+[[file:images/org-roam-capture.png]]
+
+These variable is a list, this is why you can see "INS" and "DEL" at the left : you can INSert or DELete an element of this list.
+
+As you can see, there is one element already present : the template "Default".
+
+Explication of each field :
+- Keys: A shortcut key that triggers this specific capture template. If you have only one, the capture will be automatically selected.
+- Description: A brief description of what this template is used for : will be display just near the shortcut.
+- Capture Type: Specifies the format of the captured content; here, it's set to "Plain text", but you maybe want a list or a Org entry (a heading)
+- Template: Defines the structure of the entry. %? signifies where the cursor will be positioned after the template is inserted.
+- Plist :
+  - Key : :target. Used to define where the template will be filled.
+    "%<%Y%m%d%H%M%S>-${slug}.org" is just a way to have a new file with Year, Month, Day, Hour, Minute and Second as the beginning of the file name.
+    ${slug} will be extend with the title of the note
+    .org is just the extension of the file !
+  - Key: :unnarowed. When you are in a capture process, you will view all the file (that mean that, yo)
+
+**** Exemple of creation of a new template : "Book"
+
+- click on "INS"
+- Add the key of your choice
+- Add the description of the template (for example "Book")
+- Then, the capture type is "Plain Text", because we will create the node as the target !
+- The template can be anything a string, but we will use some expanded text :
+  "%x %?". You will find all the extended element at the end of the documentation of the variable.
+  - %x will be replace by the content of the clipboard
+  - %? is just to place the cursor here
+- Now, to finish the template, click
+- For convenience, click on Key: :unnarowed t (to view the title of the new node)
+- For convenience, click on Key: :empty-lines-before 1 (to add a line between the title and the text)
+
+Your template is ready !
+
+Now, when you want to select a node that doesn't exist, you will have something like this :
+
+[[file:images/template-key.png]]
+
+And after select the right template :
+
+[[file:images/book-capture.png]]
+
+*** TODO Org-capture-templates
+
+Work in progress.
+
+[[file:images/capture-default.png]]
+
+It's a list : click insert.
+
+You will have this :
+
+[[file:images/capture-ins.png]]
+
+Don't panic !
+
+Firt, because it's a list, you will can insert more element later (as you see, there is a "INS" at the beginning and at the end if you want to add template).
+
+Now, let's dive into the details : 
+
+- Keys: A shortcut key that triggers this specific capture template. If you have only one, the capture will be automatically selected.
+- Description: A brief description of what this template is used for : will be display just near the shortcut.
+- Capture Type: This defines the type of capture, like an Org entry, which can influence how the captured data is processed.
+- Target Location: Specifies where the captured content should be stored. It consists of:
+  - File: The path to the file where entries will be captured.
+  - Filename: Specifies how the filename should be determined; can be a literal path or an expression.
+- Template: The structure or layout of the capture entry. It often includes placeholders and formatting specifics.
+
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/org/refile.org" "Tasks")
+             "* TODO %t %?\n ")
+        ("n" "Note" entry (file+headlin "~/org/notes.org")
+             "* %?\nEntered on %U\n  %i\n  %a")))
+
+* Personal.el
+
+This is the most advanced configuration. You don't need to use this method.
+
+It's not like other, because you will directly edit a configuration file of Emacs : it is more powerful, but you need to know "elisp", the language programmation of Emacs.
+
+For example, to deactivate the Tool Bar, the code will be like this :
+
+#+begin_src emacs-lisp
+
+(tool-bar-mode -1)
+
+#+end_src
+
+And to install a package :
+
+#+begin_src emacs-lisp
+
+  (use-package name-of-package
+	       :init
+	       ;; configuration before loading the package
+	       :config
+	       ;; configuration after loading the package
+	       ;; …
+	       )
+
+#+end_src
+
+There is a lot of tutorial in internet to write some "elisp" code.
+
+To use this method, click here (you will be redirected in the file "personal.el").
