@@ -26,7 +26,7 @@ Furthermore, this introduction is designed for experimentation: don't hesitate t
 :ID:       05eac3bb-c2ae-4cfc-a797-9f94604bbd71
 :END:
 
-The Menu Bar in Emacs is a horizontal bar at the top of the Emacs window that provides easy access to various features via dropdown menus (see [[id:eb4dc11f-3725-40ec-a511-f72bec1843c2][What you see when you open Emacs]] for more information). It is similar to Menu Bars in other applications, offering clickable items organized into categories such as "File", "Edit", "Options", "Buffers", and "Help".
+The Menu Bar in Emacs is a horizontal bar at the top of the Emacs window that provides easy access to various features via dropdown menus. It is similar to Menu Bars in other applications, offering clickable items organized into categories such as "File", "Edit", "Options", "Buffers", and "Help".
 
 You can interact with the Menu Bar to use Emacs without needing to remember keyboard shortcuts.
 
@@ -48,6 +48,8 @@ To restore the frame as before, click on the buffer of the Tutorial, and in the 
 
 Well done again !
 
+See [[id:eb4dc11f-3725-40ec-a511-f72bec1843c2][What you see when you open Emacs]] for more information.
+
 *** Call commands, cancel command you are typing
 :PROPERTIES:
 :ID:       8f7605f5-bd76-4a76-a173-f5df7ff48c83
@@ -58,7 +60,7 @@ In the menu selection described before, you can see things like "C-x 1", or "M-g
 When you interact with Emacs, *everything* is a "command". A command is a piece of code that allows you to interact with Emacs and perform various actions. These actions can range from simple tasks like moving the cursor for the next line (down arrow) or inserting text to complex operations like searching and replacing text, running programs, or interacting with external services.
 As a reminder, this tutorial focus of a set of tools to use your PIM, so you need to know how call this famous command to interact with the main program of your PIM : Emacs.
 
-You call command by several ways (see [[id:657dd016-284e-40ad-8591-4b3cac5f3cc7][Accessing Command]] to view all the method directly). The first method is to use the Menu Bar as describe in the first section of this introduction, the second introduced in this tutorial are the shortcuts.
+You call command by several ways. The first method is to use the Menu Bar as describe in the first section of this introduction, the second introduced in this tutorial are the shortcuts.
 
 =C= stands for Ctrl. 
 =M=, for Windows, is Alt.
@@ -83,10 +85,12 @@ This operation is usually written as :
 
 Menu Bar on top disappears with the text in Minibuffer saying, "Menu Bar mode disabled".
 
+#+ATTR_ORG: :width 500px
 [[file:images/menu-bar-off.png]]
 
 If you call the same command again, the Menu Bar appears again ("Menu Bar mode enabled").
 
+#+ATTR_ORG: :width 500px
 [[file:images/menu-bar-on.png]]
 
 Notice that you could have select, in the Menu Bar : Options > Show/Hide > Menu Bar.
@@ -145,6 +149,7 @@ You can use =ESC= to remove the region.
 
 If you are looking for a way to select the whole text, try the Menu Bar, =Edit > Select All=. It's also assigned to =C-a=. Selecting the whole text you are looking at is done via the function called =mark-whole-buffer=.
 
+#+ATTR_ORG: :width 500px
 [[file:images/select-all.png]]
 
 You just finished the tutorial of Emacs, bravo !

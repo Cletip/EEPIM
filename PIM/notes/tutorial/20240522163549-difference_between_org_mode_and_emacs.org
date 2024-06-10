@@ -1,5 +1,0 @@
-:PROPERTIES:
-:ID:       cf4b56ea-17c1-44a3-9ea3-bcd635a352c6
-:END:
-#+title: Difference between Org-mode and Emacs
-

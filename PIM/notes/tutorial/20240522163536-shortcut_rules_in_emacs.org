@@ -1,5 +1,0 @@
-:PROPERTIES:
-:ID:       6a1198a1-813b-42b0-a4f7-df8f211cd593
-:END:
-#+title: Shortcut rules in emacs
-
