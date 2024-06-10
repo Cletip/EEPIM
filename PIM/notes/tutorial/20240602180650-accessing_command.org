@@ -5,7 +5,7 @@
 
 There are four main ways to access commands in Emacs. The first is the only one really essential.
 
-1. *Using the Provided Menu*: I've implemented a menu (accessible with "ESCAPE" by default) for you with the main useful commands. You can access this menu to quickly find and execute commands without remembering their keybindings or names. *All possibilities in the menu will be described in this tutorial. That is not the case for the other.*
+1. *Using the Provided Menu*: a menu (accessible with "F11" by default) for you with the main useful commands. You can access this menu to quickly find and execute commands without remembering their keybindings or names. *All possibilities in the menu will be described in this tutorial. That is not the case for the other.*
 
 2. Using the command "execute-extended-command" (mapped in the menu) or by pressing Meta+x: Here, you can type the name of the command (you can complete a command name with "TAB", and move with the arrow to chose the command) you want to execute and press Enter to run it. This method is particularly useful when you know the name of the command but not its keybinding. The completion system is flexible : you can type "to ba" to find "tool-bar-mode" for example.
 

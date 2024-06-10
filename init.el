@@ -155,7 +155,7 @@
 (defcustom eepim-auto-save t
   "If t, activate the `auto-save-visited-mode', so save every `auto-save-visited-interval'."
   :type 'boolean
-  :group 'eepkm)
+  :group 'eepim)
 
 (when (>= emacs-major-version 26)
   ;; real auto save
@@ -212,7 +212,7 @@
 
 (setq save-interprogram-paste-before-kill t)
 
-(defgroup eepkm nil
+(defgroup eepim nil
   "Customization group for EasyEmacsPIM"
   :group 'main-group  ; Inherits from main-group
   :prefix "eepim-"
@@ -224,7 +224,7 @@
 (defcustom eepim-text-scale 150
   "Size of text in Emacs."
   :type 'integer
-  :group 'eepkm)
+  :group 'eepim)
 
 (set-face-attribute 'default (selected-frame) :height eepim-text-scale)
 
@@ -255,7 +255,7 @@
 (defcustom eepim-margin 100
   "Increase this number will add more text in buffers of Emacs."
   :type 'integer
-  :group 'eepkm)
+  :group 'eepim)
 
 (use-package olivetti
 	     :hook (org-mode . olivetti-mode)
@@ -329,7 +329,7 @@
 	     (defcustom eepim-dark-theme nil
 	       "If non-nil, launch emacs with the dark-theme."
 	       :type 'boolean
-	       :group 'eepkm)
+	       :group 'eepim)
 
 	     (defun eepim-ef-themes-select (theme &optional variant)
 	       "Function to select and apply an EF theme."
@@ -386,7 +386,7 @@
 	     
 	     (pretty-hydra-define eepim-master-hydra
 	     		     (:title "Master Commands Menu" :color red :exit t :quit-key "ESC" :foreign-keys run :exit t)
-	     		     ("Menus"
+	     		     ("Submenus"
 	     		      (("o" eepim-org-mode-hydra/body "Org Mode Menu (eepim-org-mode-hydra)")
 	     		       ("w" eepim-WBF-management-hydra/body "Window Management (eepim-WBF-management-hydra)")
 	     		       ("e" eepim-MSE-hydra/body "Basic Movement and Editing Commands (eepim-MSE-hydra)")
@@ -396,13 +396,13 @@
 	     		      "Nodes"
 	     		      (("f" org-roam-node-find "Find node (org-roam-node-find)")
 	     		       ("i" org-roam-node-insert "Insert node link (org-roam-node-insert)")
+	     		       ("b" consult-org-roam-backlinks "Go to a backlink (consult-org-roam-backlinks)")
+	     		       ("g" org-roam-buffer-toggle "Open the backlinks buffer (org-roam-buffer-toggle)")
 	     		       ("a" org-roam-alias-add "Add an alias to the node (org-roam-alias-add)")
 	     		       ("s" switch-eepim-include-tutorial "Activate or desactivate search in tutorial (switch-eepim-include-tutorial)")
 	     		       ("T" open-main-tutorial "Go to tutorial (open-main-tutorial)")
-	     		       ("g" org-roam-ui-open "Open the graphe of nodes in browser (org-roam-ui-open)")
-	     		       ("b" consult-org-roam-backlinks "Go to a backlink (consult-org-roam-backlinks)")
-	     		       ("g" org-roam-buffer-toggle "Open the backlinks buffer (org-roam-buffer-toggle)")
-	     		       ("r" eepim-org-roam-navigate "Roam the graphe in easy way (eepim-org-roam-navigate)")
+	     		       ("g" org-roam-ui-open "Open the graph of nodes in browser (org-roam-ui-open)")
+	     		       ("r" eepim-org-roam-navigate "Roam the graph in easy way (eepim-org-roam-navigate)")
 	     		       )))
 	     
 	     
@@ -512,7 +512,7 @@
 ;; one day…
 ;; (defgroup eepim-bindings nil
 ;; "Customization subgroup for key bindings"
-;;   :group 'eepkm  
+;;   :group 'eepim  
 ;;   )
 ;; think to do (eval (pretty-hydra-define … `(variable)))
 
@@ -525,7 +525,7 @@ Some example of binding are :
     <escape>
     "
   :type 'string
-  :group 'eepkm)
+  :group 'eepim)
 
 (global-set-key (kbd eepim-master-hydra) 'eepim-master-hydra/body)
 
@@ -682,7 +682,7 @@ Some example of binding are :
 	     (defcustom eepim-create-node-every-heading t
 	       "If non-nil, after insertion of a heading (using the command), create a node."
 	       :type 'boolean
-	       :group 'eepkm)
+	       :group 'eepim)
 	     
 	     (defun eepim-org-insert-id ()
 	       (let ((buffer-path (buffer-file-name))
@@ -706,7 +706,7 @@ Some example of binding are :
 	     (defcustom eepim-include-tutorial t
 	       "If non-nil, include the tutorial in the personal DB. In other term, if non-nil, the user will see some Tutorial node when using command `org-roam-node-find' and `org-roam-node-insert'."
 	       :type 'boolean
-	       :group 'eepkm)
+	       :group 'eepim)
 	     
 	     (defvar eepim-note-tutorial-directory (concat org-directory "tutorial/"))
 	     
@@ -750,7 +750,7 @@ Some example of binding are :
   "When this variable is not nil, all the exported document of Org will be in this directory.
 If this variable is nil, the exported document will be in the same directory of the document."
   :type 'string
-  :group 'eepkm)
+  :group 'eepim)
 
 (defun eepim-change-org-export-output-dir (orig-fun &rest args)
   "Modification of the export-output directory for Org-mode."
@@ -775,7 +775,7 @@ If this variable is nil, the exported document will be in the same directory of 
 	       (defcustom eepim-org-modern-mode nil
 		 "Toggle modern enhancements in Org mode."
 		 :type 'boolean
-		 :group 'eepkm)
+		 :group 'eepim)
 
 	       (when eepim-org-modern-mode
 		 (add-hook 'org-mode-hook 'org-modern-mode)
@@ -813,7 +813,7 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 (defcustom eepim-org-tidy nil
     "If t, hide the drawer of org-mode."
     :type 'boolean
-    :group 'eepkm)
+    :group 'eepim)
 
   (use-package org-tidy
 	       :init
@@ -926,8 +926,6 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	     :hook (org-mode . org-auto-tangle-mode)
 	     )
 
-(custom-set-variables '(warning-suppress-log-types '((magit))) '(warning-suppress-types '((magit))))
-
 (use-package org-roam
 	     :init
 	     (setq org-roam-directory org-directory)
@@ -968,30 +966,36 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	             (concat (string-join olp " > ") " > " title)
 	           title)))
 	     
-	           (defun eepim-org-roam-get-parent-node ()
-	           "Return the node of the current node at point, if any
-	       Recursively traverses up the headline tree to find the parent node.
-	       Take in accout if this is a file node."
-	           (save-restriction
-	     	(widen)
-	     	(save-excursion
-	     	  (let ((current-org-roam-node-id (org-roam-id-at-point)))
-	     	    ;; move to the good place
-	     	    (while (and 
-	     		    (if (equal (org-roam-id-at-point) current-org-roam-node-id)
-	     			t ; if this is the same node, say "continue"
-	     		      (not (org-roam-db-node-p)) ; check if this is a node. If not, continue. If yes, stop
-	     		      )
-	     		    (not (bobp))		; but stop if this is the end of the file
-	     		    )
-	     	      ;; command to go up 
-	     	      (org-roam-up-heading-or-point-min))
-	     	    ;; now this is the good place
-	     	    (let ((node-at-point (org-roam-node-at-point)))
-	     	      (when (and (org-roam-db-node-p) ; check if we are at a node (that can be not the case with "ROAM_EXCLUDE" at the beginning of a file)
-	     			 (not (equal (org-roam-node-id node-at-point) current-org-roam-node-id))) ; check if this if the node at point is not the same of the default
-	     		node-at-point
-	     		))))))
+	             (defun eepim-org-roam-goto-parent-node ()
+	         "Return the node of the current node at point, if any
+	           Recursively traverses up the headline tree to find the parent node.
+	           Take in accout if this is a file node."
+	         (save-restriction
+	           (widen)
+	           (let ((current-org-roam-node-id (org-roam-id-at-point)))
+	     	;; move to the good place
+	     	(while (and 
+	     		(if (equal (org-roam-id-at-point) current-org-roam-node-id)
+	     		    t ; if this is the same node, say "continue"
+	     		  (not (org-roam-db-node-p)) ; check if this is a node. If not, continue. If yes, stop
+	     		  )
+	     		(not (bobp))		; but stop if this is the end of the file
+	     		)
+	     	  ;; command to go up 
+	     	  (org-roam-up-heading-or-point-min))
+	     	;; now this is the good place
+	     	(let ((node-at-point (org-roam-node-at-point)))
+	     	  (when (and (org-roam-db-node-p) ; check if we are at a node (that can be not the case with "ROAM_EXCLUDE" at the beginning of a file)
+	     		     (not (equal (org-roam-node-id node-at-point) current-org-roam-node-id))) ; check if this if the node at point is not the same of the default
+	     	    node-at-point
+	     	    )))))
+	     
+	       (defun eepim-org-roam-get-parent-node ()
+	         "Return the node of the current node at point, if any
+	           Recursively traverses up the headline tree to find the parent node.
+	           Take in accout if this is a file node."
+	         (save-excursion (eepim-org-roam-goto-parent-node))
+	         )
 	     
 	         (defun eepim-org-roam-get-outline-path-with-aliases (&optional WITH-SELF USE-CACHE) ;argument to match the function org-get-outline-path
 	           "Get the full outline path with aliases for the current headline. Take in account a file node."
@@ -1021,11 +1025,13 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	     
 	     )
 
+(custom-set-variables '(warning-suppress-log-types '((magit))) '(warning-suppress-types '((magit))))
+
 (defun eepim-org-roam-navigate (&optional node)
-    "Select from a list of all notes that are either forward or backlinks to the current note.
-		   Optionally takes a selected NODE.
-  Ask for the user at the beginning.
-  "
+  "Select from a list of all notes that are either forward or backlinks to the current note.
+		       Optionally takes a selected NODE.
+      Ask for the user at the beginning.
+      "
     (interactive
      (list (org-roam-node-read 
 	    (if (org-roam-node-at-point)
@@ -1043,11 +1049,12 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	       (all-ids '())
 	       (chosen-node nil))
 
-	  ;; Collect forward links
-	  ;; todo collect parent and son too
+	  ;; Collect forward links in current node
 	  (save-restriction 
-	    (org-narrow-to-subtree)	;to not collect the whole file
-	    (org-element-map (org-element-parse-buffer nil t) 'link
+	    ;; not collect the whole file if after org-before-first-heading-p
+	    (when (not (org-before-first-heading-p)) (org-narrow-to-subtree))
+
+	    (org-element-map (org-element-parse-buffer) 'link
 	      (lambda (link)
 		(when (string= (org-element-property :type link) "id")
 		  (push (org-element-property :path link) id-links)))))
@@ -1060,6 +1067,12 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 					       :where (= dest $s1)
 					       :and (= type "id")]
 				      (org-roam-node-id node))))
+	  ;; collect parent
+	  (save-excursion
+	    (while (cp/org-roam-goto-parent-node)
+	      (when (org-roam-db-node-p)
+		(push (org-entry-get nil "ID") backlink-ids)
+	  )))
 
 	  ;; Combine forward and backlinks and current node
 	  (setq all-ids (append id-links backlink-ids (list (org-roam-node-id node))))

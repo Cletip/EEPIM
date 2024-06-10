@@ -50,7 +50,7 @@ Don't forget to save if you want to keep this.
 
 When you [[id:40951656-eea9-4f05-8713-eafb5bfa709e][Customize with Menu Bar]], you just change some "variables". You don't have access to all the variable with the Menu Bar, but Emacs has a lot of variables that influence his behavior.
 
-Some variable begin with "eepkm-", that mean that there are especially to facility, you, the user, the configuration of some things.
+Some variable begin with "eepim-", that mean that there are especially to facility, you, the user, the configuration of some things.
 
 To customize variables, can just customize one variable (command "customize-variable") or several variable that are grouped (command "customize-group").
 
@@ -83,9 +83,9 @@ If you ever need to reference how to use the customization buffer or get more de
 
 To finish, you will see the description of the variables UNDER the variable customisation.
 
-** Exemple 1 : eepkm-auto-save
+** Exemple 1 : eepim-auto-save
 
-To customize the variable "eepkm-auto-save", call the command "customize-variable", and you will have this :
+To customize the variable "eepim-auto-save", call the command "customize-variable", and you will have this :
 
 [[file:images/auto-save.png]]
 
@@ -112,7 +112,7 @@ Well done, you know now how to customize a variable and navigate into the menu o
 :ID:       29254ea8-09b8-4456-98c8-690433b84bca
 :END:
 
-This is a most than the [[id:f50e865e-ecc5-42a1-86b4-d4da910d4a2e][Exemple 1 : eepkm-auto-save]], but this is essential !
+This is a most than the [[id:f50e865e-ecc5-42a1-86b4-d4da910d4a2e][Exemple 1 : eepim-auto-save]], but this is essential !
 
 Capture templates in Org Roam are predefined templates that help you quickly capture notes with predefined formats and structure.
 When you select a node that doesn't exist yet, you will have the possibility to choose the template to use.
