@@ -284,12 +284,7 @@ To overcome this problem, the command "org-roam-alias-add" exists, which allows 
 Maybe you don't won't to be annoyed with nodes of the Tutorial.
 To deactivate all the search in the Tutorial, you can customize the variable "eepim-include-tutorial".
 
-**** Visualisation of the graphe
-:PROPERTIES:
-:ID:       e4b50e0c-6812-4bb2-99ca-e041a0b673dd
-:END:
-
-**** Graphical user interface
+**** Graphical user interface / Visualisation of your graphe
 :PROPERTIES:
 :ID:       2fe5c774-a8a1-4aa0-927a-af883d0d5099
 :END:
@@ -354,7 +349,7 @@ This is useful for exploring the relationships and context of the information.
 :ID:       2dc70d53-4013-4a6a-9d05-007d3ff197ca
 :END:
 
-You can roam easily using the command "eepim-org-roam-navigate" : this function ask you a node, and then offer a list of each link (and backlink) of the current node.
+You can roam easily using the command "eepim-org-roam-navigate" : this function ask you a node, and then offer a list of each link (and backlinks) of the current node.
 
 When you want to finish the function, just select another time the node where you are.
 
@@ -840,9 +835,9 @@ Bookmarks in Emacs are pointers to locations in files, making it easy to return 
 
 - Setting Bookmarks: The bookmark-set command allows you to create a bookmark at your current location in a file, which you can return to later with bookmark-jump.
 
-- Jumping to Bookmarks: bookmark-jump moves your cursor to the location of a previously set bookmark, facilitating easy navigation across complex projects or documents.
-
 - Bookmark Window Layouts: With bookmark-view-save, you can save the current arrangement of windows and buffers as a bookmark, enabling you to restore that exact layout at a later time. To restore it, just use the command "bookmark-jump" 
+
+- Jumping to Bookmarks: bookmark-jump moves your cursor to the location of a previously set bookmark, facilitating easy navigation across complex projects or documents.
 
 **** Basic Movement and Edition
 :PROPERTIES:
@@ -862,17 +857,6 @@ Most tools are available in the Menu Bar.
 
 This section is useful to better understand Emacs and to customize it.
 
-***** Help
-:PROPERTIES:
-:ID:       5996a48e-7e6e-4612-b935-a32531701f97
-:END:
-
-This section provides quick access to tools for understanding and using various Emacs features:
-
-- Describe Function: Allows you to enter a function's name to get detailed information about what the function does and how to use it.
-- Describe Variable: Useful for finding out details about configuration options (variables), including their current values and documentation.
-- Describe Key: Tells you what a specific key combination does in Emacs.
-
 ***** Customisation of variable
 :PROPERTIES:
 :ID:       f54191fa-cb6d-4eaf-8a8b-f99a0f261892
@@ -885,6 +869,17 @@ This section is very important : this is here were you will have the most custom
   To customize all the variable relative to the configuration, you can customize the group "eepim". That can be the configuration of the margin, text size or useful other little things.
 
 To have more information how to customize Emacs, you can check [[id:d576171c-80e8-4fa4-95a0-266990051a6d][another node in the tutorial]].
+
+***** Help
+:PROPERTIES:
+:ID:       5996a48e-7e6e-4612-b935-a32531701f97
+:END:
+
+This section provides quick access to tools for understanding and using various Emacs features:
+
+- Describe Function: Allows you to enter a function's name to get detailed information about what the function does and how to use it.
+- Describe Variable: Useful for finding out details about configuration options (variables), including their current values and documentation.
+- Describe Key: Tells you what a specific key combination does in Emacs.
 
 ***** Documentation
 :PROPERTIES:

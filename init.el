@@ -434,7 +434,7 @@
 	     		       ("r" org-attach-reveal "See attached document (org-attach-open)")
 	     		       ("a" org-agenda "Open Agenda in emacs (org-agenda)")
 	     		       ("A" org-hyperscheduler-open "Open Agenda in external (org-hyperscheduler-open)")
-	     		       ("c" org-capture "Capture item (org-capture)")
+	     		       ;; ("c" org-capture "Capture item (org-capture)")
 	     		       ("e" org-export-dispatch "Export (org-export-dispatch)")
 	     		       ("R" eepim-toggle-roam-node "Toggle node<->heading (eepim-toggle-roam-node)")
 	     		       ("i" org-info "Manual of Org-mode (org-info)")
@@ -457,37 +457,22 @@
 	     
 	     		      "Buffer/File"
 	     		      (
-	     		       ("o" xah-open-in-external-app "Open outside Emacs (xah-open-in-external-app)")
+	     		       ("e" xah-open-in-external-app "Open in external app (xah-open-in-external-app)")
 	     		       ("b" switch-to-buffer "Switch buffer (switch-to-buffer)")
 	     		       ("k" kill-buffer "Kill buffer (kill-buffer)")
-	     		       ("r" revert-buffer "Refresh/Revert buffer (revert-buffer)")
-	     		       ("s" save-buffer "Save buffer/file (save-buffer)")
+	     		       ("R" revert-buffer "Refresh/Revert buffer (revert-buffer)")
+	     		       ("S" save-buffer "Save buffer/file (save-buffer)")
 	     		       ("f" find-file "Open file (find-file)")
 	     		       )
 	     		      "Bookmark"
 	     		      (
-	     		       ("s" bookmark-set "Set a bookmark in a file (bookmark-set)")
-	     		       ("j" bookmark-jump "Jump to a bookmark (bookmark-jump)")
+	     		       ("b" bookmark-set "Set a bookmark in a file (bookmark-set)")
 	     		       ("w" bookmark-view-save "Save the windows disposition (bookmark-view-save)")
+	     		       ("j" bookmark-jump "Jump to a bookmark (bookmark-jump)")
 	     		       )
 	     
 	     		      ))
 	     
-	     
-	     (defun org-mark-ring-push (&optional pos buffer)
-	       "Put the current position into the mark ring and rotate it.
-	         Also push position into the Emacs mark ring.  If optional
-	         argument POS and BUFFER are not nil, mark this location instead."
-	       (interactive)
-	       (let ((pos (or pos (point)))
-	     	(buffer (or buffer (current-buffer))))
-	         (with-current-buffer buffer
-	           (org-with-point-at pos (push-mark nil t)))
-	         (setq org-mark-ring (nthcdr (1- org-mark-ring-length) org-mark-ring))
-	         (move-marker (car org-mark-ring) pos buffer))
-	       (message
-	        (substitute-command-keys
-	         "Position saved to mark ring, go back with the menu eepim-MSE-hydra.")))
 	     
 	     (pretty-hydra-define eepim-MSE-hydra
 	     		     (:title "Movement/Search/Editing Commands" :color teal :quit-key "ESC" :foreign-keys run :exit t)
@@ -511,13 +496,14 @@
 	     
 	     (pretty-hydra-define eepim-help-and-customisation-hydra
 	     		     (:title "Help and Customisation" :color amaranth :quit-key "ESC" :foreign-keys run :exit t)
-	     		     ("Help"
-	     		      (("f" describe-function "Describe Function (describe-function)")
-	     		       ("v" describe-variable "Describe Variable (describe-variable)")
-	     		       ("k" describe-key "Describe Key (describe-key)"))
+	     		     (
 	     		      "Customize"
-	     		      (("V" customize-variable "Customize Variable")
-	     		       ("G" customize-group "Customize Group"))
+	     		      (("f" customize-variable "Customize Variable")
+	     		       ("v" customize-group "Customize Group"))
+	     		      "Help"
+	     		      (("df" describe-function "Describe Function (describe-function)")
+	     		       ("dv" describe-variable "Describe Variable (describe-variable)")
+	     		       ("dk" describe-key "Describe Key (describe-key)"))
 	     		      "Documentation"
 	     		      (("i" info "Info (info)")
 	     		       ("e" view-echo-area-messages "View all Messages (view-echo-area-messages)"))
