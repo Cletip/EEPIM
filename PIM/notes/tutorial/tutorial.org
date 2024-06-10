@@ -134,6 +134,7 @@ Why "Org" ?
 Because Emacs use some "Packages" : a package is a group of functionalities that can be built-in or downloaded.
 The package to do all this things is "Org".
 
+#+ATTR_ORG: :width 250px
 [[file:images/menu-bar-section-for-org.png]]
 
 The Menu Bar Section of "Org" is not the exhaustive list of things you can do with Org (you can do a lot of things !), but it is handy for a beginner.
@@ -149,7 +150,7 @@ You can use =ESC= to remove the region.
 
 If you are looking for a way to select the whole text, try the Menu Bar, =Edit > Select All=. It's also assigned to =C-a=. Selecting the whole text you are looking at is done via the function called =mark-whole-buffer=.
 
-#+ATTR_ORG: :width 700px
+#+ATTR_ORG: :width 250px
 [[file:images/select-all.png]]
 
 You just finished the tutorial of Emacs, bravo !
