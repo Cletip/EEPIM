@@ -45,7 +45,7 @@ To switch to another buffer, just click on "Buffer" in the Menu Bar. For example
 
 To switch to the buffer of the tutorial, do the same thing, but with "tutorial.org".
 
-To restore the frame as before, click on the buffer of the Tutorial, and in the Menu Bar, do File > Remove Other Windows.
+To restore the frame as before, click on the buffer of the Tutorial, and in the Menu Bar, do File > Remove Other Windows : this will keep only the window where your cursor is located.
 
 See [[id:eb4dc11f-3725-40ec-a511-f72bec1843c2][What you see when you open Emacs]] for more information.
 

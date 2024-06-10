@@ -304,21 +304,20 @@
 	     :hook (org-mode . good-scroll-mode)
 	     )
 
-(use-package beacon
-	     :init (beacon-mode)
-	     :config
-	     (setq beacon-blink-when-focused t
-		   beacon-blink-when-point-moves-vertically 1)
-	     (setq beacon-blink-delay 0.0)
-	     (setq beacon-blink-duration 0.5)
-	     (setq beacon-size 60)
-	     ;; (setq beacon-color "#ffa38f")
-	     ;; (setq beacon-color "blue")
-	     )
+;; just the visual line
+(defun highlight-visual-line ()
+  (save-excursion
+    (cons (progn (beginning-of-visual-line) (point))
+	  (progn (end-of-visual-line) (point)))))
+(setq hl-line-range-function 'highlight-visual-line)
+
+(global-hl-line-mode)
 
 (use-package nyan-mode
     :init (nyan-mode)
     )
+
+(setq-default cursor-type 'bar)
 
 (use-package doom-themes
 	     :init
