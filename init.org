@@ -1212,8 +1212,8 @@ Create a user menu for hydra with a list of lists: This structure would organize
   (advice-add 'org-insert-link :after #'eepim-org-display-inline-if-image)
 
   (setq org-startup-with-inline-images t
-	;; size of images
-	org-image-actual-width 1000
+	;; size of images, don't forget list to try #+ATTR.* and then ball back to the number.
+	org-image-actual-width (list 700)
 	)
 
 #+end_src
@@ -1415,7 +1415,6 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
     (add-hook 'org-insert-heading-hook 'eepim-org-insert-id))
 
 #+end_src
-
 
 **** TODO Org-capture
 :LOGBOOK:
@@ -1792,6 +1791,17 @@ Useful to see the "Tutorial" before each nodes of the tutorial.
     (org-tidy-mode)))
 
 (add-hook 'org-mode-hook 'eepim-setup-org-tidy-mode 90)
+
+#+end_src
+
+
+*** Add tutorial to org-id-extra-files and agenda
+
+#+begin_src emacs-lisp :noweb-ref org-config
+
+  (setq org-agenda-text-search-extra-files
+	(remove (concat eepim-note-tutorial-directory "personal.org")(directory-files-recursively "/media/utilisateur/SDD-WD_the-System/the-System/data/org-attach/328bb661-3a43-436f-a2da-d01002d17741/.emacs.d/PIM/notes/tutorial" "org$"))
+	)
 
 #+end_src
 

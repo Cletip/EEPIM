@@ -695,8 +695,8 @@ Some example of binding are :
 	     (advice-add 'org-insert-link :after #'eepim-org-display-inline-if-image)
 	     
 	     (setq org-startup-with-inline-images t
-	           ;; size of images
-	           org-image-actual-width 1000
+	           ;; size of images, don't forget list to try #+ATTR.* and then ball back to the number.
+	           org-image-actual-width (list 700)
 	           )
 	     
 	     
@@ -757,6 +757,11 @@ Some example of binding are :
 	          nil)))
 	     
 	     (advice-add 'command-execute :around #'eepim-custom-read-only-advice)
+	     
+	     
+	     (setq org-agenda-text-search-extra-files
+	           (remove (concat eepim-note-tutorial-directory "personal.org")(directory-files-recursively "/media/utilisateur/SDD-WD_the-System/the-System/data/org-attach/328bb661-3a43-436f-a2da-d01002d17741/.emacs.d/PIM/notes/tutorial" "org$"))
+	           )
 	     
 	     )
 
