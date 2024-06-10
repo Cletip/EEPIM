@@ -640,14 +640,7 @@ fill-column
 
 **** View where is the cursor with highlight line
 
-#+begin_src emacs-lisp :tangle yes 
-
-  ;; just the visual line
-  (defun highlight-visual-line ()
-    (save-excursion
-      (cons (progn (beginning-of-visual-line) (point))
-	    (progn (end-of-visual-line) (point)))))
-  (setq hl-line-range-function 'highlight-visual-line)
+#+begin_src emacs-lisp :tangle yes
 
   (global-hl-line-mode)
 

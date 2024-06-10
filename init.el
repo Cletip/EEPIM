@@ -304,13 +304,6 @@
 	     :hook (org-mode . good-scroll-mode)
 	     )
 
-;; just the visual line
-(defun highlight-visual-line ()
-  (save-excursion
-    (cons (progn (beginning-of-visual-line) (point))
-	  (progn (end-of-visual-line) (point)))))
-(setq hl-line-range-function 'highlight-visual-line)
-
 (global-hl-line-mode)
 
 (use-package nyan-mode
