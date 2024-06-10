@@ -199,6 +199,8 @@
 	       (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 	     )
 
+(tab-bar-mode)
+
 (use-package autorevert
 	     :ensure nil  ; autorevert is built-in, no need to download
 	     :hook (window-setup . global-auto-revert-mode)  

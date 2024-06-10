@@ -38,15 +38,14 @@ File > New Window Bellow.
 
 Oh my god, what did you do !
 
-You just split the "=frame=" (the total part of Emacs) in two "=windows=". Each window has a "=buffer=" : that can be a document, an image, etc.
-That is very useful : for example, you can have two buffer to view two different document, or just to be in two different places in the same document.
+You just split the "=frame=" (the total part of Emacs) in two "=windows=". Each window has a "=buffer=" : that can be a document, an image, etc. A good example of the difference between a buffer and a file is when you view the list of installed packages in Emacs : this list wasn't a file saved on your computer, it was displayed within Emacs as a buffer.
+Splitting frame in two windows is very useful : for example, you can have two buffer to view two different document, or just to be in two different places in the same document.
 
-To switch to another buffer, just click on "Buffer" in the Menu Bar. For example, switch to the buffer "=*scratch*=".
-This buffer is special : he is always present, and the text inside will not be saved. It is just to try some things !
+To switch to another buffer, just click on "Buffer" in the Menu Bar. For example, switch to the buffer "=*scratch*=". This buffer is special : he is always present, and the text inside will not be saved. It is just to try some things !
+
+To switch to the buffer of the tutorial, do the same thing, but with "tutorial.org".
 
 To restore the frame as before, click on the buffer of the Tutorial, and in the Menu Bar, do File > Remove Other Windows.
-
-Well done again !
 
 See [[id:eb4dc11f-3725-40ec-a511-f72bec1843c2][What you see when you open Emacs]] for more information.
 

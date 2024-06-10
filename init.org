@@ -435,6 +435,14 @@ CUA Mode is a feature in Emacs that configures the keybindings to emulate the Co
 #+end_src
 
 
+*** tab-bar-mode
+
+#+begin_src emacs-lisp :tangle yes 
+
+(tab-bar-mode)
+
+#+end_src
+
 *** Auto revert
 
 #+begin_src emacs-lisp :tangle yes 
