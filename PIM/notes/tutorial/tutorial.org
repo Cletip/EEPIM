@@ -85,12 +85,12 @@ This operation is usually written as :
 
 Menu Bar on top disappears with the text in Minibuffer saying, "Menu Bar mode disabled".
 
-#+ATTR_ORG: :width 500px
+#+ATTR_ORG: :width 700px
 [[file:images/menu-bar-off.png]]
 
 If you call the same command again, the Menu Bar appears again ("Menu Bar mode enabled").
 
-#+ATTR_ORG: :width 500px
+#+ATTR_ORG: :width 700px
 [[file:images/menu-bar-on.png]]
 
 Notice that you could have select, in the Menu Bar : Options > Show/Hide > Menu Bar.
@@ -149,7 +149,7 @@ You can use =ESC= to remove the region.
 
 If you are looking for a way to select the whole text, try the Menu Bar, =Edit > Select All=. It's also assigned to =C-a=. Selecting the whole text you are looking at is done via the function called =mark-whole-buffer=.
 
-#+ATTR_ORG: :width 500px
+#+ATTR_ORG: :width 700px
 [[file:images/select-all.png]]
 
 You just finished the tutorial of Emacs, bravo !
