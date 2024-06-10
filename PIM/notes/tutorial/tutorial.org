@@ -1,4 +1,4 @@
-#+title: Tutorial
+#+title: Main Tutorial
 #+STARTUP: showall
 
 The aim of this tutorial is to get you started as soon as possible with this "PIM", which stands for "Personal Information Manager" : make some "nodes" to create  a personal information graph that you will use all your life !

@@ -404,12 +404,11 @@
 	     		       ("i" org-roam-node-insert "Insert node link (org-roam-node-insert)")
 	     		       ("a" org-roam-alias-add "Add an alias to the node (org-roam-alias-add)")
 	     		       ("s" switch-eepim-include-tutorial "Activate or desactivate search in tutorial (switch-eepim-include-tutorial)")
-	     		       ("t" open-main-tutorial "Go to tutorial (open-main-tutorial)")
+	     		       ("T" open-main-tutorial "Go to tutorial (open-main-tutorial)")
 	     		       ("g" org-roam-ui-open "Open the graphe of nodes in browser (org-roam-ui-open)")
-	     		       ;; todo navigate in the graphe.
-	     		       ("g" consult-org-roam-backlinks "Go to a backlink (consult-org-roam-backlinks)")
+	     		       ("b" consult-org-roam-backlinks "Go to a backlink (consult-org-roam-backlinks)")
 	     		       ("g" org-roam-buffer-toggle "Open the backlinks buffer (org-roam-buffer-toggle)")
-	     		       ("g" eepim-org-roam-navigate "Roam the graphe in easy way (eepim-org-roam-navigate)")
+	     		       ("r" eepim-org-roam-navigate "Roam the graphe in easy way (eepim-org-roam-navigate)")
 	     		       )))
 	     
 	     
@@ -946,6 +945,8 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 (use-package org-auto-tangle
 	     :hook (org-mode . org-auto-tangle-mode)
 	     )
+
+(custom-set-variables '(warning-suppress-log-types '((magit))) '(warning-suppress-types '((magit))))
 
 (use-package org-roam
 	     :init
