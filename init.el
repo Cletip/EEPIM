@@ -760,7 +760,7 @@ Some example of binding are :
 	     
 	     
 	     (setq org-agenda-text-search-extra-files
-	           (remove (concat eepim-note-tutorial-directory "personal.org")(directory-files-recursively "/media/utilisateur/SDD-WD_the-System/the-System/data/org-attach/328bb661-3a43-436f-a2da-d01002d17741/.emacs.d/PIM/notes/tutorial" "org$"))
+	           (remove (concat eepim-note-tutorial-directory "personal.org")(directory-files-recursively eepim-note-tutorial-directory "org$"))
 	           )
 	     
 	     )
