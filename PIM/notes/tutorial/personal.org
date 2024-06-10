@@ -1,0 +1,48 @@
+
+#+title: Personal Configuration
+#+auto_tangle: t
+
+This file is used only for user configuration. It is loaded after config.org. Therefore, all modifications made here are loaded afterwards.
+
+This file is a .org file. At each save, the file is "exported"/tangle in a .el file (with the line auto_tangle: t). This is this file that is loaded by Emacs. Restart another Emacs to take in account the modification.
+
+A simplistic example of structure might be like this :
+
+* Begin
+
+Keep this to be sure that this file is loaded.
+
+#+begin_src emacs-lisp :tangle yes
+
+  (message "Personnal configuration loading...")
+
+#+end_src
+
+
+* Configuration of X
+
+Some text here.
+
+** Configuration of XY
+
+More text here.
+
+#+begin_src emacs-lisp :tangle yes
+
+  ;; some code here
+
+#+end_src
+
+** Etc
+
+* Configuration of Z...
+
+* End
+
+Keep this to be sure that this file is loaded.
+
+#+begin_src emacs-lisp :tangle yes
+
+  (message "Personnal configuration loaded")
+
+#+end_src

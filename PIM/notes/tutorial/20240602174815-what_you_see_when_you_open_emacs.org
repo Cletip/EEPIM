@@ -1,0 +1,17 @@
+:PROPERTIES:
+:ID:       eb4dc11f-3725-40ec-a511-f72bec1843c2
+:END:
+#+title: What you see when you open Emacs
+
+The whole things is call a "frame". 
+In this frame, there is one window, containing several parts (from top to down):
+
+1. The Menu Bar: offers access to almost all Emacs functionalities through drop-down menus. It categorizes options under headings like File, Edit, Options, Buffers, Tools… You can explore this menu, but it is not the main to retain.
+2. The toolbar: typically provides quick access to frequently used commands such as opening, saving, copying, and pasting files, among other things. It is displayed as a row of icons below the Menu Bar.
+3. A window (a frame can have several windows !), containing :
+   1. The Buffer: The main area of the Emacs window is called the buffer. This is where files, text, and other content are displayed. When you first open Emacs, the Tutorial is automatically open for you.
+   2. The Mode Line: Near the bottom of the window, there's a line called the mode line. This provides information about the current buffer, such as its name, the major and minor modes it's using, and whether the content has been modified.
+4. The Echo Area: At the very bottom of the window, below the mode line, is the echo area. This area displays helpful messages, prompts for input, and shows the results of commands.
+5. And finally, The Minibuffer (hidden): Located at the very bottom, the Minibuffer is *where Emacs asks you for input*. You’ll type file names, search queries, and other commands here.
+
+See also [[info:emacs#Commands][The Organization Of The Screen in the manual]].

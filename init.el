@@ -103,12 +103,12 @@
 
   ;; trigger the loading of org-mode
 
-  (find-file (concat user-emacs-directory "PKM/notes/tutorial/" "tutorial.org"))
+  (find-file (concat user-emacs-directory "PIM/notes/tutorial/" "tutorial.org"))
 
   ;; all the things loading after will go here
 
   ;; to have access for all org variable.
-  (require 'org-capture)
+  ;; (require 'org-capture)
 
   (if (file-exists-p custom-file)
       (load custom-file nil 'nomessage)
@@ -128,6 +128,13 @@
 ;; Add to mouse-leave-buffer-hook to handle mouse leaving Emacs window
 (add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
 
+(global-set-key [mouse-3]
+		`(menu-item ,(purecopy "Menu Bar") ignore
+			    :filter ,(lambda (_)
+				       (if (zerop (or (frame-parameter nil 'menu-bar-lines) 0))
+					   (mouse-menu-bar-map)
+					 (mouse-menu-major-mode-map)))))
+
 ;; minibuffer, stop cursor going into prompt
 (customize-set-variable
  'minibuffer-prompt-properties
@@ -145,29 +152,23 @@
 (global-set-key (kbd "C-c +") 'text-scale-increase)
 (global-set-key (kbd "C-c -") 'text-scale-decrease)
 
-(defcustom eepkm-auto-save t
+(defcustom eepim-auto-save t
   "If t, activate the `auto-save-visited-mode', so save every `auto-save-visited-interval'."
   :type 'boolean
   :group 'eepkm)
 
 (when (>= emacs-major-version 26)
   ;; real auto save
-  (auto-save-visited-mode eepkm-auto-save))
+  (auto-save-visited-mode eepim-auto-save)
+  ;; every X seconds
+  (setq auto-save-visited-interval 10))
 
 (setq make-backup-files t)
 
-(use-package beacon
-	     :init (beacon-mode)
-	     :config
-	     (setq beacon-blink-when-focused t
-		   beacon-blink-when-point-moves-vertically 1
-		   )
-	     )
-
-(defun eepkm-display-message (msg)
+(defun eepim-display-message (msg)
   "Display the message MSG in the echo area with yellow foreground."
   (propertize msg 'face '(:foreground "gold" :weight bold :height 1.7)))
-(setq set-message-function #'eepkm-display-message)
+(setq set-message-function #'eepim-display-message)
 
 (custom-set-faces
  '(minibuffer-prompt ((t (:foreground "gold" :weight bold :height 1.7)))))
@@ -205,21 +206,25 @@
 	     (setq global-auto-revert-non-file-buffers t)  
 	     )
 
+(delete-selection-mode 1)
+
+(setq save-interprogram-paste-before-kill t)
+
 (defgroup eepkm nil
-  "Customization group for EasyEmacsPKM"
+  "Customization group for EasyEmacsPIM"
   :group 'main-group  ; Inherits from main-group
-  :prefix "eepkm-"
+  :prefix "eepim-"
   )
 
 ;; visuellement
 (global-visual-line-mode 1)
 
-(defcustom eepkm-text-scale 150
-    "Size of text in Emacs."
-    :type 'integer
-    :group 'eepkm)
+(defcustom eepim-text-scale 150
+  "Size of text in Emacs."
+  :type 'integer
+  :group 'eepkm)
 
-(set-face-attribute 'default (selected-frame) :height eepkm-text-scale)
+(set-face-attribute 'default (selected-frame) :height eepim-text-scale)
 
 (let ((font-name-1 "DejaVu Sans Mono")
       (font-name-2 "DejaVu Serif")
@@ -245,17 +250,14 @@
     (sp-local-pair 'org-mode "\/" "\/")
     )
 
-(auto-save-visited-mode 1)
-(setq auto-save-visited-interval 10) ; every X seconds
-
-(defcustom eepkm-margin 100
-  "Increment have more text in one buffer of Emacs."
+(defcustom eepim-margin 100
+  "Increase this number will add more text in buffers of Emacs."
   :type 'integer
   :group 'eepkm)
 
 (use-package olivetti
 	     :hook (org-mode . olivetti-mode)
-	     :config (setq olivetti-body-width eepkm-margin)
+	     :config (setq olivetti-body-width eepim-margin)
 	     )
 
 ;; nice color mode line
@@ -303,11 +305,14 @@
 (use-package beacon
 	     :init (beacon-mode)
 	     :config
+	     (setq beacon-blink-when-focused t
+		   beacon-blink-when-point-moves-vertically 1)
 	     (setq beacon-blink-delay 0.0)
 	     (setq beacon-blink-duration 0.5)
 	     (setq beacon-size 60)
 	     ;; (setq beacon-color "#ffa38f")
-	     (setq beacon-color "blue"))
+	     ;; (setq beacon-color "blue")
+	     )
 
 (use-package nyan-mode
     :init (nyan-mode)
@@ -327,12 +332,12 @@
 (use-package ef-themes
 	     :init
 
-	     (defcustom eepkm-dark-theme nil
+	     (defcustom eepim-dark-theme nil
 	       "If non-nil, launch emacs with the dark-theme."
 	       :type 'boolean
 	       :group 'eepkm)
 
-	     (defun eepkm-ef-themes-select (theme &optional variant)
+	     (defun eepim-ef-themes-select (theme &optional variant)
 	       "Function to select and apply an EF theme."
 
 	       ;; Set variables before the package is loaded
@@ -352,9 +357,9 @@
 
 	       (load-theme theme t))
 
-	     (eepkm-ef-themes-select 'ef-duo-dark)
+	     (eepim-ef-themes-select 'ef-duo-dark)
 
-	     (when (not eepkm-dark-theme)
+	     (when (not eepim-dark-theme)
 	       (ef-themes-toggle)
 	       )
 
@@ -385,26 +390,30 @@
 (use-package pretty-hydra
 	     :init
 	     
-	     (pretty-hydra-define eepkm-master-hydra
+	     (pretty-hydra-define eepim-master-hydra
 	     		     (:title "Master Commands Menu" :color red :exit t :quit-key "ESC" :foreign-keys run :exit t)
 	     		     ("Menus"
-	     		      (("o" eepkm-org-mode-hydra/body "Org Mode Menu (eepkm-org-mode-hydra)")
-	     		       ("w" eepkm-WBF-management-hydra/body "Window Management (eepkm-WBF-management-hydra)")
-	     		       ("e" eepkm-movement-and-editing-hydra/body "Basic Movement and Editing Commands (eepkm-movement-and-editing-hydra)")
-	     		       ("h" eepkm-help-and-customisation-hydra/body "Help and Customisation (eepkm-help-and-customisation-hydra)")
+	     		      (("o" eepim-org-mode-hydra/body "Org Mode Menu (eepim-org-mode-hydra)")
+	     		       ("w" eepim-WBF-management-hydra/body "Window Management (eepim-WBF-management-hydra)")
+	     		       ("e" eepim-MSE-hydra/body "Basic Movement and Editing Commands (eepim-MSE-hydra)")
+	     		       ("h" eepim-help-and-customisation-hydra/body "Help and Customisation (eepim-help-and-customisation-hydra)")
 	     		       ("c" execute-extended-command "Execute a command with name (execute-extended-command)")
 	     		       )
 	     		      "Nodes"
 	     		      (("f" org-roam-node-find "Find node (org-roam-node-find)")
 	     		       ("i" org-roam-node-insert "Insert node link (org-roam-node-insert)")
 	     		       ("a" org-roam-alias-add "Add an alias to the node (org-roam-alias-add)")
-	     		       ("s" switch-eepkm-include-tutorial "Activate or desactivate search in tutorial (switch-eepkm-include-tutorial)")
+	     		       ("s" switch-eepim-include-tutorial "Activate or desactivate search in tutorial (switch-eepim-include-tutorial)")
 	     		       ("t" open-main-tutorial "Go to tutorial (open-main-tutorial)")
 	     		       ("g" org-roam-ui-open "Open the graphe of nodes in browser (org-roam-ui-open)")
+	     		       ;; todo navigate in the graphe.
+	     		       ("g" consult-org-roam-backlinks "Go to a backlink (consult-org-roam-backlinks)")
+	     		       ("g" org-roam-buffer-toggle "Open the backlinks buffer (org-roam-buffer-toggle)")
+	     		       ("g" eepim-org-roam-navigate "Roam the graphe in easy way (eepim-org-roam-navigate)")
 	     		       )))
 	     
 	     
-	     (pretty-hydra-define eepkm-org-mode-hydra
+	     (pretty-hydra-define eepim-org-mode-hydra
 	     		     (:title "Org Mode Operations" :color blue :quit-key "ESC" :foreign-keys run :exit t :exit t)
 	     		     ("Editing"
 	     		      (("h" org-meta-return "New heading/item/element list (org-meta-return)")
@@ -428,13 +437,13 @@
 	     		       ("A" org-hyperscheduler-open "Open Agenda in external (org-hyperscheduler-open)")
 	     		       ("c" org-capture "Capture item (org-capture)")
 	     		       ("e" org-export-dispatch "Export (org-export-dispatch)")
-	     		       ("R" eepkm-toggle-roam-exclude "Toggle node<->heading (eepkm-toggle-roam-exclude)")
+	     		       ("R" eepim-toggle-roam-node "Toggle node<->heading (eepim-toggle-roam-node)")
 	     		       ("i" org-info "Manual of Org-mode (org-info)")
 	     		       )))
 	     
 	     
-	     (pretty-hydra-define eepkm-WBF-management-hydra
-	     		     (:title "Window Management" :color teal :quit-key "ESC" :foreign-keys run :exit t)
+	     (pretty-hydra-define eepim-WBF-management-hydra
+	     		     (:title "Windows, Buffer, Bookmark management" :color teal :quit-key "ESC" :foreign-keys run :exit t)
 	     
 	     		     ("Windows and Frame"
 	     		      (("s" split-window-below "Split horizontally (split-window-below)")
@@ -447,19 +456,20 @@
 	     		       ("r" winner-redo "Redo layout (winner-redo)")
 	     		       )
 	     
-	     		      "Buffer"
-	     		      (("b" switch-to-buffer "Switch buffer (switch-to-buffer)")
-	     		       ("k" kill-buffer "Kill buffer (kill-buffer)")
-	     		       ("r" revert-buffer "Refresh/Revert buffer (revert-buffer)"))
-	     		      "File"
+	     		      "Buffer/File"
 	     		      (
 	     		       ("o" xah-open-in-external-app "Open outside Emacs (xah-open-in-external-app)")
-	     		       ("s" save-buffer "Save file (save-buffer)")
-	     
-	     		       ("j" bookmark-jump "Jump to a bookmark (bookmark-jump)")
-	     		       ("s" bookmark-set "Set a bookmark in a file (bookmark-set)")
-	     		       ("w" bookmark-view-save "Save the windows disposition (bookmark-view-save)")
+	     		       ("b" switch-to-buffer "Switch buffer (switch-to-buffer)")
+	     		       ("k" kill-buffer "Kill buffer (kill-buffer)")
+	     		       ("r" revert-buffer "Refresh/Revert buffer (revert-buffer)")
+	     		       ("s" save-buffer "Save buffer/file (save-buffer)")
 	     		       ("f" find-file "Open file (find-file)")
+	     		       )
+	     		      "Bookmark"
+	     		      (
+	     		       ("s" bookmark-set "Set a bookmark in a file (bookmark-set)")
+	     		       ("j" bookmark-jump "Jump to a bookmark (bookmark-jump)")
+	     		       ("w" bookmark-view-save "Save the windows disposition (bookmark-view-save)")
 	     		       )
 	     
 	     		      ))
@@ -467,8 +477,8 @@
 	     
 	     (defun org-mark-ring-push (&optional pos buffer)
 	       "Put the current position into the mark ring and rotate it.
-	     Also push position into the Emacs mark ring.  If optional
-	     argument POS and BUFFER are not nil, mark this location instead."
+	         Also push position into the Emacs mark ring.  If optional
+	         argument POS and BUFFER are not nil, mark this location instead."
 	       (interactive)
 	       (let ((pos (or pos (point)))
 	     	(buffer (or buffer (current-buffer))))
@@ -478,36 +488,37 @@
 	         (move-marker (car org-mark-ring) pos buffer))
 	       (message
 	        (substitute-command-keys
-	         "Position saved to mark ring, go back with the menu eepkm-movement-and-editing-hydra.")))
+	         "Position saved to mark ring, go back with the menu eepim-MSE-hydra.")))
 	     
-	     (pretty-hydra-define eepkm-movement-and-editing-hydra
-	     		     (:title "Basic Editing Commands" :color teal :quit-key "ESC" :foreign-keys run :exit t)
+	     (pretty-hydra-define eepim-MSE-hydra
+	     		     (:title "Movement/Search/Editing Commands" :color teal :quit-key "ESC" :foreign-keys run :exit t)
 	     		     (
 	     		      "Movement"
 	     		      (("m" (lambda () (interactive) (set-mark-command t)) "Go to the previous mark (set-mark-command t)"))
+	     		      "Search"
+	     		      (("s" consult-line "Search inside the document (consult-line)")
+	     		       ("q" query-replace "Search and replace (query-replace)")
+	     		       ("g" consult-org-roam-search "Search in all nodes (consult-org-roam-search)")
+	     		       )
 	     		      "Editing"
 	     		      (("c" copy-region-as-kill "Copy (copy-region-as-kill)")
 	     		       ("x" kill-region "Cut (kill-region)")
 	     		       ("v" yank "Paste (yank)")
+	     		       ("V" consult-yank-pop "View all the clipboard with selection and paste (consult-yank-pop)")
 	     		       ("z" undo "Undo (undo)"))
-	     		      "Search"
-	     		      (("s" consult-line "Search inside the document (consult-line)")
-	     		       ("q" query-replace "Search and replace (query-replace)"))))
+	     
+	     		      ))
 	     
 	     
-	     (pretty-hydra-define eepkm-help-and-customisation-hydra
+	     (pretty-hydra-define eepim-help-and-customisation-hydra
 	     		     (:title "Help and Customisation" :color amaranth :quit-key "ESC" :foreign-keys run :exit t)
 	     		     ("Help"
 	     		      (("f" describe-function "Describe Function (describe-function)")
 	     		       ("v" describe-variable "Describe Variable (describe-variable)")
-	     		       ("k" describe-key "Describe Key (describe-key)")
-	     		       ("m" describe-mode "Describe Mode (describe-mode)"))
+	     		       ("k" describe-key "Describe Key (describe-key)"))
 	     		      "Customize"
 	     		      (("V" customize-variable "Customize Variable")
-	     		       ("G" customize-group "Customize Group")
-	     		       ("F" customize-face "Customize Face")
-	     		       ("O" customize-option "Customize Option")
-	     		       ("T" customize-themes "Customize Themes"))
+	     		       ("G" customize-group "Customize Group"))
 	     		      "Documentation"
 	     		      (("i" info "Info (info)")
 	     		       ("e" view-echo-area-messages "View all Messages (view-echo-area-messages)"))
@@ -519,15 +530,15 @@
 ;; 	     :ensure (:type git :host github :repo "Ladicle/hydra-posfram")
 ;; 	     )
 
-;; todo
-;; (defgroup eepkm-bindings nil
+;; one day…
+;; (defgroup eepim-bindings nil
 ;; "Customization subgroup for key bindings"
 ;;   :group 'eepkm  
 ;;   )
 ;; think to do (eval (pretty-hydra-define … `(variable)))
 
-(defcustom eepkm-master-hydra "<f11>"
-  "Key for `org-roam-node-find` in the eepkm-bindings PKM section.
+(defcustom eepim-master-hydra "<f11>"
+  "Key for `org-roam-node-find` in the eepim-bindings PIM section.
 Some example of binding are :
     <tab>
     <f11>
@@ -537,7 +548,7 @@ Some example of binding are :
   :type 'string
   :group 'eepkm)
 
-(global-set-key (kbd eepkm-master-hydra) 'eepkm-master-hydra/body)
+(global-set-key (kbd eepim-master-hydra) 'eepim-master-hydra/body)
 
 (defun xah-open-in-external-app (&optional Fname)
     "Open the current file or dired marked files in external app.
@@ -615,8 +626,7 @@ Some example of binding are :
 	     (prescient-history-length 1000 "Set the history length for Prescient")
 	     :hook ((vertico-mode . vertico-prescient-mode)
 		    (vertico-prescient-mode . prescient-persist-mode)
-		    ))  ; Automatically enable vertico-prescient-mode in vertico-mode
-
+		    ))  
 ;; (use-package vertico-posframe
 ;; 	     :after vertico
 ;; 	     ;; :hook(vertico-mode . vertico-posframe-mode)
@@ -626,8 +636,8 @@ Some example of binding are :
 ;; 	     (setq
 ;; 	      vertico-posframe-poshandler #'posframe-poshandler-frame-top-center
 ;; 	      vertico-posframe-border-width 2
-;; 	      vertico-posframe-width nil ;;pile la bonne largeur
-;; 	      vertico-posframe-height nil ;;pile la bonne hauteur
+;; 	      vertico-posframe-width nil
+;; 	      vertico-posframe-height nil
 ;; )
 ;; )
 
@@ -639,23 +649,17 @@ Some example of binding are :
 	     (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
 	     )
 
-;; Use the `orderless' completion style.
-;; Use space-separated search terms in any order when completing with Icomplete or the default interface.
-;; Example : M-x consult-line, write "use ordeless", and you will find the configuration of the package orderless !
 (use-package orderless
 	     :init
-	     ;; Enable `partial-completion' for files to allow path expansion.
-	     ;; You may prefer to use `initials' instead of `partial-completion'.
 	     (setq completion-styles '(orderless)
 		   completion-category-defaults nil
 		   completion-category-overrides '((file (styles partial-completion)))))
 
-;; better searching 
 (use-package consult
-	     :config
+	     :init
 	     (global-set-key (kbd "C-f") 'consult-line)
+	     (global-set-key [remap isearch-forward] 'consult-line)
 	     (global-set-key (kbd "C-x b") 'consult-buffer)
-	     (global-set-key (kbd "M-y") 'consult-yank-pop)
 	     (global-set-key [remap switch-to-buffer] 'consult-buffer)
 	     (global-set-key [remap switch-to-buffer-other-window] 'consult-buffer-other-window)
 	     (global-set-key [remap switch-to-buffer-other-frame] 'consult-buffer-other-frame))
@@ -669,7 +673,8 @@ Some example of binding are :
 	     ;; (org :type git :repo "https://code.orgmode.org/bzg/org-mode.git")
 	     (org :type git :repo "https://git.savannah.gnu.org/git/emacs/org-mode.git" :branch "bugfix")
 	     :init
-	     (setq org-directory (concat user-emacs-directory "PKM/notes/"))
+	     (setq org-directory (concat user-emacs-directory "PIM/notes/"))
+	     (setq org-agenda-files (list org-directory))
 	     :config
 	     
 	     ;;Pour obtenir des polices proportionnelles
@@ -677,7 +682,7 @@ Some example of binding are :
 	     
 	     
 	     ;; refresh image after insert
-	     (defun eepkm-org-display-inline-if-image ( &optional COMPLETE-FILE LINK-LOCATION DESCRIPTION)
+	     (defun eepim-org-display-inline-if-image ( &optional COMPLETE-FILE LINK-LOCATION DESCRIPTION)
 	       "Display inline images if a 'file:' link pointing to an image is inserted."
 	       (let* ((element (org-element-context))
 	     	 (link-type (org-element-property :type element))
@@ -687,7 +692,7 @@ Some example of binding are :
 	           (org-display-inline-images))))
 	     
 	     
-	     (advice-add 'org-insert-link :after #'eepkm-org-display-inline-if-image)
+	     (advice-add 'org-insert-link :after #'eepim-org-display-inline-if-image)
 	     
 	     (setq org-startup-with-inline-images t
 	           ;; size of images
@@ -695,12 +700,12 @@ Some example of binding are :
 	           )
 	     
 	     
-	     (defcustom eepkm-create-node-every-heading t
-	       "If non-nil, after create a heading, create a node."
+	     (defcustom eepim-create-node-every-heading t
+	       "If non-nil, after insertion of a heading (using the command), create a node."
 	       :type 'boolean
 	       :group 'eepkm)
 	     
-	     (defun eepkm-org-insert-id ()
+	     (defun eepim-org-insert-id ()
 	       (let ((buffer-path (buffer-file-name))
 	     	(roam-dir (expand-file-name org-roam-directory)))
 	         (when (and buffer-path (string-prefix-p roam-dir buffer-path))
@@ -708,24 +713,73 @@ Some example of binding are :
 	     	(org-back-to-heading)
 	     	(org-id-get-create)))))
 	     
-	     (when eepkm-create-node-every-heading
-	       (add-hook 'org-insert-heading-hook 'eepkm-org-insert-id))
+	     (when eepim-create-node-every-heading
+	       (add-hook 'org-insert-heading-hook 'eepim-org-insert-id))
+	     
+	     
+	     (defun eepim-tutorial-directory-p ()
+	       "Check if the current buffer is in the `eepim-note-tutorial-directory`."
+	       (and buffer-file-name
+	            (string-prefix-p (expand-file-name eepim-note-tutorial-directory)
+	                             (expand-file-name (file-name-directory buffer-file-name)))))
+	     
+	     
+	     (defcustom eepim-include-tutorial t
+	       "If non-nil, include the tutorial in the personal DB. In other term, if non-nil, the user will see some Tutorial node when using command `org-roam-node-find' and `org-roam-node-insert'."
+	       :type 'boolean
+	       :group 'eepkm)
+	     
+	     (defvar eepim-note-tutorial-directory (concat org-directory "tutorial/"))
+	     
+	     (if eepim-include-tutorial
+	         (lambda () t)  ; Always include the node.
+	       (lambda ()
+	         (let ((current-dir (file-name-directory (or buffer-file-name ""))))
+	           (equal eepim-note-tutorial-directory current-dir))))
+	     
+	     
+	     (defun eepim-enable-read-only-if-in-directory ()
+	       "Enable read-only mode if the buffer is in the `eepim-note-tutorial-directory`."
+	       (when (eepim-tutorial-directory-p)
+	         (read-only-mode 1)))
+	     
+	     (add-hook 'find-file-hook 'eepim-enable-read-only-if-in-directory)
+	     
+	     ;; custom message
+	     (defun eepim-custom-read-only-advice (function &rest args)
+	       "Customize the read-only message for specific directories."
+	       (condition-case err
+	           (apply function args)
+	         (buffer-read-only
+	          (if (eepim-tutorial-directory-p)
+	     	 (message "You can't change files of the tutorial. Search a node or switch to the scratch buffer.")
+	            (signal 'buffer-read-only nil))
+	          nil)))
+	     
+	     (advice-add 'command-execute :around #'eepim-custom-read-only-advice)
 	     
 	     )
 
 (use-package org-hyperscheduler)
 
-(defun eepkm-org-export-output-dir (orig-fun &rest args)
+(defcustom eepim-org-export-output-dir (expand-file-name "PIM/data/export/" user-emacs-directory)
+  "When this variable is not nil, all the exported document of Org will be in this directory.
+If this variable is nil, the exported document will be in the same directory of the document."
+  :type 'string
+  :group 'eepkm)
+
+(defun eepim-change-org-export-output-dir (orig-fun &rest args)
   "Modification of the export-output directory for Org-mode."
-  (let ((old-default-directory default-directory))
-    ;; Change working directory temporarily to 'export' directory.
-    (setq default-directory (expand-file-name "PKM/data/export/" user-emacs-directory))
-    (apply orig-fun args)
-    ;; Restores original working directory after export.
-    (setq default-directory old-default-directory)))
+  (when eepim-org-export-output-dir
+    (let ((old-default-directory default-directory))
+      ;; Change working directory temporarily to 'export' directory.
+      (setq default-directory (expand-file-name "PIM/data/export/" user-emacs-directory))
+      (apply orig-fun args)
+      ;; Restores original working directory after export.
+      (setq default-directory old-default-directory))))
 
 ;; Applies directory modification function to all Org export functions.
-(advice-add 'org-export-to-file :around #'eepkm-org-export-output-dir)
+(advice-add 'org-export-to-file :around #'eepim-change-org-export-output-dir)
 
 (setq org-ellipsis "⤵")
 
@@ -734,12 +788,12 @@ Some example of binding are :
 (use-package org-modern
 	       :init
 
-	       (defcustom eepkm-org-modern-mode nil
+	       (defcustom eepim-org-modern-mode nil
 		 "Toggle modern enhancements in Org mode."
 		 :type 'boolean
 		 :group 'eepkm)
 
-	       (when eepkm-org-modern-mode
+	       (when eepim-org-modern-mode
 		 (add-hook 'org-mode-hook 'org-modern-mode)
 		 (add-hook 'org-agenda-finalize-hook 'org-modern-agenda))
 
@@ -759,45 +813,93 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	       )
 
 (use-package org-appear
-  :hook (org-mode . org-appear-mode)  ; Automatically enable org-appear-mode in org-mode
-  :custom
-  (org-appear-autolinks t "Automatically reveal the details of links")
-  (org-appear-autoentities t "Automatically reveal the details of entities, see https://orgmode.org/manual/Special-Symbols.html")
-  (org-appear-autosubmarkers t "Automatically reveal sub- and superscripts")
-  :config
-  ;; You can add any additional configuration that needs to be executed after the package is loaded here
-  ;; For example, if you want to enable pretty entities globally, you could uncomment the following line:
-  ;; (setq org-pretty-entities-include-sub-superscripts t)
-  )
-
-(defcustom eepkm-org-tidy nil
-  "If t, hide the drawer of org-mode."
-  :type 'boolean
-  :group 'eepkm)
-
-(use-package org-tidy
-	     :init
-	     (when eepkm-org-tidy
-	       (add-hook 'org-mode-hook 'org-tidy-mode))
+	     :hook (org-mode . org-appear-mode)  ; Automatically enable org-appear-mode in org-mode
+	     :custom
+	     ;; hide emphasis
+	     (org-hide-emphasis-markers t)
+	     (org-appear-autolinks nil "Automatically reveal the details of links")
+	     (org-appear-autoentities t "Automatically reveal the details of entities, see https://orgmode.org/manual/Special-Symbols.html")
+	     (org-appear-autosubmarkers t "Automatically reveal sub- and superscripts")
 	     :config
-	     (setq org-tidy-properties-style 'fringe)
+	     ;; You can add any additional configuration that needs to be executed after the package is loaded here
+	     ;; For example, if you want to enable pretty entities globally, you could uncomment the following line:
+	     ;; (setq org-pretty-entities-include-sub-superscripts t)
 	     )
 
-(setq org-attach-dir (concat user-emacs-directory "PKM/data/org-attach"))
+(defcustom eepim-org-tidy nil
+    "If t, hide the drawer of org-mode."
+    :type 'boolean
+    :group 'eepkm)
 
-;; each attached document go to the ID of the nodes
+  (use-package org-tidy
+	       :init
+	       (when eepim-org-tidy
+		 (add-hook 'org-mode-hook 'org-tidy-mode))
+
+(defun eepim-setup-org-tidy-mode ()
+  "Enable `org-tidy` mode for Org files in `eepim-note-tutorial-directory`."
+  (when (eepim-tutorial-directory-p)
+    (org-tidy-mode)))
+
+(add-hook 'org-mode-hook 'eepim-setup-org-tidy-mode 90)
+
+
+	       :config
+	       (setq org-tidy-properties-style 'fringe)
+
+
+
+	       ;; resovle issue newline
+	       (defun org-tidy--put-overlays (ovs)
+		 "Put overlays from OVS, ensuring newline after drawer is kept."
+		 (dolist (l ovs)
+		   (-when-let* (((&plist :ovly-beg :ovly-end :display
+					 :backspace-beg :backspace-end
+					 :del-beg :del-end) l)
+				(not-exists (not (org-tidy-overlay-exists ovly-beg ovly-end)))
+				;; Adjust ovly-end to keep newline after drawer
+				(adjusted-ovly-end (if
+						       ;; check i there is a newline after
+						       (save-excursion
+							 (goto-char ovly-end)
+							 (looking-at-p "\n"))
+
+
+						       (1- ovly-end)
+						     ovly-end))
+				(ovly (make-overlay ovly-beg adjusted-ovly-end nil t nil)))
+		     (pcase display
+		       ('empty (overlay-put ovly 'display ""))
+
+		       ('inline-symbol
+			(overlay-put ovly 'display
+				     (format " %s" org-tidy-properties-inline-symbol)))
+
+		       ('fringe
+			(overlay-put ovly 'display
+				     '(left-fringe org-tidy-fringe-bitmap-sharp org-drawer))))
+
+		     (push (list :type 'property :ov ovly) org-tidy-overlays)
+
+		     (org-tidy-make-protect-ov backspace-beg backspace-end
+					       del-beg del-end)
+		     )))
+
+	       )
+
+(setq org-attach-dir (concat user-emacs-directory "PIM/data/org-attach"))
 
 ;;The first function in this list defines the preferred function which will be used when creating new attachment folders.
 (setq org-attach-id-to-path-function-list
-      '(eepkm-org-attach-id-uuid-folder-format
+      '(eepim-org-attach-id-uuid-folder-format
 	;; org-attach-id-uuid-folder-format
 	))
 
-(defun eepkm-org-attach-id-uuid-folder-format (id)
+(defun eepim-org-attach-id-uuid-folder-format (id)
   "Return the path to attach a file with an id"
   (format "%s" id))
 
-(defun eepkm-eepkm-get-linux-download-directory ()
+(defun eepim-eepim-get-linux-download-directory ()
   "Retrieve the XDG download directory path from user-dirs.dirs."
   (let ((config-file (expand-file-name "~/.config/user-dirs.dirs")))
     (when (file-exists-p config-file)
@@ -809,7 +911,7 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	  (file-name-as-directory (expand-file-name "~/Downloads")))))))
 
 
-(defun eepkm-get-downloads-directory ()
+(defun eepim-get-downloads-directory ()
   "Return the path to the Downloads directory, depending on the operating system."
   (interactive)
   (cond
@@ -818,23 +920,27 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
    ((eq system-type 'darwin)      ; For macOS
     (file-name-as-directory (expand-file-name "Downloads" (getenv "HOME"))))
    ((eq system-type 'gnu/linux)   ; For Linux
-    (eepkm-get-linux-download-directory))
+    (eepim-get-linux-download-directory))
    (t
     (message "Operating system not supported."))))
 
-(defun eepkm-org-attach-read-file-name-downloads (&rest args)
+(defun eepim-org-attach-read-file-name-downloads (&rest args)
   `("Select file to attach: " ,(if (memq system-type '(gnu gnu/linux gnu/kfreebsd berkeley-unix))
 				   "~/Téléchargements/"
 				 (concat (getenv "USERPROFILE") "\\Downloads")
 				 )))
 
 (advice-add 'org-attach :before (lambda () 
-				  (advice-add 'read-file-name :filter-args 'eepkm-org-attach-read-file-name-downloads)
+				  (advice-add 'read-file-name :filter-args 'eepim-org-attach-read-file-name-downloads)
 				  ))
 
 (advice-add 'org-attach :after (lambda () 
-				 (advice-remove 'read-file-name 'eepkm-org-attach-read-file-name-downloads)
+				 (advice-remove 'read-file-name 'eepim-org-attach-read-file-name-downloads)
 				 ))
+
+(use-package org-auto-tangle
+	     :hook (org-mode . org-auto-tangle-mode)
+	     )
 
 (use-package org-roam
 	     :init
@@ -857,20 +963,6 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	     ;; automatic sync with files 
 	     (org-roam-db-autosync-mode +1)
 	     
-	     (defcustom eepkm-include-tutorial t
-	       "If non-nil, include the tutorial in the personal DB."
-	       :type 'boolean
-	       :group 'eepkm)
-	     
-	     (defvar eepkm-note-tutorial-directory (concat org-directory "Tutorial/"))
-	     
-	     (if eepkm-include-tutorial
-	         (lambda () t)  ; Always include the node.
-	       (lambda ()
-	         (let ((current-dir (file-name-directory (or buffer-file-name ""))))
-	           (equal eepkm-note-tutorial-directory current-dir))))
-	     
-	     
 	     (setq org-roam-node-display-template " ${directory} ${hierarchy-light} ")
 	     
 	     
@@ -890,7 +982,7 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	             (concat (string-join olp " > ") " > " title)
 	           title)))
 	     
-	           (defun eepkm-org-roam-get-parent-node ()
+	           (defun eepim-org-roam-get-parent-node ()
 	           "Return the node of the current node at point, if any
 	       Recursively traverses up the headline tree to find the parent node.
 	       Take in accout if this is a file node."
@@ -915,10 +1007,10 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	     		node-at-point
 	     		))))))
 	     
-	         (defun eepkm-org-roam-get-outline-path-with-aliases (&optional WITH-SELF USE-CACHE) ;argument to match the function org-get-outline-path
+	         (defun eepim-org-roam-get-outline-path-with-aliases (&optional WITH-SELF USE-CACHE) ;argument to match the function org-get-outline-path
 	           "Get the full outline path with aliases for the current headline. Take in account a file node."
 	           ;; using the olp of the parent, because org-roam save node by files, from top to end
-	           (let ((parent-node (eepkm-org-roam-get-parent-node)))
+	           (let ((parent-node (eepim-org-roam-get-parent-node)))
 	     	(when parent-node
 	     	  (let* ((aliases (org-roam-node-aliases parent-node))
 	     		 (alias-str (if (> (length aliases) 0)
@@ -932,16 +1024,87 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	     	    (append (org-roam-node-olp parent-node) (list (concat (org-roam-node-title parent-node) alias-str))))))
 	           )
 	     
-	         (defun eepkm-replace-org-get-outline-path-advice (orig-func &rest args)
+	         (defun eepim-replace-org-get-outline-path-advice (orig-func &rest args)
 	           "Temporarily override `org-get-outline-path` during `org-roam-db-insert-node-data` execution."
 	           (cl-letf (((symbol-function 'org-get-outline-path)
 	     		 (lambda (&optional with-self use-cache)
-	     		   (eepkm-org-roam-get-outline-path-with-aliases with-self use-cache))))
+	     		   (eepim-org-roam-get-outline-path-with-aliases with-self use-cache))))
 	     	(apply orig-func args)))
 	     
-	         (advice-add 'org-roam-db-insert-node-data :around #'eepkm-replace-org-get-outline-path-advice)
+	         (advice-add 'org-roam-db-insert-node-data :around #'eepim-replace-org-get-outline-path-advice)
 	     
 	     )
+
+(defun eepim-org-roam-navigate (&optional node)
+    "Select from a list of all notes that are either forward or backlinks to the current note.
+		   Optionally takes a selected NODE.
+  Ask for the user at the beginning.
+  "
+    (interactive
+     (list (org-roam-node-read 
+	    (if (org-roam-node-at-point)
+		(org-roam-node-title  (org-roam-node-at-point))
+	      "")
+	    nil nil nil "Initial node to roam : ")))
+    (let ((finished-p nil))
+
+      (org-roam-node-visit node)
+
+      (while (not finished-p)
+	(let* (
+	       (id-links '())
+	       (backlink-ids '())
+	       (all-ids '())
+	       (chosen-node nil))
+
+	  ;; Collect forward links
+	  ;; todo collect parent and son too
+	  (save-restriction 
+	    (org-narrow-to-subtree)	;to not collect the whole file
+	    (org-element-map (org-element-parse-buffer nil t) 'link
+	      (lambda (link)
+		(when (string= (org-element-property :type link) "id")
+		  (push (org-element-property :path link) id-links)))))
+
+	  ;; Collect backlinks
+	  (setq backlink-ids (mapcar (lambda (el) (car el))
+				     (org-roam-db-query
+				      [:select [source]
+					       :from links
+					       :where (= dest $s1)
+					       :and (= type "id")]
+				      (org-roam-node-id node))))
+
+	  ;; Combine forward and backlinks and current node
+	  (setq all-ids (append id-links backlink-ids (list (org-roam-node-id node))))
+
+	  ;; Prompt user for selection
+	  (setq chosen-node (if all-ids
+				(org-roam-node-read ""
+						    (lambda (n)
+						      (if (org-roam-node-p n)
+							  (if (member (org-roam-node-id n) all-ids)
+							      t
+							    nil)))
+
+						    nil
+						    nil
+						    "Next node (nothing stop the function): "
+
+						    )
+			      (user-error "No links found, either forward or backward (orphelin node).")))
+
+	  (if (equal (org-roam-node-id chosen-node) (org-roam-node-id node))
+	      (progn
+		(setq finished-p t)
+		(message "Navigation finished."))
+	    (progn
+	      (org-roam-node-visit chosen-node)
+	      (setq node chosen-node)
+	      )
+	    ))
+	))
+    )
 
 (use-package org-roam-ui
     :after org-roam
@@ -966,14 +1129,7 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
    (consult-org-roam-grep-func #'consult-ripgrep)
    ;; Display org-roam buffers right after non-org-roam buffers
    ;; in consult-buffer (and not down at the bottom)
-   (consult-org-roam-buffer-after-buffers t)
-   :bind
-   ;; Define some convenient keybindings as an addition
-   ("C-c n e" . consult-org-roam-file-find)
-   ("C-c n b" . consult-org-roam-backlinks)
-   ("C-c n B" . consult-org-roam-backlinks-recursive)
-   ("C-c n l" . consult-org-roam-forward-links)
-   ("C-c n r" . consult-org-roam-search))
+   (consult-org-roam-buffer-after-buffers t))
 
 ;;to directly delete the buffer if a file (or directory) is deleted
 (defun my--dired-kill-before-delete (file &rest rest)
@@ -982,8 +1138,6 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
     (dolist (dired-buf (dired-buffers-for-dir file))
       (kill-buffer dired-buf))))
 (advice-add 'dired-delete-file :before 'my--dired-kill-before-delete)
-
-
 
 					; automatic refresh of dired when file is modified
 (add-hook 'dired-mode-hook 'auto-revert-mode)
@@ -997,6 +1151,10 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 (setq dired-recursive-deletes 'always) ; asks for more to delete recursively
 (setq dired-dwim-target t) ; qd t-on copies, if another dired is open, copies into it "directly".
 
-(if (file-exists-p (concat user-emacs-directory "personal.el"))
-    (load (concat user-emacs-directory "personal.el") nil 'nomessage)
-  (message "The personal configuration of the user [%s] is not present." (concat user-emacs-directory "personal.el")))
+(defvar eepim-personal-file-org (concat user-emacs-directory "personal.org") "Personal file of the user exported for `eepim-personal-file-el'.")
+
+(defvar eepim-personal-file-el (concat user-emacs-directory "personal.el") "Personal file of the user loaded after the main configuration.")
+
+(if (file-exists-p eepim-personal-file-el)
+    (load eepim-personal-file-el nil 'nomessage)
+  (message "The personal configuration of the user [%s] is not present." eepim-personal-file-el))

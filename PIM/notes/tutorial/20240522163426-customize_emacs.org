@@ -44,6 +44,9 @@ You can know view just under the Tool Bar files that are open !
 Don't forget to save if you want to keep this.
 
 * Customize variables
+:PROPERTIES:
+:ID:       548f8706-0be0-4ba3-b051-4d660fb802da
+:END:
 
 When you [[id:40951656-eea9-4f05-8713-eafb5bfa709e][Customize with Menu Bar]], you just change some "variables". You don't have access to all the variable with the Menu Bar, but Emacs has a lot of variables that influence his behavior.
 
@@ -81,20 +84,20 @@ If you ever need to reference how to use the customization buffer or get more de
 To finish, you will see the description of the variables UNDER the variable customisation.
 
 ** Exemple 1 : eepkm-auto-save
-:PROPERTIES:
-:ID:       f50e865e-ecc5-42a1-86b4-d4da910d4a2e
-:END:
 
 To customize the variable "eepkm-auto-save", call the command "customize-variable", and you will have this :
 
 [[file:images/auto-save.png]]
 
+You can turn the variable off by clicking on "Toggle". 
 As you can see, this variable permit to save a file after a… "auto-save-visited-interval".
 You can click on it to have a description :
 
 [[file:images/auto-save-interval.png]]
 
 As you can see, this value is 10.
+Under the value, you have the original value.
+Then, you have the description of this variable.
 At the bottom, you can read "You can customize this variable".
 Click on "customize" to change the time of every save !
 
@@ -110,8 +113,6 @@ Well done, you know now how to customize a variable and navigate into the menu o
 :END:
 
 This is a most than the [[id:f50e865e-ecc5-42a1-86b4-d4da910d4a2e][Exemple 1 : eepkm-auto-save]], but this is essential !
-
-*** Org-roam-capture-templates
 
 Capture templates in Org Roam are predefined templates that help you quickly capture notes with predefined formats and structure.
 When you select a node that doesn't exist yet, you will have the possibility to choose the template to use.
@@ -164,66 +165,12 @@ And after select the right template :
 
 [[file:images/book-capture.png]]
 
-*** TODO Org-capture-templates
-
-Work in progress.
-
-[[file:images/capture-default.png]]
-
-It's a list : click insert.
-
-You will have this :
-
-[[file:images/capture-ins.png]]
-
-Don't panic !
-
-Firt, because it's a list, you will can insert more element later (as you see, there is a "INS" at the beginning and at the end if you want to add template).
-
-Now, let's dive into the details : 
-
-- Keys: A shortcut key that triggers this specific capture template. If you have only one, the capture will be automatically selected.
-- Description: A brief description of what this template is used for : will be display just near the shortcut.
-- Capture Type: This defines the type of capture, like an Org entry, which can influence how the captured data is processed.
-- Target Location: Specifies where the captured content should be stored. It consists of:
-  - File: The path to the file where entries will be captured.
-  - Filename: Specifies how the filename should be determined; can be a literal path or an expression.
-- Template: The structure or layout of the capture entry. It often includes placeholders and formatting specifics.
-
-(setq org-capture-templates
-      '(("t" "Todo" entry (file+headline "~/org/refile.org" "Tasks")
-             "* TODO %t %?\n ")
-        ("n" "Note" entry (file+headlin "~/org/notes.org")
-             "* %?\nEntered on %U\n  %i\n  %a")))
-
 * Personal.el
 
 This is the most advanced configuration. You don't need to use this method.
 
 It's not like other, because you will directly edit a configuration file of Emacs : it is more powerful, but you need to know "elisp", the language programmation of Emacs.
 
-For example, to deactivate the Tool Bar, the code will be like this :
-
-#+begin_src emacs-lisp
-
-(tool-bar-mode -1)
-
-#+end_src
-
-And to install a package :
-
-#+begin_src emacs-lisp
-
-  (use-package name-of-package
-	       :init
-	       ;; configuration before loading the package
-	       :config
-	       ;; configuration after loading the package
-	       ;; …
-	       )
-
-#+end_src
-
 There is a lot of tutorial in internet to write some "elisp" code.
 
-To use this method, click here (you will be redirected in the file "personal.el").
+To use this method, [[elisp:(if (file-exists-p eepkm-personal-file-org)(find-file eepkm-personal-file-org)(progn (find-file (concat user-emacs-directory "personal.org"))(insert-file (concat eepkm-note-tutorial-directory "personal.org"))))][click here to go to personal configuration file (you will be redirected in the file "personal.el". If it is the first time, the file will be created)]].

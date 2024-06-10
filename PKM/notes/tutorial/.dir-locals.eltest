@@ -1,7 +1,0 @@
-((nil . ((eval . (add-hook 'before-change-functions (lambda) () "Ask for confirmation before modifying the buffer."
-  (when (and (buffer-file-name) ;; Ensure it's a file buffer
-             (not (buffer-modified-p))) ;; Only ask if buffer isn't already modified
-    (if (yes-or-no-p "Sure? ")
-        (message "Proceed with modification.")
-      (read-only-mode 1)
-      (error "Modification aborted by user"))) nil t)))))

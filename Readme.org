@@ -1,13 +1,13 @@
-#+title: EasyEmacsPKM
+#+title: EasyEmacsPIM
 
 * Purpose
 
-This guide is designed to provide a foundation of a "PKM", that mean "Personal Knowledge Management (system)". A "PKM" , is a set of method used to collect, organize, store, and share information by an individual, enhancing personal effectiveness and facilitating learning. Normally, a "PKM" is a set of tools. Here, the goal of this project/guide is to centralize all of this.
+This guide is designed to provide a foundation of a "PIM", that mean "Personal Information Manager". A "PIM" , is a set of method used to collect, organize, store, and share information by an individual, enhancing personal effectiveness and facilitating learning. Normally, a "PIM" is a set of tools. Here, the goal of this project/guide is to centralize all of this.
 
-In this guide, we need to install two softwares to setup the new PKM :
+In this guide, we need to install two softwares to setup the new PIM :
 
 1. Git in this setup is used here to effortlessly update your setup. 
-2. Emacs serves as the central platform for your Personal Knowledge Management (PKM). Its extensive customizability and adaptability make it ideal for tailoring a system that can handle all your information management needs, from note-taking and task management to calendar integration and coding.
+2. Emacs serves as the central platform for your PIM. Its extensive customizability and adaptability make it ideal for tailoring a system that can handle all your information management needs, from note-taking and task management to calendar integration and coding.
 
 * Installation
 
@@ -106,7 +106,7 @@ For *Windows*:
 
 Finish ! Well done !
 
-** Setup the PKM
+** Setup the PIM
 
 *Windows, macOS, and Linux:*
 
@@ -181,16 +181,16 @@ Finish ! Well done !
 
 * Contributor
 
-The aim to this project is to facilitate the adoption of Emacs by people, using the concept of PKM.
+The aim to this project is to facilitate the adoption of Emacs by people, using the concept of PIM.
 
 ** Main files and directory
 
 - init.org:
-  This file acts as the configuration backbone for the entire PKM system. It contains settings and customization scripts that tailor the environment to your specific needs. When Emacs starts, it loads the settings from this file to set up the PKM system according to the predefined configurations.
-- directory "PKM"
+  This file acts as the configuration backbone for the entire PIM system. It contains settings and customization scripts that tailor the environment to your specific needs. When Emacs starts, it loads the settings from this file to set up the PIM system according to the predefined configurations.
+- directory "PIM"
   - directory "tutorial"
     - tutorial.org:
-       Main file for the comprehensive tutorial designed to help users understand how to use the PKM system effectively. It includes step-by-step instructions, examples, and tips to guide users through the various features and functionalities of the system. This document has to be the most friendly possible.
+       Main file for the comprehensive tutorial designed to help users understand how to use the PIM system effectively. It includes step-by-step instructions, examples, and tips to guide users through the various features and functionalities of the system. This document has to be the most friendly possible.
     - other files :
       used to facilated the explanation of tutorial.org
   - data
