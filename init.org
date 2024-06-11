@@ -242,7 +242,7 @@ All the [[id:40951656-eea9-4f05-8713-eafb5bfa709e][Customize with Menu Bar]] and
 
   (setq inhibit-startup-screen t )
 
-  (defun open-main-tutorial ()
+  (defun eepim-open-main-tutorial ()
     "Open a specific file and maximize the Emacs window on startup."
     (interactive)
 
@@ -262,7 +262,7 @@ All the [[id:40951656-eea9-4f05-8713-eafb5bfa709e][Customize with Menu Bar]] and
     )
 
   (add-hook 'elpaca-after-init-hook
-	    #'open-main-tutorial
+	    #'eepim-open-main-tutorial
 	    )
 
 #+end_src
@@ -825,12 +825,12 @@ Create a user menu for hydra with a list of lists: This structure would organize
 			(("f" org-roam-node-find "Find node (org-roam-node-find)")
 			 ("i" org-roam-node-insert "Insert node link (org-roam-node-insert)")
 			 ("b" consult-org-roam-backlinks "Go to a backlink (consult-org-roam-backlinks)")
-			 ("g" org-roam-buffer-toggle "Open the backlinks buffer (org-roam-buffer-toggle)")
+			 ("B" org-roam-buffer-toggle "Open the backlinks buffer (org-roam-buffer-toggle)")
 			 ("a" org-roam-alias-add "Add an alias to the node (org-roam-alias-add)")
-			 ("s" switch-eepim-include-tutorial "Activate or desactivate search in tutorial (switch-eepim-include-tutorial)")
-			 ("T" open-main-tutorial "Go to tutorial (open-main-tutorial)")
 			 ("g" org-roam-ui-open "Open the graph of nodes in browser (org-roam-ui-open)")
 			 ("r" eepim-org-roam-navigate "Roam the graph in easy way (eepim-org-roam-navigate)")
+			 ("s" eepim-switch-include-tutorial "Activate or desactivate search in tutorial (eepim-switch-include-tutorial)")
+			 ("T" eepim-open-main-tutorial "Go to tutorial (eepim-open-main-tutorial)")
 			 )))
 
 #+end_src
@@ -1493,7 +1493,7 @@ Now, let's dive into the details :
   (use-package corfu)
 
   ;; style completion : orderless
-  ;; only between bracket, configure corfu for this
+  ;; only between bracket, configure corfu for this (and start with one caracter)
 
   ;; 	(defun eepim-corfu-org-roam-link-replace-at-point ()
   ;; 	(org-roam-link-replace-at-point))
@@ -1531,8 +1531,8 @@ Useful to see the "Tutorial" before each nodes of the tutorial.
     "Return the directory of the org-roam node, but only for tutorial directory."
     (let ((file-path (org-roam-node-file node)))
       (if (string-equal (file-name-nondirectory (directory-file-name (file-name-directory file-path))) "tutorial")
-	  "Tutorial"
-	(make-string (length "Tutorial") ?\s))))  ; Return an empty string if not in tutorial
+	  "Tutorial:"
+	(make-string (length "Tutorial:") ?\s))))  ; Return an empty string if not in tutorial
 
 #+end_src
 

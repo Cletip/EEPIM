@@ -1,0 +1,41 @@
+:PROPERTIES:
+:ID:       2167f081-9c49-4296-9b5a-f5fbfcebbec8
+:END:
+#+title: What is a "Node" ?
+
+In Org-roam, a "node" can be thought of something searchable when you want to jump or insert a part of your knowledge.
+
+Nodes are designed to be a part of a connected knowledge network. For example, the heading "What is a Node ?" is a node.
+
+To be unique, each node need an ID. In this tutorial (and only here), IDs are hidden. To view IDs, you can call the command "org-tidy-mode".
+As you can see, the IDs are in the "properties drawers" :
+
+#+begin_example
+
+:PROPERTIES:
+:ID:       2167f081-9c49-4296-9b5a-f5fbfcebbec8
+:END:
+
+#+end_example
+
+There are placed just under the heading or at the top of your note : you can fold/expand the drawer like a heading. But in general, it is not really useful.
+Recall the command org-tidy-mode to hide :PROPERTIES: drawers.
+The "Properties Drawer" can have other properties, like the property "ROAM_EXCLUDE", that is here to exclude a node of the searching of Org-roam.
+
+If you call the command "org-tidy-mode", the drawer will be "hidden" of your view, but it is still here : it is marked by the "#" at the left side.  If you want to always hide the drawer elsewhere, todo customize the variable "eepim-org-tidy".
+
+So, the true definition of a node is :
+- a heading
+- with an ID in the properties drawer
+- and not with the ROAM_EXCLUDE property set to "t".
+
+Don't panic about this history about "ID", because most of the time, IDs are created automatically. What's more, a handy function is available in this menu: "eepim-toggle-roam-node".
+This function help you to toggle a heading into a node, and vice versa.
+
+** Why this distinction between node and heading
+:PROPERTIES:
+:ID:       46d3af9a-fbba-4b16-9135-567c4ac3c7a7
+:END:
+
+Simply because you don't want your note structure to be entirely searchable, and the reverse is also true : you can have a ton of heading and subheading, but in the searchable interface, you want only the biggest heading and the smallest heading. But, in your note, you keep this ability to organize things as you want.
+

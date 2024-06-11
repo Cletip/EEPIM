@@ -64,11 +64,11 @@ As a reminder, this tutorial focuses of a set of tools to use your PIM, so you n
 
 You can call commands by several ways. The first method is to use the Menu Bar as describe in the first section of this introduction, the seconded method in this tutorial are the shortcuts.
 
-todo : be clearer. Search image ?
-
-=C= stands for Ctrl. 
-=M= stands for Alt(for windows) or command (for MacOS)
-"=-=" stands to press two key in the same time
+Special abbreviations are used for shortcuts :
+- =C= stands for Ctrl. 
+- =M= stands for Alt(for windows) or command (for MacOS)
+- =S= stands for Shift
+- "=-=" stands to press two key in the same time
 
 So, for example, =C-x t 2= is:
 
@@ -103,7 +103,7 @@ Then, you can select =menu-bar-mode= (using the arrow if it's not the first choi
 
 To cancel a command, like =M-x=, just press =ESC= (Escape) or C-g. You will see "Quit" displayed in the Minibuffer.
 
-*** Basic edition
+*** Introduction to "heading"
 :PROPERTIES:
 :ID:       86e3c4c8-398d-4cea-962d-a6e8aff17aef
 :END:
@@ -121,40 +121,30 @@ Now, click on the first heading, and press "TAB".
 
 What did you do, everything just disappeared !
 
-No worry, the subheading and text is just "hidden" : pressing "TAB"" on a heading cause the text (and subheading) under that heading to disappear or fold. This feature is known as folding, and it's very useful for managing large notes/documents by temporarily hiding parts you're not currently working on.
+No worry, the subheading and text is just "hidden" : pressing "TAB"" on a heading cause the text (and subheading) under that heading to fold. This feature (folding) is very useful for managing large notes/documents by temporarily hiding parts you're not currently working on.
 
-TODO réexpliquer ça mieux :
+When using the folding feature, you can cycle through different visibility options for the content under a heading. For example, you can start with the text folded, then press TAB on a heading to view only the subheading, then press TAB again to view all the text, and then press TAB once more to fold the content back. This cycle can be repeated as needed. Thoroughly test it in the scratch buffer by creating new headings and subheadings to become more familiar with it.
 
-The visibility can change (put on the first heading to test the cycle), like that :
-
-#+begin_example
-
-Folded -> Press TAB -> View only subheading -> Press TAB -> View all the text -> Press TAB -> Folded -> …
-
-#+end_example
-
-Now that you understand this, how can you access of all the magic ? In the Menu Bar of course !
-TODO meilleur explication de ça.
-All of this is in the "Org" section.
-Why "Org" ?
-Because Emacs use some "Packages" : a package is a group of functionalities that can be built-in or downloaded.
-The package to do all these things is "Org".
+You can also navigate to the Menu Bar in Emacs where the options for managing visibility within the "Org" are located. Why "Org" ? Because Emacs uses =packages= to provide various capabilities, and the "Org" package specifically caters to organizing and managing text in a structured manner, including this folding functionality.
 
 #+ATTR_ORG: :width 250px
 [[file:images/menu-bar-section-for-org.png]]
 
-The Menu Bar Section of "Org" is not the exhaustive list of things you can do with Org (you can do a lot of things !), but it is handy for a beginner.
-We will dive into it later.
+The Menu Bar Section of "Org" is not the exhaustive list of things you can do with Org (you can do a lot of things), but it is handy for a beginner. We will dive into it later.
 
-As you maybe notice, you can fold this document (the Tutorial), because it use "Org" too !
+As you maybe notice, you can fold this document (the Tutorial), because it use "Org" too.
 
-To finish this introduction, you can use C-c to copy, C-x to cut, C-v to paste and C-z to undo. This operation are also available just under the Menu bar : the Tool Bar. The Tool Bar help you to do some things in different place in Emacs.
+Now that you are acquainted with cycling one heading, you can cycle all headings by pressing S-TAB on your keyboard. This will allow you to do the same cycle, but for all headings in the document. You can test it in for this tutorial.
 
-todo image tool bar.
+*** Basic edition
 
-You can of course select an area of text : just drag an area (called a "region" in Emacs) with your mouse. This operation to select an area of text is called "mark" (you are =marking= a =region=).
+To finish this introduction, you can use C-c to copy, C-x to cut, C-v to paste and C-z to undo. This operation are also available just under the Menu bar : the Tool Bar. The Tool Bar is just under the Menu bar, and looks like this (it's not exactly the same depending on Windows, Linux and Mac) :
 
-You can click elsewhere (or use =ESC=) to remove the mark.
+[[file:images/tool-bar.png]]
+
+The Tool Bar can help you to do some things in different place in Emacs.
+
+Furthermore, you can of course select an area of text : just drag an area (called a "=region=" in Emacs) with your mouse. This operation to select an area of text is called "=mark=" (you are =marking= a =region=). You can click elsewhere (or use =ESC=) to remove the mark.
 
 If you are looking for a way to select the whole text, try the Menu Bar, =Edit > Select All=. It's also assigned to =C-a=. Selecting the whole text you are looking at is done via the function called =mark-whole-buffer=.
 
@@ -168,20 +158,7 @@ You just finished the tutorial of Emacs, bravo ! Take a pause.
 :ID:       5181a2a5-754a-49e9-bfbd-79eed5e8c6f3
 :END:
 
-While default keyboard shortcuts of Emacs are efficient and can speed up your workflow, frequently using specific combinations like Ctrl + a can become cumbersome. To enhance your experience and simplify navigation, a menu-based interface is implemented for you.
-
-This tutorial is build exactly like the menu (translated with some Org heading), so the menu will serve as the primary tutorial too, providing a comprehensive guide to all the available features and functionalities.
-
-Furthermore, there will be a lot of shortcuts in this section that will not (always) be in the menu (because sometimes, the default shortcut of Emacs are good !) but don't forget :
-=You also rely on the Menu Bar, the Org Submenu, or even M-x= (if you want to just try a command for example).
-To see all methods to call commands, you can click [[id:657dd016-284e-40ad-8591-4b3cac5f3cc7][here]].
-
-For the following, you can fold and jump to the part that interest you the most : =You don't have to read this in a linear way.=
-
-*** Introduction
-:PROPERTIES:
-:ID:       5244b638-efd5-45aa-b762-1a5c91cde94d
-:END:
+While default keyboard shortcuts of Emacs are efficient and can speed up your workflow, frequently using specific combinations like "C-x t 2" can become cumbersome. To enhance your experience and simplify navigation, a menu interface is implemented.
 
 When you open the menu, you will have something like this :
 
@@ -189,9 +166,14 @@ When you open the menu, you will have something like this :
 
 To use the menu, just open it by pressing "F11", and then type the letter near the functionality/command, and the command associated with it will run.
 
-If you want change the shortcut to open the Menu, todo customize the variable "eepim-master-hydra".
+This tutorial is structured like the menu. As you can see in the menu, on the left, you have a section "Submenus", and on the left, you have "Nodes". So, in this tutorial, you will have two main heading : Submenus and Nodes. 
+For example, if you want information on "Open the graph of nodes in browser" under "Nodes" section, you can navigate to the "Nodes" heading in this tutorial, and then "Visualization of your graph" heading. =The menu and tutorial follow the same structure=.
 
-As you can see in the menu, on the right, you have a section "Nodes", and on the left, you will have other "submenus".
+Furthermore, there will be a lot of shortcuts in this section that will not (always) be in the menu (because sometimes, the default shortcut of Emacs/Org work perfectly) but don't forget :
+=You also rely on the Menu Bar, the Org Submenu, or even M-x=.
+To see all methods to call commands, you can have [[id:657dd016-284e-40ad-8591-4b3cac5f3cc7][a summary here]].
+
+Finally, =you don't have to read this in a linear way.= Fold and jump to the part that interest you the most. The most important part (and the only part that you can use if you want) is find and create nodes.
 
 *** Nodes
 :PROPERTIES:
@@ -202,37 +184,7 @@ This section is the most important part : taking notes and make some links betwe
 Org focuses is a package to take notes.
 Org-roam, another package, is a powerful tool for networked note-taking within Emacs.
 
-**** What is a "Node" ?
-:PROPERTIES:
-:ID:       9f3e2fe2-5532-4093-94b2-dc7ae97b534a
-:END:
-
-In Org-roam, a "node" can be thought of something searchable (meaning with an "attached unique identifier" (ID)) when you want to jump or insert a part of your knowledge.
-
-Nodes are designed to be a part of a connected knowledge network.
-
-This "Tutorial" is… a node. 
-The heading "What is a Node ?" is also a node.
-
-But… where is these famous IDs ? In this tutorial (and only here), there are hidden. To view the IDs, you can call the command "org-tidy-mode".
-As you can see, the IDs are in :Properties: drawers, just under the heading : you can fold/expand the drawer like a heading. But in general, it is not really useful.
-Recall the command org-tidy-mode to hide :PROPERTIES: drawers.
-The "Properties Drawer" can have other properties, like the property "ROAM_EXCLUDE", that is here to exclude a node of the searching of Org-roam.
-
-If you, call the command "org-tidy-mode". The drawer will be "hidden" of your view, but it is still here : it is marked by the "#" at the left side. As you can see in this tutorial, the drawer are hidden.
-If you want to always hide the drawer elsewhere, todo customize the variable "eepim-org-tidy".
-
-So, the true definition of a node is :
-- a heading
-- with an ID in the properties drawer
-- and not with the ROAM_EXCLUDE property set to "t".
-
-Don't panic about this history about "ID", because most of the time, IDs are created automatically. What's more, a handy function is available in this menu: "eepim-toggle-roam-node".
-This function help you to toggle a heading into a node, and vice versa.
-
-Why this distinction between node and heading ? Quite simply because you don't want your note structure to be entirely searchable, and the reverse is also true : you can have a ton of heading and subheading, but in the searchable interface, you want only the biggest heading and the smallest heading. But, in your note, you keep this ability to organize things as you want.
-
-**** Find and Insertion 
+**** Find, Insertion, and creation 
 :PROPERTIES:
 :ID:       c35e5626-d6e5-4123-ab7f-416e874dab8c
 :END:
@@ -240,31 +192,19 @@ Why this distinction between node and heading ? Quite simply because you don't w
 To find a node, just open the menu, and call "org-roam-node-find", and to insert a link, call "org-roam-node-insert".
 As you can see, you can jump and insert to any section of this tutoriel, because all heading are actually… nodes.
 
-The display of this two commands are very handy : you can search like if you search a command (so you can put some SPC), and you can see with a hierarchical view to know : what does X mean, oh yes, it is in Y, I remember now !
-To finish, when you are searching a node in the Minibuffer, you can have a preview of the node (use the arrow (down and up) to switch the preview).
+The display of this two commands are very handy : you can search like if you search a command (so you can put some SPC), and you see with a hierarchical view. When searching for a node in the Minibuffer, you have a preview to the node currently selected (using the arrow keys up and down to change the selection).
 
-***** Links
-:PROPERTIES:
-:ID:       689acb4b-4743-4fc0-8276-859945c45113
-:END:
+If you complete the command "org-roam-node-insert" or "org-roam-node-find" with a node that doesn't exist, this will create a new node. You will have something like that :
 
-TODO mieux expliquer, et juste dire qu'il peut modifier. Trop complexe, cacher la syntaxe ?
-todo créer un node
+[[file:images/capture-basic.png]]
 
-A link in Org is like this (without the space between the "[]") :
-#+begin_example
+Don't pay attention to the "Properties" drawer (and don't modify it) : it is just here because you are actually creating a node (see [[id:2167f081-9c49-4296-9b5a-f5fbfcebbec8][What is a "Node" ?]] for more information).
 
-[ [typeOfLink:destination] [Description] ]
+You can write what you want, and finish the creation by doing "C-c C-c".
 
-#+end_example
+To have your own template (a pre-designed format or layout that can be customized for specific use), you can view this : [[id:29254ea8-09b8-4456-98c8-690433b84bca][customize a variable : Org-roam templates]].
 
-To modify the link, you have two choice :
-- put the cursor on the link, and call the command org-insert-link : Menu Bar > Org > Hyperlinks > Insert Link (or use the menu)
-- toggle the visibility of link to show the complete link and not only the description : Menu Bar > Org > Hyperlinks > Literal link (command org-toggle-link-display)
-
-To have more detail, you can check the [[info:org#Hyperlinks][manual]].
-
-****** Backlinks
+**** Backlinks
 :PROPERTIES:
 :ID:       7f2cdc0f-9688-47d2-87e8-a30769411f84
 :END:
@@ -274,16 +214,16 @@ In other words, backlinks answer at the question : Where is this note cited ?
 
 They enable you to trace the context of how a note is referred to across your entire note database.
 
-There is two primary commands to view and navigate backlinks:
+There is two primary commands to view and navigate backlinks :
 
-******* The command consult-org-roam-backlinks
+***** The command consult-org-roam-backlinks
 :PROPERTIES:
 :ID:       81eec7f6-1510-4431-a63a-720fcaeacb23
 :END:
 
 When invoked, this command opens a minibuffer listing all the notes that contain links to the current note. You can navigate through this list to see the context in which your current note is referenced.
 
-******* The command org-roam-buffer-toggle
+***** The command org-roam-buffer-toggle
 :PROPERTIES:
 :ID:       14f049c1-058f-42f0-86ab-0930b1bed960
 :END:
@@ -293,39 +233,6 @@ This command toggles the "Org-roam side buffer" that displays backlinks to the c
 When you toggle this buffer, it appears typically on the right or left side of your Emacs window. It lists all backlinks with some context information to the current note, allowing you to quickly jump to any referring note just by clicking on it.
 
 This is useful for exploring the relationships and context of the information.
-
-***** Node that doesn't exist yet
-:PROPERTIES:
-:ID:       ce1df45e-3bd1-43b3-b6fa-9b1caf24d9ff
-:END:
-
-If you complete the command "org-roam-node-insert" or "org-roam-node-find" with a node that doesn't exist, this will create a new node. You will have something like that :
-
-[[file:images/capture-basic.png]]
-
-Don't pay attention to the "Properties" drawer (and don't modify it) : it is just here because you are actually creating a node (see todo partie avancée)
-
-You can write what you want, and then finish the "capture" process. (todo décrire capture !)
-
-To have your own template (todo pré configuration), you can view this : [[id:29254ea8-09b8-4456-98c8-690433b84bca][Exemple 2 : Org-roam templates]].
-
-***** Alias
-:PROPERTIES:
-:ID:       2b19164e-168f-4aa9-81b9-a304c3593057
-:END:
-
-todo : meilleur example.
-Sometimes, you want to find a note by writing "Hello", but the node has the name of "World".
-To overcome this problem, the command "org-roam-alias-add" exists, which allows you to add an alias, and despite to be able to search for nodes with another name.
-
-***** Deactivate the tutorial in nodes search
-:PROPERTIES:
-:ID:       10f82333-9c64-4b84-8cc4-60caac5e606c
-:END:
-
-Maybe you don't want to be annoyed with nodes of the Tutorial.
-To deactivate all the search in the Tutorial, you can customize (todo) the variable "eepim-include-tutorial".
-
 **** Visualization of your graph
 :PROPERTIES:
 :ID:       2fe5c774-a8a1-4aa0-927a-af883d0d5099
@@ -365,6 +272,25 @@ You can roam easily using the command "eepim-org-roam-navigate" : this function 
 
 When you want to finish the function, just select another time the node that you select previously.
 
+**** Alias
+:PROPERTIES:
+:ID:       2b19164e-168f-4aa9-81b9-a304c3593057
+:END:
+
+Sometimes, you want to find a note by his title, but the node can also have another name.
+To overcome this problem, the command "org-roam-alias-add" exists, which allows you to add an alias, and despite to be able to search for nodes with another name.
+
+**** Deactivate the tutorial in nodes search
+:PROPERTIES:
+:ID:       10f82333-9c64-4b84-8cc4-60caac5e606c
+:END:
+
+If you wish to avoid being bothered by nodes from the Tutorial (indicated by "Tutorial:" on the left when searching for nodes), you can disable this feature by calling the command "eepim-switch-include-tutorial."
+
+**** Go to back to the main tutorial
+
+The command "open-main-tutorial" is here to return in this main tutorial.
+
 *** Submenus
 :PROPERTIES:
 :ID:       ba5955f0-ee22-4739-b7ce-3e55448f658c
@@ -381,10 +307,6 @@ Each submenu has its specificities and utility.
 If a command is related to a specific Org mode functionality being searched for, it will be quickly found within this section.
 
 The "Org Submenu" will gather the most useful commands, but  many of the command descriptions are clear enough to be used without further explanation.
-
-However, for more details about all the concept that Org mode can handle, you can consult this section todo.
-
-In some section, there will be the default shortcut, because some shortcut of Org are very handy.
 
 ***** Main things to know for taking notes in Org
 :PROPERTIES:
@@ -512,38 +434,27 @@ More information in the [[info:org#Emphasis and Monospace][manual]].
 :ID:       e32a64bb-1149-4157-96fb-d0fa3e6d7a2f
 :END:
 
-In Org mode, links are a powerful way to connect your notes to other sections of your document, external files, websites, and even other Org mode documents. There is two primary commands: =org-insert-link= and =org-store-link=.
+Check the section [[id:ed45b6d1-9ac1-4766-9a7c-e92c5193ac5a][What is a link ?]] before if you want more information to better understand this section.
 
-****** Link with other node
-:PROPERTIES:
-:ID:       86a7ba2b-fac6-4ee2-9560-b763ab7cb7d6
-:END:
+In Org mode, links are the way to connect your notes to other sections of your document, external files, websites, and even other Org mode documents. There is two primary commands to do this : =org-insert-link= and =org-store-link=.
 
-As explain before, there is a lot of type of link. For the convenience, you can quickly add a link to a node in the menu find with the command "org-roam-node-insert".
+As explain before in the section [[id:c35e5626-d6e5-4123-ab7f-416e874dab8c][Find, Insertion, and creation of nodes]], you can insert a link to another node : the command "org-roam-node-insert" is a sort of shortcut to the command  org-insert-link, that is more general.
 
-But, how can you link other things, like document and website ?
+You can, everywhere and in (almost) every document (even if you are in the manual of Emacs) store a "link" with the command "org-store-link".
 
-****** Store and insert link
-:PROPERTIES:
-:ID:       755c8f73-758f-4fca-bb31-1a7db00d5dde
-:END:
-
-You can, everywhere and in (almost) every document (even if you are in the manual of Emacs !) store a "link" with the command "org-store-link".
-
-When you store a link, you will have something like this :
+When you store a link, you will see something like this in the Minibuffer :
 
 [[file:images/org-store-link-result.png]]
 
-Then, you will be able to insert the link (or any type of link) with the command "org-insert-link" :
+This will permit you to insert the link (or any type of link) with the command "org-insert-link" :
 
 [[file:images/org-insert-link-type.png]]
 
-As you can see, stored link are on the top.
+Stored links are located at the top. To add a URL link, just paste the URL here. You can also choose the type of link you want, which will prompt you to specify the destination of the link.
 
-If it's a url, you can simply put the url here.
-After select the type of link you want (or paste the url), you will be asked to the "description" :  this will be the way the link will be displayed in the notes (to see the complete links, see the command "org-toggle-link-display").
+One important type of link is the "file:" type link, which allows you to link to any document on your computer. When selecting the "file:" type and pressing RET, you will be prompted to enter the path to your file, starting from the Download directory. For a more advanced usage of the system, consider using a new file system with Org detailed in this section : [[id:eca94245-8e35-4eed-ab27-b626c7ce702e][Attach documents]].
 
-You have a lot of type possible. The most important is maybe the "file:" type link : you can link to any other document of your computer. But the recommandation to use the system to its full potential is to use a new file system with org-mode : check the section of "[[id:eca94245-8e35-4eed-ab27-b626c7ce702e][org-attach]]".
+After selecting the link type and destination, you will be prompted to provide a "description" for the link. This description will be displayed as the link text in your notes. To view the complete links, use the "org-toggle-link-display" command.
 
 ***** Todo
 :PROPERTIES:
@@ -637,7 +548,7 @@ Consult the [[id:d2e439fe-4717-4b21-8215-9bf835894cd0][agenda section]] to consu
 
 [[info:org#Tags][Page in the manual]]
 
-***** Attach
+***** Attach documents
 :PROPERTIES:
 :ID:       eca94245-8e35-4eed-ab27-b626c7ce702e
 :END:
@@ -724,7 +635,6 @@ The main features are :
   You can use f (forward) and b (backward) to navigate through time in your agenda. Furthermore, press d to see the agenda just for a day, and w to return to the week view.
 - t : if you want to know all your TODO, just click here.
 - m : search for some tags
-- e : export your agenda into another format (todo)
 
 After selecting the option that you want, you put your cursor on a heading (in the agenda view) and press TAB (to move to the heading and keep open the buffer Org-agenda) or RET (to move to the heading and hide the buffer Org-agenda) to directly jump in the right place !
 

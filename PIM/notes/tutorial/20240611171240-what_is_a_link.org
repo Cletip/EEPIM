@@ -1,0 +1,17 @@
+:PROPERTIES:
+:ID:       ed45b6d1-9ac1-4766-9a7c-e92c5193ac5a
+:END:
+#+title: What is a link ?
+
+A link in Org is like this :
+#+begin_src org
+
+[[typeOfLink:destination][Description]]
+
+#+end_src
+
+To modify the link, you have two choice :
+- put the cursor on the link, and call the command org-insert-link : Menu Bar > Org > Hyperlinks > Insert Link (or use the menu)
+- toggle the visibility of link to show the complete link and not only the description : Menu Bar > Org > Hyperlinks > Literal link (command org-toggle-link-display)
+
+To have more detail, you can check the [[info:org#Hyperlinks][manual]].

@@ -1,4 +1,4 @@
-#+title: EasyEmacsPIM
+#+title: EEPIM - Easy Emacs for Personal Information Management
 
 * Purpose
 

@@ -97,7 +97,7 @@
 
 (setq inhibit-startup-screen t )
 
-(defun open-main-tutorial ()
+(defun eepim-open-main-tutorial ()
   "Open a specific file and maximize the Emacs window on startup."
   (interactive)
 
@@ -117,7 +117,7 @@
   )
 
 (add-hook 'elpaca-after-init-hook
-	  #'open-main-tutorial
+	  #'eepim-open-main-tutorial
 	  )
 
 (defun stop-using-minibuffer (&optional arg)
@@ -397,12 +397,12 @@
 	     		      (("f" org-roam-node-find "Find node (org-roam-node-find)")
 	     		       ("i" org-roam-node-insert "Insert node link (org-roam-node-insert)")
 	     		       ("b" consult-org-roam-backlinks "Go to a backlink (consult-org-roam-backlinks)")
-	     		       ("g" org-roam-buffer-toggle "Open the backlinks buffer (org-roam-buffer-toggle)")
+	     		       ("B" org-roam-buffer-toggle "Open the backlinks buffer (org-roam-buffer-toggle)")
 	     		       ("a" org-roam-alias-add "Add an alias to the node (org-roam-alias-add)")
-	     		       ("s" switch-eepim-include-tutorial "Activate or desactivate search in tutorial (switch-eepim-include-tutorial)")
-	     		       ("T" open-main-tutorial "Go to tutorial (open-main-tutorial)")
 	     		       ("g" org-roam-ui-open "Open the graph of nodes in browser (org-roam-ui-open)")
 	     		       ("r" eepim-org-roam-navigate "Roam the graph in easy way (eepim-org-roam-navigate)")
+	     		       ("s" eepim-switch-include-tutorial "Activate or desactivate search in tutorial (eepim-switch-include-tutorial)")
+	     		       ("T" eepim-open-main-tutorial "Go to tutorial (eepim-open-main-tutorial)")
 	     		       )))
 	     
 	     
@@ -954,8 +954,8 @@ org-modern-star '("◉" "○" "◈" "◇" "✳" "★" "☆" "▲" "△" "▼" "�
 	       "Return the directory of the org-roam node, but only for tutorial directory."
 	       (let ((file-path (org-roam-node-file node)))
 	         (if (string-equal (file-name-nondirectory (directory-file-name (file-name-directory file-path))) "tutorial")
-	     	"Tutorial"
-	           (make-string (length "Tutorial") ?\s))))  ; Return an empty string if not in tutorial
+	     	"Tutorial:"
+	           (make-string (length "Tutorial:") ?\s))))  ; Return an empty string if not in tutorial
 	     
 	     
 	     (cl-defmethod org-roam-node-hierarchy-light ((node org-roam-node))
