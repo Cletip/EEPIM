@@ -1124,6 +1124,19 @@ Create a user menu for hydra with a list of lists: This structure would organize
 
 **** Agenda
 
+***** Org-agenda
+
+#+begin_src emacs-lisp :tangle yes 
+
+(setq org-agenda-prefix-format '((agenda . "%i %-12t %s %b")
+ (todo . "%i %b")
+ (tags . "%i %b")
+ (search . " %i %-12:c")))
+
+#+end_src
+
+***** "Google calendar"  view
+
 #+begin_src emacs-lisp :tangle yes 
 
 (use-package org-hyperscheduler)

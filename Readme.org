@@ -19,7 +19,7 @@ In this guide, we need to install two softwares to setup the new PIM :
 1. Download the Git installer from the official Git website: [[https://gitforwindows.org/][git download]].
 2. Run the downloaded `.exe` file to start the installer.
 3. Follow the installation prompts. Make sure to choose options that add Git to your PATH, which makes it accessible from the command prompt.
-4. To verify installation, open PowerShell and type `git --version`. It should return the installed version of Git.
+4. To verify installation, open the application "Windows PowerShell" and type `git --version` and then press ENTER. It should return the installed version of Git.
 
 *macOS:*
 1. The easiest way to install Git on macOS is to install the Xcode Command Line Tools. Open a terminal and type:
@@ -50,12 +50,15 @@ In this guide, we need to install two softwares to setup the new PIM :
      
 3. Verify the installation by typing `git --version` in the terminal.
 
-
 *** Configuration
 
-*On all OS*,  configure your Git username and email : type the following commands, replacing Your Name and your_email@example.com with your actual name and email:
-- git config --global user.name "Your Name"
-- git config --global user.email "your_email@example.com"
+*On all OS*,  configure your Git username and email : type the following commands in Windows Powershell/terminal, replacing Your Name and your_email@example.com with your actual name and email:
+#+begin_src sh
+
+git config --global user.name "Your Name"
+git config --global user.email "your_email@example.com"
+
+#+end_src
 
 ** Download and Install Emacs
 
@@ -90,21 +93,28 @@ In this guide, we need to install two softwares to setup the new PIM :
 
 For *Windows*:
 - C Compiler
-  - Download and use the installer in the [[https://www.msys2.org][official MSYS2 website]]
-  - Extract the installer of the folder and execute the installer
-  - Follow the instruction by clicking "Next"
-  - At the end, run MSYS2 and, in its terminal, (where you can type), type the following : pacman -S gcc
-  - Answer “Y”
+  - Download the installer in the [[https://www.msys2.org/#installation][official MSYS2 website]]
+  - Execute the installer
+  - Follow the instruction by clicking "Next" each time
+  - At the end, run MSYS2 and, in its terminal, (where you can type something), type the following : pacman -S gcc
+  - Then, press ENTER
+  - Answer “Y” at the question "Proceed with installation ?"
   - Now we will add "C:\msys64\usr\bin" to the PATH in your environmental variables :
-    - Search for "Environment Variables" in Windows Search, OR Go to Windows Explorer > Right click on "This PC" > Properties > Advanced system settings > Environment Variables
+    - Search for "Environment Variables" in Windows Search, OR Go to Windows Explorer > Right click on "This PC" > In "Search for a parameter", type "Environment Variables" and click on it.  Then, click on "Environment Variables".
     - At the bottom "System Variables" panel, look for a Variable named "Path" and double click on it.
     - Click on "New", and add this :
-      C:\msys64\usr\bin.
-      If the previous method (Click on "New") don't work, add this at the end :
-      ; C:\msys64\usr\bin
-    - Click Ok, Ok
+      #+begin_src sh
 
-Finish ! Well done !
+      C:\msys64\usr\bin
+
+      #+end_src
+      If the previous method (Click on "New") don't work, add this at the end :
+      #+begin_src sh
+
+      ; C:\msys64\usr\bin
+
+      #+end_src
+    - Click Ok, Ok
 
 ** Setup the PIM
 
@@ -117,8 +127,10 @@ Finish ! Well done !
    - *Windows*:
      #+begin_src sh
        cd $env:APPDATA
-       # or
-       # cd %USERPROFILE%\AppData
+     #+end_src
+              or (if the previous return an error)
+     #+begin_src sh
+       cd %USERPROFILE%\AppData
      #+end_src
    - *macOS/Linux*:
      #+begin_src sh
@@ -157,8 +169,10 @@ Finish ! Well done !
    2. Install all the fonts by double-clicking on each one (and maybe click "install" after).
 
 8. Now, you can launch Emacs like any other program.
-   - The first time you start Emacs, it might take a while to load as it configures itself. The first loading time can vary between 5 and 20 minutes, depending on your internet connection and your computer.
-   - If everything goes well, you will see the tutorial. Just read through it and learn how to use Emacs.
+   - When you launch Emacs for the first time, the initialization process may take some time as it configures itself. The duration of the initial loading period be a bit long depending on factors such as your internet speed and computer performance. Additionally, after about one minute, there will be a pourcentage indicating the installation progress at the bottom left corner of the screen.
+   - If everything goes well, you will see the tutorial. Restart Emacs to be sure that everything is ok. Then, just read through it and learn how to use Emacs.
+
+Finish the setup, well done !
 
 * Update
 

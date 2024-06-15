@@ -744,6 +744,11 @@ Some example of binding are :
 	     
 	     )
 
+(setq org-agenda-prefix-format '((agenda . "%i %-12t %s %b")
+ (todo . "%i %b")
+ (tags . "%i %b")
+ (search . " %i %-12:c")))
+
 (use-package org-hyperscheduler)
 
 (defcustom eepim-org-export-output-dir (expand-file-name "PIM/data/export/" user-emacs-directory)

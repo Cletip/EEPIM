@@ -1,0 +1,18 @@
+:PROPERTIES:
+:ID:       3259a131-f045-4b8c-a70c-35a9ae7751a3
+:END:
+#+title: Create a node
+
+* Another node
+:PROPERTIES:
+:ID:       331f81da-5779-4d66-97ff-195fe7bb5a3c
+:END:
+
+Some text.
+
+** A subnode
+:PROPERTIES:
+:ID:       5c97e862-fe94-4a0b-b9e2-d5e9e46a9ee1
+:END:
+
+Some text

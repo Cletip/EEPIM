@@ -680,12 +680,14 @@ Work in progress.
 
 To export the current node to a different format (like txt, html or Latex), call the command "org-export-dispatch".
 Then, select the export format you want with the shortcut.
-You have other option on the top too that you can modify.
+
+[[file:images/org-export-dispatch.png]]
+
+You have other option on the top that you can modify to adjust the scope of you exportation.
 
 All the exported document will be in this directory : [[file:../../data/export/][.emacs.d/PIM/data/export]].
 
 You can change this directory with the variable "eepim-org-export-output-dir".
-
 
 ***** Toggle a heading into a node
 :PROPERTIES:
