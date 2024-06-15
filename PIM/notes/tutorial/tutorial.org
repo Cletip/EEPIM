@@ -31,7 +31,7 @@ Furthermore, this introduction is designed for experimentation: don't hesitate t
 
 The Menu Bar in Emacs is a horizontal bar at the top of the Emacs window that provides easy access to various features via dropdown menus. It is similar to Menu Bars in other applications, offering clickable items organized into categories such as "File", "Edit", "Options", "Buffers", and "Help".
 
-You can interact with the Menu Bar to use Emacs without needing to remember keyboard shortcuts.
+You can interact with the Menu Bar to use Emacs.
 
 For example, try this :
 
@@ -44,7 +44,7 @@ Oh my god, what did you do !
 You just split the "=frame=" (the total part of Emacs) in two "=windows=". Each window has a "=buffer=" : that can be a document, an image, etc. A good example of the difference between a buffer and a file is when you view the list of installed packages in Emacs : this list wasn't a file saved on your computer, it was displayed within Emacs as a buffer.
 Splitting frame in two windows is very useful : for example, you can have two buffer to view two different document, or just to be in two different places in the same document.
 
-To switch to another buffer, just click on "Buffer" in the Menu Bar. For example, switch to the buffer "=*scratch*=". This buffer is special : he is always present, and the text inside will not be saved. It is just to try some things !
+Currently, we are in the buffer "tutorial". To switch to another buffer, just click on "Buffer" in the Menu Bar. For example, switch to the buffer "=*scratch*=". This buffer is special : he is always present, and the text inside will not be saved. It is just to try some things !
 
 To switch to the buffer of the tutorial, do the same thing, but with "tutorial.org".
 
@@ -52,23 +52,24 @@ To restore the frame as before, click on the buffer of the Tutorial, and in the 
 
 See [[id:eb4dc11f-3725-40ec-a511-f72bec1843c2][What you see when you open Emacs]] for more information.
 
-*** Call commands, cancel command you are typing
+*** Call commands, cancel command
 :PROPERTIES:
 :ID:       8f7605f5-bd76-4a76-a173-f5df7ff48c83
 :END:
 
-In the menu selection described before, you can see things like "C-x 1", or "M-g a" near the description of the action. This is the keyboard shortcut ("key binding" or "keybinding") assigned to a "functionally". All "functionalities" are =command=. 
+In the menu selection described before, you can see things like "C-x 1", or "M-g a" near the description of the action. This is the keyboard shortcut (or key binding) assigned to a "functionally". All "functionalities" are =command=. 
 
 When you interact with Emacs, *everything* is a "command". A command is a piece of code that allows you to interact with Emacs and perform various actions. These actions can range from simple tasks like moving the cursor for the next line (down arrow) or inserting text to complex operations like searching and replacing text, running programs, or interacting with external services.
-As a reminder, this tutorial focuses of a set of tools to use your PIM, so you need to know how to call these famous commands to interact with the main program of your PIM : Emacs.
 
-You can call commands by several ways. The first method is to use the Menu Bar as describe in the first section of this introduction, the seconded method in this tutorial are the shortcuts.
+As a reminder, this tutorial focuses on a set of tools to use your PIM, so you need to know how to call those commands to interact with the main program of your PIM : Emacs.
+
+You can call commands by several ways. The first method is to use the Menu Bar as describe in the first section of this introduction, the second method in this tutorial is the shortcuts.
 
 Special abbreviations are used for shortcuts :
 - =C= stands for Ctrl. 
 - =M= stands for Alt(for windows) or command (for MacOS)
 - =S= stands for Shift
-- "=-=" stands to press two key in the same time
+- "=-=" stands to press two keys in the same time
 
 So, for example, =C-x t 2= is:
 
@@ -88,12 +89,12 @@ This operation is usually written as :
 
 The Menu Bar on top disappears with the text in the Minibuffer saying, "Menu Bar mode disabled".
 
-#+ATTR_ORG: :width 700px
+#+ATTR_ORG: :width 550px
 [[file:images/menu-bar-off.png]]
 
 If you call the same command again, the Menu Bar appears again ("Menu Bar mode enabled").
 
-#+ATTR_ORG: :width 700px
+#+ATTR_ORG: :width 550px
 [[file:images/menu-bar-on.png]]
 
 Notice that you could have selected, in the Menu Bar : Options > Show/Hide > Menu Bar.
